@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-  
 from flask import Flask
 from flask_uploads import configure_uploads
 from applications.config import database, common
