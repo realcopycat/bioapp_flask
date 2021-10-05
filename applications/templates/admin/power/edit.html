@@ -97,10 +97,10 @@
 </form>
 {% include 'admin/common/footer.html' %}
 <script>
-  layui.use(['form', 'jquery', 'iconPicker', 'dtree'], function () {
+  layui.use(['form', 'jquery', 'icon', 'dtree'], function () {
     let form = layui.form
     let $ = layui.jquery
-    let iconPicker = layui.iconPicker
+    let icon = layui.icon
     let dtree = layui.dtree
 
     dtree.renderSelect({
@@ -157,7 +157,7 @@
       return false
     })
 
-    iconPicker.render({
+    icon.render({
       elem: '#icon',
       type: 'fontClass',
       search: true,
@@ -168,7 +168,7 @@
       }
     })
 
-    iconPicker.checkIcon('icon', "{{ icon }}")
+    icon.checkIcon('icon', "{{ icon }}")
 
     window.init = function (type) {
       if (type == '0') {
