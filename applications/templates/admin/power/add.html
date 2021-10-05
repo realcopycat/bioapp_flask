@@ -85,10 +85,10 @@
 </form>
 {% include 'admin/common/footer.html' %}
 <script>
-  layui.use(['form', 'jquery', 'iconPicker', 'dtree'], function () {
+  layui.use(['form', 'jquery', 'icon', 'dtree'], function () {
     let form = layui.form
     let $ = layui.jquery
-    let iconPicker = layui.iconPicker
+    let icon = layui.icon
     let dtree = layui.dtree
 
     dtree.renderSelect({
@@ -145,7 +145,7 @@
       return false
     })
 
-    iconPicker.render({
+    icon.render({
       // 选择器，推荐使用input
       elem: '#icon',
       // 数据类型：fontClass/unicode，推荐使用fontClass
