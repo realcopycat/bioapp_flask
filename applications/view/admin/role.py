@@ -8,6 +8,7 @@ from applications.common.utils.validate import xss_escape
 from applications.extensions import db
 from applications.models import Role, Power, User
 from applications.schemas import RoleSchema, PowerSchema2
+from applications.common import admin as index_curd
 
 admin_role = Blueprint('adminRole', __name__, url_prefix='/admin/role')
 
@@ -114,6 +115,7 @@ def save_role_power():
     role.power = powers
     
     db.session.commit()
+    index_curd.add_auth_session()
     return success_api(msg="授权成功")
 
 
