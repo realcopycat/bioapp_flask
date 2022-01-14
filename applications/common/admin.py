@@ -63,6 +63,7 @@ def make_menu_tree():
 def get_captcha():
     image, code = vieCode().GetCodeImage()
     out = BytesIO()
+    code = (''.join(code)).lower()
     session["code"] = code
     image.save(out, 'png')
     out.seek(0)
