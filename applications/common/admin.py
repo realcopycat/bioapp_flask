@@ -4,7 +4,7 @@ from io import BytesIO
 from flask import session, make_response, current_app
 from flask_login import current_user
 
-from applications.common.utils.gen_captcha import gen_captcha
+from applications.common.utils.gen_captcha import vieCode
 from applications.schemas import PowerOutSchema
 
 
@@ -61,7 +61,7 @@ def make_menu_tree():
 
 # 生成验证码
 def get_captcha():
-    code, image = gen_captcha()
+    image, code = vieCode().GetCodeImage()
     out = BytesIO()
     session["code"] = code
     image.save(out, 'png')
