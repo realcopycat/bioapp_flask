@@ -1,0 +1,3 @@
+-i https://pypi.tuna.tsinghua.edu.cn/simple
+Flask==2.0.2
+flask-restx==0.5.1
