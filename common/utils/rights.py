@@ -5,8 +5,8 @@ from flask import abort, request, jsonify, session
 from flask_login import login_required
 from flask_login import current_user
 
-from applications.extensions import db
-from applications.models import LoggingModel
+from extensions import db
+from models import LogModel
 
 
 def record_logging(success: bool = True) -> None:
@@ -22,7 +22,7 @@ def record_logging(success: bool = True) -> None:
         'uid': current_user.id,
         'success': success
     }
-    log = LoggingModel()
+    log = LogModel()
     for key, value in info.items():
         setattr(log, key, value)
 

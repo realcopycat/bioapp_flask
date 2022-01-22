@@ -1,8 +1,8 @@
-from flask import Blueprint, session, redirect, render_template, url_for
+from flask import session, redirect, render_template, url_for
 from flask_login import login_required, logout_user, current_user
 
-from applications.common.gen_captcha import get_captcha_image
-from applications.common.utils.http import success_api
+from common.gen_captcha import get_captcha_image
+from common.utils.http import success_api
 
 # 获取验证码
 from applications.view import index_bp

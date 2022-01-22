@@ -1,26 +1,20 @@
 import os
 
 from flask import Flask
-from applications.common.flask_uploads import configure_uploads
+from common.flask_uploads import configure_uploads
 
-from applications.common.utils.upload import photos
-from applications.configs import common
-from applications.extensions import init_plugs
+from common.utils.upload import photos
+from extensions import init_plugs
 from applications.view import init_view
 from applications.api import init_api
-from applications.configs import config
+import config
 
 
-def create_app(config_name=None):
+def create_app():
     app = Flask('pear-admin-flask')
 
-    if not config_name:
-        # 尝试从本地环境中读取
-        config_name = os.getenv('FLASK_CONFIG', 'development')
-
     # 引入数据库配置
-    app.config.from_object(common)
-    app.config.from_object(config[config_name])
+    app.config.from_object(config)
 
     # 注册各种插件
     init_plugs(app)

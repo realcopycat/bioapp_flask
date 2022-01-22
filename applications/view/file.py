@@ -1,7 +1,7 @@
 from flask import render_template
 
 from applications.view import index_bp
-from applications.common.utils.rights import view_logging_required, permission_required
+from common.utils.rights import view_logging_required, permission_required
 
 
 @index_bp.get('/file')

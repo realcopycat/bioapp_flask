@@ -83,7 +83,7 @@
               field: 'enable', title: '是否可用', templet: (d) => {
                 // TODO 修改禁用启动逻辑
                 return `<input type="checkbox" name="enable" value="${d.powerId}" lay-skin="switch" lay-text="启用|禁用" lay-filter="tool-switch"  ${d.enable ===
-                1 ? 'checked=checked' : ''}>`
+                true ? 'checked=checked' : ''}>`
               },
             },
             { field: 'sort', title: '排序' },

@@ -1,9 +1,9 @@
 from flask import Blueprint, request, render_template
 from sqlalchemy import desc
 
-from applications.common.utils.http import table_api
-from applications.common.utils.rights import permission_required
-from applications.models import LoggingModel
+from common.utils.http import table_api
+from common.utils.rights import permission_required
+from models import LogModel
 
 logs_bp = Blueprint('logs', __name__, url_prefix='/logs')
 
@@ -19,9 +19,9 @@ def index():
 def login_log():
     page = request.args.get('page', type=int)
     limit = request.args.get('limit', type=int)
-    log_paginate = LoggingModel.query.filter_by(
+    log_paginate = LogModel.query.filter_by(
         url='/api/v1/passport/login').order_by(
-        desc(LoggingModel.create_at)).paginate(
+        desc(LogModel.create_at)).paginate(
         page=page, per_page=limit, error_out=False)
     data = [
         {
@@ -47,9 +47,9 @@ def login_log():
 def operate_log():
     page = request.args.get('page', type=int)
     limit = request.args.get('limit', type=int)
-    log_paginate = LoggingModel.query.filter(
-        LoggingModel.url != '/api/v1/passport/login').order_by(
-        desc(LoggingModel.create_at)).paginate(
+    log_paginate = LogModel.query.filter(
+        LogModel.url != '/api/v1/passport/login').order_by(
+        desc(LogModel.create_at)).paginate(
         page=page, per_page=limit, error_out=False)
     data = [
         {

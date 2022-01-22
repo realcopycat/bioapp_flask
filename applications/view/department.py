@@ -1,7 +1,7 @@
 from flask import render_template, request
 
-from applications.common.utils.rights import permission_required, view_logging_required
-from applications.models import CompanyDepartment
+from models import DepartmentModels
+from common.utils.rights import permission_required, view_logging_required
 from applications.view import index_bp
 
 
@@ -24,5 +24,5 @@ def add():
 @permission_required("admin:dept:edit")
 def edit():
     dept_id = request.args.get("deptId", type=int)
-    dept = CompanyDepartment.query.get(dept_id)
+    dept = DepartmentModels.query.get(dept_id)
     return render_template('admin/department/dept_edit.html', dept=dept)

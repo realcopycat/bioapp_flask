@@ -5,9 +5,9 @@ from flask import request, jsonify, current_app
 from flask_login import current_user
 from flask_restful import Resource, reqparse
 
-from applications.common.utils.http import success_api, fail_api
-from applications.extensions import db
-from applications.models import RightsPower, RightsRole
+from common.utils.http import success_api, fail_api
+from extensions import db
+from models import RightModels, RoleModels
 
 
 def get_render_config():
@@ -105,7 +105,6 @@ def make_menu_tree():
             if p.type == 0 or p.type == 1:
                 powers.append(p)
 
-    # power_dict = marshal(powers, RightsPower.fields2())  # 生成可序列化对象
     power_dict = [
         {
             'id': item.id,
@@ -118,8 +117,6 @@ def make_menu_tree():
             'icon': item.icon,
             'sort': item.sort,
             'enable': item.enable,
-            'update_at': item.update_at.strftime('%Y-%m-%d %H:%M:%S'),
-            'create_at': item.create_at.strftime('%Y-%m-%d %H:%M:%S'),
         } for item in powers
     ]
     power_dict.sort(key=lambda x: x['id'], reverse=True)
@@ -143,15 +140,15 @@ def make_menu_tree():
 
 # 删除权限（目前没有判断父节点自动删除子节点）
 def remove_power(power_id):
-    power = RightsPower.query.filter_by(id=power_id).first()
+    power = RightModels.query.filter_by(id=power_id).first()
     role_id_list = []
     roles = power.role
     for role in roles:
         role_id_list.append(role.id)
-    roles = RightsRole.query.filter(RightsRole.id.in_(role_id_list)).all()
+    roles = RoleModels.query.filter(RoleModels.id.in_(role_id_list)).all()
     for p in roles:
         power.role.remove(p)
-    r = RightsPower.query.filter_by(id=power_id).delete()
+    r = RightModels.query.filter_by(id=power_id).delete()
     db.session.commit()
     return r
 
@@ -177,8 +174,8 @@ class RightRightsResource(Resource):
     def get(self):
         """获取选择父节点"""
 
-        power = RightsPower.query.all()
-        # power_data = marshal(power, RightsPower.fields())
+        power = RightModels.query.all()
+        # power_data = marshal(power, RightModels.fields())
         power_data = [
             {
                 'powerId': item.id,
@@ -189,8 +186,6 @@ class RightRightsResource(Resource):
                 'parentId': item.parent_id,
                 'icon': item.icon,
                 'sort': item.sort,
-                'create_at': item.create_at.strftime('%Y-%m-%d %H:%M:%S'),
-                'update_at': item.update_at.strftime('%Y-%m-%d %H:%M:%S'),
                 'enable': item.enable,
             } for item in power
         ]
@@ -211,7 +206,7 @@ class RightPowerResource(Resource):
 
     def post(self, power_id):
         res = parser_power.parse_args()
-        power = RightsPower(
+        power = RightModels(
             icon=res.icon,
             open_type=res.open_type,
             parent_id=res.parent_id,
@@ -233,15 +228,15 @@ class RightPowerResource(Resource):
 
     def delete(self, power_id):
         # 删除权限（目前没有判断父节点自动删除子节点）
-        power = RightsPower.query.filter_by(id=power_id).first()
+        power = RightModels.query.filter_by(id=power_id).first()
         role_id_list = []
         roles = power.role
         for role in roles:
             role_id_list.append(role.id)
-        roles = RightsRole.query.filter(RightsRole.id.in_(role_id_list)).all()
+        roles = RoleModels.query.filter(RoleModels.id.in_(role_id_list)).all()
         for p in roles:
             power.role.remove(p)
-        r = RightsPower.query.filter_by(id=power_id).delete()
+        r = RightModels.query.filter_by(id=power_id).delete()
         db.session.commit()
 
         if r:
@@ -262,7 +257,7 @@ class RightPowerResource(Resource):
             "url": res.power_url,
             "sort": res.sort
         }
-        power = RightsPower.query.filter_by(id=power_id).update(data)
+        power = RightModels.query.filter_by(id=power_id).update(data)
         db.session.commit()
 
         if not power:
@@ -273,7 +268,7 @@ class RightPowerResource(Resource):
 class RightPowerEnableResource(Resource):
     def put(self, right_id):
 
-        power = RightsPower.query.get(right_id)
+        power = RightModels.query.get(right_id)
         if power:
             power.enable = not power.enable
             db.session.commit()

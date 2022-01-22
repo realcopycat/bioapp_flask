@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template
 
-from applications.common.utils.rights import permission_required, view_logging_required
+from common.utils.rights import permission_required, view_logging_required
 
-from applications.models import RightsRole
+from models import RoleModels
 
 role_bp = Blueprint('role', __name__, url_prefix='/admin/role')
 
@@ -28,7 +28,7 @@ def power(role_id):
 @view_logging_required
 @permission_required("admin:role:edit")
 def role_editor(role_id):
-    role = RightsRole.query.filter_by(id=role_id).first()
+    role = RoleModels.query.filter_by(id=role_id).first()
     return render_template('admin/roles/roles_edit.html', role=role)
 
 

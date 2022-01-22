@@ -1,10 +1,9 @@
-from flask_restful import fields
+from datetime import datetime
 
-from applications.extensions import db
-from .base import BaseModel
+from extensions import db
 
 
-class LoggingModel(db.Model, BaseModel):
+class LogModel(db.Model):
     __tablename__ = 'lg_logging'
     id = db.Column(db.Integer, primary_key=True)
     method = db.Column(db.String(10))
@@ -14,3 +13,6 @@ class LoggingModel(db.Model, BaseModel):
     ip = db.Column(db.String(255))
     success = db.Column(db.Boolean, default=True)
     user_agent = db.Column(db.Text)
+
+    create_at = db.Column(db.DateTime, default=datetime.now, comment='创建时间')
+    update_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now, comment='更新时间')

@@ -3,10 +3,10 @@ from flask import session, redirect, url_for
 from flask_login import current_user, login_user
 from flask_restful import Resource, reqparse
 
-from applications.common.gen_captcha import add_auth_session
-from applications.common.utils.http import fail_api, success_api
-from applications.common.utils.rights import record_logging
-from applications.models import CompanyUser
+from common.gen_captcha import add_auth_session
+from common.utils.http import fail_api, success_api
+from common.utils.rights import record_logging
+from models import UserModels
 
 
 class LoginResource(Resource):
@@ -28,7 +28,7 @@ class LoginResource(Resource):
 
         if req.captcha != s_code:
             return fail_api(message="验证码错误")
-        user = CompanyUser.query.filter_by(username=req.username).first()
+        user = UserModels.query.filter_by(username=req.username).first()
 
         if user is None:
             return fail_api(message="不存在的用户")
