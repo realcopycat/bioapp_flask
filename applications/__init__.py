@@ -1,16 +1,29 @@
 import os
 
-from flask import Flask
+from flask import Flask, Blueprint
 from common.flask_uploads import configure_uploads
 
 from common.utils.upload import photos
 from extensions import init_plugs
 from applications.view import init_view
-from applications.api import init_api
 import config
 
+api_bp: Blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
 
-def create_app():
+from .rights import register_rights_api
+from .system import register_system_api
+from .users import register_users_api
+
+register_rights_api(api_bp)
+register_users_api(api_bp)
+register_system_api(api_bp)
+
+
+def init_api(app: Flask) -> None:
+    app.register_blueprint(api_bp)
+
+
+def create_app() -> Flask:
     app = Flask('pear-admin-flask')
 
     # 引入数据库配置
