@@ -8,8 +8,15 @@ class User(BaseModel):
     username = Column(String(20), comment='用户名')
 
 
+class Test(BaseModel):
+    __tablename__ = 'admin_test'
+    id = Column(Integer, primary_key=True, autoincrement=True, comment='ID')
+    name = Column(String(20), comment='名')
+
+
 class Userschema(PModel):
     id: int
     username: str
+
     class Config:
         orm_mode = True
