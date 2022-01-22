@@ -1,8 +1,9 @@
 from flask import Flask
-from flask_restx import Api
-from flask import Blueprint
-from entrance.namespaces import namespaces
+
+from entrance.extend.orm import db
+from entrance.extend.migrate import migrate
 
 
 def init_extensions(app: Flask):
-    pass
+    db.init_app(app)
+    migrate.init_app(app)
