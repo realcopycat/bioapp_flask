@@ -18,8 +18,14 @@ class User(db.Model, UserMixin):
     update_at = db.Column(db.DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now, comment='创建时间')
     role = db.relationship('Role', secondary="admin_user_role", backref=db.backref('user'), lazy='dynamic')
 
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+    @property
+    def password(self):
+        raise AttributeError('这个属性值只能设置')
+
+    # 使用这个装饰器，对应属性操作
+    @password.setter
+    def password(self, value):
+        self.password_hash = generate_password_hash(value)
 
     def validate_password(self, password):
         return check_password_hash(self.password_hash, password)

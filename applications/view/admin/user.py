@@ -71,7 +71,7 @@ def save():
     if bool(User.query.filter_by(username=username).count()):
         return fail_api(msg="用户已经存在")
     user = User(username=username, realname=real_name)
-    user.set_password(password)
+    user.password = password
     db.session.add(user)
     roles = Role.query.filter(Role.id.in_(role_ids)).all()
     for r in roles:
@@ -189,7 +189,7 @@ def edit_password_put():
     is_right = user.validate_password(res_json.get("oldPassword"))
     if not is_right:
         return fail_api("旧密码错误")
-    user.set_password(res_json.get("newPassword"))
+    user.password = res_json.get("newPassword")
     db.session.add(user)
     db.session.commit()
     return success_api("更改成功")
