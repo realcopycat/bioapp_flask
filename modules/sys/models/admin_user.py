@@ -6,7 +6,7 @@ from common.model import BaseModel, Column, Integer, String, DateTime, relations
 
 
 class User(BaseModel, UserMixin):
-    __tablename__ = 'admin_user'
+    __tablename__ = 'sys_user'
     id = Column(Integer, primary_key=True, autoincrement=True, comment='用户ID')
     username = Column(String(20), comment='用户名')
     realname = Column(String(20), comment='真实名字')

@@ -4,7 +4,7 @@ from common.model import BaseModel, Column, Integer, String, DateTime
 
 
 class Power(BaseModel):
-    __tablename__ = 'admin_power'
+    __tablename__ = 'sys_power'
     id = Column(Integer, primary_key=True, comment='权限编号')
     name = Column(String(255), comment='权限名称')
     type = Column(String(1), comment='权限类型')

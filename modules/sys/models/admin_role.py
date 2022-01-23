@@ -3,7 +3,7 @@ from common.model import BaseModel, Column, String, Integer, DateTime,relationsh
 
 
 class Role(BaseModel):
-    __tablename__ = 'admin_role'
+    __tablename__ = 'sys_role'
     id = Column(Integer, primary_key=True, comment='角色ID')
     name = Column(String(255), comment='角色名称')
     code = Column(String(255), comment='角色标识')

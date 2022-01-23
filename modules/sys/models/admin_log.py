@@ -4,7 +4,7 @@ from common.model import BaseModel, Column, Integer, String, Text, DateTime
 
 
 class AdminLog(BaseModel):
-    __tablename__ = 'admin_admin_log'
+    __tablename__ = 'sys_admin_log'
     id = Column(Integer, primary_key=True)
     method = Column(String(10))
     uid = Column(Integer)

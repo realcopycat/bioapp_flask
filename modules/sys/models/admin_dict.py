@@ -4,7 +4,7 @@ from common.model import BaseModel, Column, Integer, String, DateTime
 
 
 class DictType(BaseModel):
-    __tablename__ = 'admin_dict_type'
+    __tablename__ = 'sys_dict_type'
     id = Column(Integer, primary_key=True)
     type_name = Column(String(255), comment='字典类型名称')
     type_code = Column(String(255), comment='字典类型标识')
@@ -15,7 +15,7 @@ class DictType(BaseModel):
 
 
 class DictData(BaseModel):
-    __tablename__ = 'admin_dict_data'
+    __tablename__ = 'sys_dict_data'
     id = Column(Integer, primary_key=True)
     data_label = Column(String(255), comment='字典类型名称')
     data_value = Column(String(255), comment='字典类型标识')

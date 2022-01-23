@@ -4,7 +4,7 @@ from common.model import BaseModel, Column, Integer, String, Text, DateTime
 
 
 class Dept(BaseModel):
-    __tablename__ = 'admin_dept'
+    __tablename__ = 'sys_dept'
     id = Column(Integer, primary_key=True, comment="部门ID")
     parent_id = Column(Integer, comment="父级编号")
     dept_name = Column(String(50), comment="部门名称")
