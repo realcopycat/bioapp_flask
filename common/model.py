@@ -1,6 +1,10 @@
 import datetime
 
 from entrance.extensions import db
+from sqlalchemy.orm import relationship
+from sqlalchemy import Table
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import backref
 
 
 class BaseModel(db.Model):
@@ -33,6 +37,10 @@ class CurdModel(BaseModel):
 
 
 Column = db.Column
+Table = Table
+relationship = relationship
+ForeignKey = ForeignKey
+backref = backref
 
 TypeDecorator = db.TypeDecorator
 INT = db.INT
