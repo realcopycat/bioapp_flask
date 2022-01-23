@@ -1,0 +1,2 @@
+-r min.txt
+-r extra.txt

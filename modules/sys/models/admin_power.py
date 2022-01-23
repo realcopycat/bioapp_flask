@@ -1,6 +1,6 @@
 import datetime
 
-from common.model import BaseModel, Column, Integer, String, DateTime
+from common.model import BaseModel, Column, Integer, String, DateTime, SQLAlchemyAutoSchema
 
 
 class Power(BaseModel):
@@ -17,3 +17,10 @@ class Power(BaseModel):
     create_time = Column(DateTime, default=datetime.datetime.now, comment='创建时间')
     update_time = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now, comment='更新时间')
     enable = Column(Integer, comment='是否开启')
+
+
+class PowerSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Power
+        include_fk = True
+        load_instance = True

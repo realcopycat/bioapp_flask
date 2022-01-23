@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import Table
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import backref
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 
 class BaseModel(db.Model):
@@ -85,3 +86,6 @@ Interval = db.Interval
 Enum = db.Enum
 ARRAY = db.ARRAY
 JSON = db.JSON
+
+
+SQLAlchemyAutoSchema=SQLAlchemyAutoSchema

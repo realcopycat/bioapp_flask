@@ -1,6 +1,6 @@
 import datetime
 
-from common.model import BaseModel, Column, Integer, String, Text, DateTime
+from common.model import BaseModel, Column, Integer, String, Text, DateTime, SQLAlchemyAutoSchema
 
 
 class Dept(BaseModel):
@@ -17,3 +17,10 @@ class Dept(BaseModel):
     address = Column(String(255), comment="详细地址")
     create_at = Column(DateTime, default=datetime.datetime.now, comment='创建时间')
     update_at = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now, comment='创建时间')
+
+
+class DeptSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Dept
+        include_fk = True
+        load_instance = True

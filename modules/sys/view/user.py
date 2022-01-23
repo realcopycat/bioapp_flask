@@ -1,11 +1,5 @@
-from typing import List
-
 from common.view import Blueprint, View
-from flask import jsonify
 
-from pydantic import BaseModel, ValidationError, constr, parse_obj_as
-
-from entrance.extend.orm import db
 
 user = Blueprint('sys', __name__, url_prefix='/user')
 

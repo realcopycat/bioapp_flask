@@ -1,6 +1,6 @@
 import datetime
 
-from common.model import BaseModel, Column, Integer, String, Text, DateTime
+from common.model import BaseModel, Column, Integer, String, Text, DateTime, SQLAlchemyAutoSchema
 
 
 class AdminLog(BaseModel):
@@ -14,3 +14,10 @@ class AdminLog(BaseModel):
     success = Column(Integer)
     user_agent = Column(Text)
     create_time = Column(DateTime, default=datetime.datetime.now)
+
+
+class AdminLogSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = AdminLog
+        include_fk = True
+        load_instance = True

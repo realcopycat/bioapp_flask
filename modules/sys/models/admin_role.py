@@ -1,5 +1,5 @@
 import datetime
-from common.model import BaseModel, Column, String, Integer, DateTime,relationship
+from common.model import BaseModel, Column, String, Integer, DateTime, relationship, SQLAlchemyAutoSchema
 
 
 class Role(BaseModel):
@@ -14,3 +14,9 @@ class Role(BaseModel):
     create_time = Column(DateTime, default=datetime.datetime.now, comment='创建时间')
     update_time = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now, comment='更新时间')
     power = relationship('Power', secondary="admin_role_power", backref=backref('role'))
+
+class RoleSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Role
+        include_fk = True
+        load_instance = True

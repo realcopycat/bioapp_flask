@@ -2,7 +2,7 @@ import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from common.model import BaseModel, Column, Integer, String, DateTime, relationship
+from common.model import BaseModel, Column, Integer, String, DateTime, relationship, SQLAlchemyAutoSchema, backref
 
 
 class User(BaseModel, UserMixin):
@@ -24,3 +24,12 @@ class User(BaseModel, UserMixin):
 
     def validate_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+# 如果要全换全部字段，就不要声明fields或exclude字段即可
+class UserRoleSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = User
+        include_fk = True
+        load_instance = True
+        exclude = ['password_hash']

@@ -1,6 +1,6 @@
 import datetime
 
-from common.model import BaseModel, Integer, Column, String, CHAR, DateTime
+from common.model import BaseModel, Integer, Column, String, CHAR, DateTime, SQLAlchemyAutoSchema
 
 
 class Photo(BaseModel):
@@ -11,3 +11,10 @@ class Photo(BaseModel):
     mime = Column(CHAR(50), nullable=False)
     size = Column(CHAR(30), nullable=False)
     create_time = Column(DateTime, default=datetime.datetime.now)
+
+
+class AdminLogSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Photo
+        include_fk = True
+        load_instance = True
