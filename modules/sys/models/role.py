@@ -1,5 +1,5 @@
 import datetime
-from common.model import BaseModel, Column, String, Integer, DateTime, relationship, SQLAlchemyAutoSchema
+from common.model import BaseModel, Column, String, Integer, DateTime, relationship, SQLAlchemyAutoSchema, backref
 
 
 class Role(BaseModel):
@@ -13,7 +13,8 @@ class Role(BaseModel):
     sort = Column(Integer, comment='排序')
     create_time = Column(DateTime, default=datetime.datetime.now, comment='创建时间')
     update_time = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now, comment='更新时间')
-    power = relationship('Power', secondary="admin_role_power", backref=backref('role'))
+    power = relationship('Power', secondary="sys_role_power", backref=backref('role'))
+
 
 class RoleSchema(SQLAlchemyAutoSchema):
     class Meta:

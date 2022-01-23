@@ -2,7 +2,6 @@ import datetime
 
 from entrance.extensions import db
 from sqlalchemy.orm import relationship
-from sqlalchemy import Table
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import backref
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
@@ -38,7 +37,7 @@ class CurdModel(BaseModel):
 
 
 Column = db.Column
-Table = Table
+Table = db.Table
 relationship = relationship
 ForeignKey = ForeignKey
 backref = backref
@@ -87,5 +86,4 @@ Enum = db.Enum
 ARRAY = db.ARRAY
 JSON = db.JSON
 
-
-SQLAlchemyAutoSchema=SQLAlchemyAutoSchema
+SQLAlchemyAutoSchema = SQLAlchemyAutoSchema

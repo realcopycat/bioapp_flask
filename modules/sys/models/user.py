@@ -17,7 +17,7 @@ class User(BaseModel, UserMixin):
     dept_id = Column(Integer, comment='部门id')
     create_at = Column(DateTime, default=datetime.datetime.now, comment='创建时间')
     update_at = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now, comment='创建时间')
-    role = relationship('Role', secondary="admin_user_role", backref=backref('user'), lazy='dynamic')
+    role = relationship('Role', secondary="sys_user_role", backref=backref('user'), lazy='dynamic')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

@@ -1,9 +1,9 @@
 from flask_mail import Message
 
-from applications.extensions.init_mail import mail
-
-
 # send_mail(subject='title', recipients=['123@qq.com'], content='body')
+from entrance.extend.mail import mail
+
+
 def send_mail(subject, recipients, content):
     try:
         message = Message(subject=subject, recipients=recipients, body=content)

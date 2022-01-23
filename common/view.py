@@ -4,35 +4,22 @@ from flask.views import MethodViewType, MethodView
 
 class Blueprint(FlaskBlueprint):
 
-    # Order in which the methods are presented in the spec
-    HTTP_METHODS = ["OPTIONS", "HEAD", "GET", "POST", "PUT", "PATCH", "DELETE"]
-
-    DEFAULT_LOCATION_CONTENT_TYPE_MAPPING = {
-        "json": "application/json",
-        "form": "application/x-www-form-urlencoded",
-        "files": "multipart/form-data",
-    }
-
-
-
     def __init__(self, *args, **kwargs):
-
-        self.description = kwargs.pop("description", "")
 
         super().__init__(*args, **kwargs)
 
         self._endpoints = []
 
     def add_url_rule(
-        self,
-        rule,
-        endpoint=None,
-        view_func=None,
-        provide_automatic_options=None,
-        *,
-        parameters=None,
-        tags=None,
-        **options,
+            self,
+            rule,
+            endpoint=None,
+            view_func=None,
+            provide_automatic_options=None,
+            *,
+            parameters=None,
+            tags=None,
+            **options,
     ):
 
         if view_func is None:
@@ -74,6 +61,7 @@ class Blueprint(FlaskBlueprint):
     def register_child_bp(self, bp_lists):
         for bp in bp_lists:
             self.register_blueprint(bp)
+
 
 class View(MethodView):
     pass
