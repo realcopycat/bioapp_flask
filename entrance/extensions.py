@@ -1,6 +1,6 @@
 from flask import Flask
 
-from common.extend.celery import register_celery
+from common.extend.celeryer import register_celery
 from common.extend.limit import limiter
 from common.extend.orm import db
 from common.extend.migrate import migrate
