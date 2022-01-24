@@ -1,7 +1,7 @@
 from flask_mail import Message
 
 # send_mail(subject='title', recipients=['123@qq.com'], content='body')
-from entrance.extend.mail import mail
+from common.extend.mail import mail
 
 
 def send_mail(subject, recipients, content):
