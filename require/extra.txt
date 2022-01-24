@@ -1,2 +1,4 @@
 Flask-Mail==0.9.1
 celery==5.2.3
+qiniu==7.5.0
+upyun==2.5.5

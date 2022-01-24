@@ -1,4 +1,5 @@
 from base_uploader import BaseUploader
+import upyun
 
 
 class UpyunUploader(BaseUploader):
