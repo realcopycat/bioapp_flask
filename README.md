@@ -30,4 +30,27 @@
 
 #### 项目简介
 >Pear Admin Flask 新版本开发中
->
+
+#### 安装
+
+```shell
+pip install -r require/common.txt
+```
+
+#### 目录结构
+
+pear-admin-flask
+
+​	common		 ->	公共
+
+​	entrance	 	->	核心
+
+​	logs	          	->	日志
+
+​	modules 		->	蓝图，视图，模型，服务
+
+​	require	    	->	安装需要的文件
+
+​	.flaskenv	  	->	配置文件
+
+​	app.py	    	->	启动模块（使用flask run命令的话可以删除）
