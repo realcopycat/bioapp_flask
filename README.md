@@ -156,9 +156,7 @@ flask new --type view --name test/a
 # 自动注册蓝图
 # 访问http://127.0.0.1:5000/test/a/
 ```
-
 #### 预览项目
-
 |  |  |
 |---------------------|---------------------|
 | ![](docs/assets/1.jpg)  | ![](docs/assets/2.jpg)  |
