@@ -144,7 +144,7 @@
           data.field.icon = 'layui-icon ' + data.field.icon
           console.log(data.field)
           $.ajax({
-            url: '/api/v1/rights/rights/power/' + data.field.powerId,
+            url: '/api/v1/rights/power/' + data.field.powerId,
             data: JSON.stringify(data.field),
             dataType: 'json',
             contentType: 'application/json',
