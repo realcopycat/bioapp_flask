@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from sqlalchemy import desc
 
 from common.utils.rights import permission_required, view_logging_required
-from models import LogModel, RoleModels, UserModels
+from models import LogModel, RoleModel, UserModel
 from . import index_bp
 
 
@@ -19,7 +19,7 @@ def users_main():
 @view_logging_required
 @permission_required("admin:user:add")
 def users_add_view():
-    roles = RoleModels.query.all()
+    roles = RoleModel.query.all()
     return render_template('admin/users/users_add.html', roles=roles)
 
 
@@ -28,8 +28,8 @@ def users_add_view():
 @permission_required("admin:user:edit")
 def users_user_id_view(user_id):
     #  获取编辑用户信息
-    user = UserModels.query.filter_by(id=user_id).first()
-    roles = RoleModels.query.all()
+    user = UserModel.query.filter_by(id=user_id).first()
+    roles = RoleModel.query.all()
     checked_roles = []
     for r in user.role:
         checked_roles.append(r.id)

@@ -7,7 +7,7 @@ from sqlalchemy import desc
 from common.utils.http import fail_api, success_api, table_api
 from common.utils.upload import upload_one, delete_photo_by_id
 from extensions import db
-from models import PhotoModels
+from models import PhotoModel
 
 
 class FilePhotosResource(Resource):
@@ -15,10 +15,10 @@ class FilePhotosResource(Resource):
     def get(self):
         page = request.args.get('page', type=int)
         limit = request.args.get('limit', type=int)
-        photo_paginate = PhotoModels.query.order_by(desc(PhotoModels.create_at)
-                                                    ).paginate(page=page,
-                                                             per_page=limit,
-                                                             error_out=False)
+        photo_paginate = PhotoModel.query.order_by(desc(PhotoModel.create_at)
+                                                   ).paginate(page=page,
+                                                              per_page=limit,
+                                                              error_out=False)
         data = [
             {
                 'id': item.id,
@@ -54,11 +54,11 @@ class FilePhotosResource(Resource):
         """图片批量删除"""
         # TODO bugs 图片删除失败
         ids = request.form.getlist('ids[]')
-        photo_name = PhotoModels.query.filter(PhotoModels.id.in_(ids)).all()
+        photo_name = PhotoModel.query.filter(PhotoModel.id.in_(ids)).all()
         upload_url = current_app.config.get("UPLOADED_PHOTOS_DEST")
         for p in photo_name:
             os.remove(upload_url + '/' + p.name)
-        photo = PhotoModels.query.filter(PhotoModels.id.in_(ids)).delete(synchronize_session=False)
+        photo = PhotoModel.query.filter(PhotoModel.id.in_(ids)).delete(synchronize_session=False)
         db.session.commit()
         if photo:
             return success_api(message="删除成功")

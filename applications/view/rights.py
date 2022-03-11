@@ -1,7 +1,7 @@
 from flask import render_template
 
 from common.utils.rights import permission_required, view_logging_required
-from models import RightModels
+from models import RightModel
 from applications.view import index_bp
 
 
@@ -16,7 +16,7 @@ def rights_index():
 @view_logging_required
 @permission_required("admin:power:edit")
 def rights_edit(power_id):
-    power = RightModels.query.filter_by(id=power_id).first()
+    power = RightModel.query.filter_by(id=power_id).first()
     icon = str(power.icon).split()
     if len(icon) == 2:
         icon = icon[1]

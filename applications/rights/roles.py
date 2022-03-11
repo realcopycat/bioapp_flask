@@ -2,27 +2,27 @@ from flask_restful import Resource, reqparse, marshal
 
 from common.utils.http import table_api, success_api, fail_api
 from extensions import db
-from models import RightModels, RoleModels, UserModels
+from models import RightModel, RoleModel, UserModel
 
 
 def remove_role(role_id):
     """ 删除角色 """
-    role = RoleModels.query.filter_by(id=role_id).first()
+    role = RoleModel.query.filter_by(id=role_id).first()
     # 删除该角色的权限
     power_id_list = []
     for p in role.power:
         power_id_list.append(p.id)
 
-    powers = RightModels.query.filter(RightModels.id.in_(power_id_list)).all()
+    powers = RightModel.query.filter(RightModel.id.in_(power_id_list)).all()
     for p in powers:
         role.power.remove(p)
     user_id_list = []
     for u in role.user:
         user_id_list.append(u.id)
-    users = UserModels.query.filter(UserModels.id.in_(user_id_list)).all()
+    users = UserModel.query.filter(UserModel.id.in_(user_id_list)).all()
     for u in users:
         role.user.remove(u)
-    r = RoleModels.query.filter_by(id=role_id).delete()
+    r = RoleModel.query.filter_by(id=role_id).delete()
     db.session.commit()
     return r
 
@@ -46,11 +46,11 @@ class RoleRolesResource(Resource):
 
         filters = []
         if res.role_name:
-            filters.append(RoleModels.name.like('%' + res.role_name + '%'))
+            filters.append(RoleModel.name.like('%' + res.role_name + '%'))
         if res.role_code:
-            filters.append(RoleModels.code.like('%' + res.role_code + '%'))
+            filters.append(RoleModel.code.like('%' + res.role_code + '%'))
 
-        paginate = RoleModels.query.filter(*filters).paginate(page=res.page, per_page=res.limit, error_out=False)
+        paginate = RoleModel.query.filter(*filters).paginate(page=res.page, per_page=res.limit, error_out=False)
 
         return table_api(result={'items': [{'id': item.id,
                                             'roleName': item.name,
@@ -85,7 +85,7 @@ class RoleRoleResource(Resource):
 
         res = parser.parse_args()
 
-        role = RoleModels(
+        role = RoleModel(
             details=res.details,
             enable=res.enable,
             code=res.role_code,
@@ -116,7 +116,7 @@ class RoleRoleResource(Resource):
             "details": res.details
         }
 
-        role = RoleModels.query.filter_by(id=role_id).update(data)
+        role = RoleModel.query.filter_by(id=role_id).update(data)
         db.session.commit()
         if not role:
             return fail_api(message="更新角色失败")
@@ -127,7 +127,7 @@ class RoleEnableResource(Resource):
     """启用用户"""
 
     def put(self, role_id):
-        ret = RoleModels.query.get(role_id)
+        ret = RoleModel.query.get(role_id)
         ret.enable = not ret.enable
         db.session.commit()
 
@@ -141,10 +141,10 @@ class RolePowerResource(Resource):
 
     def get(self, role_id):
         # 获取角色权限
-        role = RoleModels.query.filter_by(id=role_id).first()
+        role = RoleModel.query.filter_by(id=role_id).first()
         # 获取权限列表的 id
         check_powers_list = [rp.id for rp in role.power]
-        powers = RightModels.query.all()  # 获取所有的权限
+        powers = RightModel.query.all()  # 获取所有的权限
         powers = [{
             'powerId': item.id,
             'powerName': item.name,
@@ -176,14 +176,14 @@ class RolePowerResource(Resource):
         power_list = res.power_ids.split(',')
 
         """ 更新角色权限 """
-        role = RoleModels.query.filter_by(id=role_id).first()
+        role = RoleModel.query.filter_by(id=role_id).first()
         power_id_list = []
         for p in role.power:
             power_id_list.append(p.id)
-        powers = RightModels.query.filter(RightModels.id.in_(power_id_list)).all()
+        powers = RightModel.query.filter(RightModel.id.in_(power_id_list)).all()
         for p in powers:
             role.power.remove(p)
-        powers = RightModels.query.filter(RightModels.id.in_(power_list)).all()
+        powers = RightModel.query.filter(RightModel.id.in_(power_list)).all()
         for p in powers:
             role.power.append(p)
         db.session.commit()

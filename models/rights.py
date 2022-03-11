@@ -17,7 +17,7 @@ role_power = db.Table(
 )
 
 
-class RightModels(db.Model):
+class RightModel(db.Model):
     __tablename__ = 'rt_power'
     id = db.Column(db.Integer, primary_key=True, comment='权限编号')
     name = db.Column(db.String(255), comment='权限名称')
@@ -30,10 +30,10 @@ class RightModels(db.Model):
     sort = db.Column(db.Integer, comment='排序')
     enable = db.Column(db.Boolean, comment='是否开启')
 
-    parent = db.relationship("RightModels", remote_side=[id])  # 自关联
+    parent = db.relationship("RightModel", remote_side=[id])  # 自关联
 
 
-class RoleModels(db.Model):
+class RoleModel(db.Model):
     __tablename__ = 'rt_role'
     id = db.Column(db.Integer, primary_key=True, comment='角色ID')
     name = db.Column(db.String(255), comment='角色名称')
@@ -43,4 +43,4 @@ class RoleModels(db.Model):
     details = db.Column(db.String(255), comment='详情')
     sort = db.Column(db.Integer, comment='排序')
 
-    power = db.relationship('RightModels', secondary="rt_role_power", backref=db.backref('role'))
+    power = db.relationship('RightModel', secondary="rt_role_power", backref=db.backref('role'))

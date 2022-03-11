@@ -5,7 +5,7 @@ from sqlalchemy import desc
 
 from common.utils.http import fail_api, success_api, table_api
 from extensions import db
-from models import UserModels, RoleModels, DepartmentModels
+from models import UserModel, RoleModel, DepartmentModel
 from models import LogModel
 
 
@@ -18,20 +18,20 @@ def get_current_user_logs():
 
 def is_user_exists(username):
     """ 判断用户是否存在 """
-    res = UserModels.query.filter_by(username=username).count()
+    res = UserModel.query.filter_by(username=username).count()
     return bool(res)
 
 
 def delete_by_id(_id):
     """ 删除用户 """
-    user = UserModels.query.filter_by(id=_id).first()
+    user = UserModel.query.filter_by(id=_id).first()
     roles_id = []
     for role in user.role:
         roles_id.append(role.id)
-    roles = RoleModels.query.filter(RoleModels.id.in_(roles_id)).all()
+    roles = RoleModel.query.filter(RoleModel.id.in_(roles_id)).all()
     for r in roles:
         user.role.remove(r)
-    res = UserModels.query.filter_by(id=_id).delete()
+    res = UserModel.query.filter_by(id=_id).delete()
     db.session.commit()
     return res
 
@@ -43,14 +43,14 @@ def batch_remove(ids):
 
 
 def update_user_role(_id, roles_list):
-    user = UserModels.query.filter_by(id=_id).first()
+    user = UserModel.query.filter_by(id=_id).first()
     roles_id = []
     for role in user.role:
         roles_id.append(role.id)
-    roles = RoleModels.query.filter(RoleModels.id.in_(roles_id)).all()
+    roles = RoleModel.query.filter(RoleModel.id.in_(roles_id)).all()
     for r in roles:
         user.role.remove(r)
-    roles = RoleModels.query.filter(RoleModels.id.in_(roles_list)).all()
+    roles = RoleModel.query.filter(RoleModel.id.in_(roles_list)).all()
     for r in roles:
         user.role.append(r)
     db.session.commit()
@@ -72,17 +72,17 @@ class UserUsersResource(Resource):
         filters = []
 
         if res.real_name:
-            filters.append(UserModels.realname.like('%' + res.real_name + '%'))
+            filters.append(UserModel.realname.like('%' + res.real_name + '%'))
         if res.username:
-            filters.append(UserModels.username.like('%' + res.username + '%'))
+            filters.append(UserModel.username.like('%' + res.username + '%'))
         if res.dept_id:
-            filters.append(UserModels.dept_id == res.dept_id)
+            filters.append(UserModel.dept_id == res.dept_id)
 
-        paginate = UserModels.query.filter(*filters).paginate(page=res.page,
-                                                              per_page=res.limit,
-                                                              error_out=False)
+        paginate = UserModel.query.filter(*filters).paginate(page=res.page,
+                                                             per_page=res.limit,
+                                                             error_out=False)
 
-        dept_name = lambda dept_id: DepartmentModels.query.filter_by(id=dept_id).first().dept_name if dept_id else ""
+        dept_name = lambda dept_id: DepartmentModel.query.filter_by(id=dept_id).first().dept_name if dept_id else ""
         user_data = [{
             'id': item.id,
             'username': item.username,
@@ -111,7 +111,7 @@ class UserUsersResource(Resource):
         if is_user_exists(res.username):
             return fail_api(message="用户已经存在")
 
-        user = UserModels()
+        user = UserModel()
         user.username = res.username
         user.realname = res.real_name
         user.set_password(res.password)
@@ -119,8 +119,8 @@ class UserUsersResource(Resource):
         db.session.commit()
 
         """ 增加用户角色 """
-        user = UserModels.query.filter_by(id=user.id).first()
-        roles = RoleModels.query.filter(RoleModels.id.in_(role_ids)).all()
+        user = UserModel.query.filter_by(id=user.id).first()
+        roles = RoleModel.query.filter(RoleModel.id.in_(role_ids)).all()
         for r in roles:
             user.role.append(r)
         db.session.commit()
@@ -152,7 +152,7 @@ class UserUserResource(Resource):
         if is_user_exists(res.username):
             return fail_api(message="用户已经存在")
 
-        user = UserModels()
+        user = UserModel()
         user.username = res.username
         user.realname = res.real_name
         user.set_password(res.password)
@@ -160,8 +160,8 @@ class UserUserResource(Resource):
         db.session.commit()
 
         """ 增加用户角色 """
-        user = UserModels.query.filter_by(id=user.id).first()
-        roles = RoleModels.query.filter(RoleModels.id.in_(role_ids)).all()
+        user = UserModel.query.filter_by(id=user.id).first()
+        roles = RoleModel.query.filter(RoleModel.id.in_(role_ids)).all()
         for r in roles:
             user.role.append(r)
         db.session.commit()
@@ -189,7 +189,7 @@ class UserRoleResource(Resource):
         role_ids = res.role_ids.split(',')
 
         # 更新用户数据
-        UserModels.query.filter_by(id=user_id).update({'username': res.username,
+        UserModel.query.filter_by(id=user_id).update({'username': res.username,
                                                         'realname': res.real_name,
                                                         'dept_id': res.dept_id})
         db.session.commit()

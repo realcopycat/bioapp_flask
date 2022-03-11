@@ -4,7 +4,7 @@ from flask_restful import Resource, reqparse
 
 from common.utils.http import fail_api, success_api
 from extensions import db
-from models import UserModels
+from models import UserModel
 
 
 class UserStatusResource(Resource):
@@ -18,11 +18,11 @@ class UserStatusResource(Resource):
         res = parser.parse_args()
 
         if res.operate == 1:
-            user = UserModels.query.get(user_id)
+            user = UserModel.query.get(user_id)
             user.enable = res.operate
             message = success_api(message="启动成功")
         else:
-            user = UserModels.query.filter_by(id=res.user_id).update({"enable": res.operate})
+            user = UserModel.query.filter_by(id=res.user_id).update({"enable": res.operate})
             message = success_api(message="禁用成功")
         if user:
             db.session.commit()
@@ -36,7 +36,7 @@ class UserAvatarResource(Resource):
 
     def put(self, user_id):
         url = request.json.get("avatar").get("src")
-        ret = UserModels.query.get(user_id)
+        ret = UserModel.query.get(user_id)
         ret.avatar = url
         db.session.commit()
         if not ret:
@@ -55,7 +55,7 @@ class UserInfoResource(Resource):
 
         res = parser.parse_args()
 
-        ret = UserModels.query.get(user_id)
+        ret = UserModel.query.get(user_id)
         ret.username = res.username
         ret.realname = res.real_name
         ret.remark = res.details
@@ -80,7 +80,7 @@ class UserPasswordResource(Resource):
             return fail_api(message='确认密码不一致')
 
         """ 修改当前用户密码 """
-        user = UserModels.query.get(user_id)
+        user = UserModel.query.get(user_id)
         is_right = user.validate_password(res.oldPassword)
         if not is_right:
             return jsonify(success=False, message="旧密码错误")

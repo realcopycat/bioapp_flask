@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from extensions import db
 
 
-class UserModels(db.Model, UserMixin):
+class UserModel(db.Model, UserMixin):
     __tablename__ = 'cp_user'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='用户ID')
     username = db.Column(db.String(20), comment='用户名')
@@ -18,7 +18,7 @@ class UserModels(db.Model, UserMixin):
     enable = db.Column(db.Integer, default=0, comment='启用')
     dept_id = db.Column(db.Integer, comment='部门id')
 
-    role = db.relationship('RoleModels', secondary="rt_user_role", backref=db.backref('user'), lazy='dynamic')
+    role = db.relationship('RoleModel', secondary="rt_user_role", backref=db.backref('user'), lazy='dynamic')
 
     def set_password(self, password):
         """设置密码，对密码进行加密存储"""
@@ -32,7 +32,7 @@ class UserModels(db.Model, UserMixin):
     update_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now, comment='更新时间')
 
 
-class DepartmentModels(db.Model):
+class DepartmentModel(db.Model):
     __tablename__ = 'cp_dept'
     id = db.Column(db.Integer, primary_key=True, comment="部门ID")
     parent_id = db.Column(db.Integer, comment="父级编号")

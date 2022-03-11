@@ -3,7 +3,7 @@ from datetime import datetime
 from extensions import db
 
 
-class PhotoModels(db.Model):
+class PhotoModel(db.Model):
     __tablename__ = 'file_photo'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)

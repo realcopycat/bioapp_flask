@@ -7,7 +7,7 @@ from flask_restful import Resource, reqparse
 
 from common.utils.http import success_api, fail_api
 from extensions import db
-from models import RightModels, RoleModels
+from models import RightModel, RoleModel
 
 
 def get_render_config():
@@ -140,15 +140,15 @@ def make_menu_tree():
 
 # 删除权限（目前没有判断父节点自动删除子节点）
 def remove_power(power_id):
-    power = RightModels.query.filter_by(id=power_id).first()
+    power = RightModel.query.filter_by(id=power_id).first()
     role_id_list = []
     roles = power.role
     for role in roles:
         role_id_list.append(role.id)
-    roles = RoleModels.query.filter(RoleModels.id.in_(role_id_list)).all()
+    roles = RoleModel.query.filter(RoleModel.id.in_(role_id_list)).all()
     for p in roles:
         power.role.remove(p)
-    r = RightModels.query.filter_by(id=power_id).delete()
+    r = RightModel.query.filter_by(id=power_id).delete()
     db.session.commit()
     return r
 
@@ -174,8 +174,8 @@ class RightRightsResource(Resource):
     def get(self):
         """获取选择父节点"""
 
-        power = RightModels.query.all()
-        # power_data = marshal(power, RightModels.fields())
+        power = RightModel.query.all()
+        # power_data = marshal(power, RightModel.fields())
         power_data = [
             {
                 'powerId': item.id,
@@ -206,7 +206,7 @@ class RightPowerResource(Resource):
 
     def post(self, power_id):
         res = parser_power.parse_args()
-        power = RightModels(
+        power = RightModel(
             icon=res.icon,
             open_type=res.open_type,
             parent_id=res.parent_id,
@@ -228,15 +228,15 @@ class RightPowerResource(Resource):
 
     def delete(self, power_id):
         # 删除权限（目前没有判断父节点自动删除子节点）
-        power = RightModels.query.filter_by(id=power_id).first()
+        power = RightModel.query.filter_by(id=power_id).first()
         role_id_list = []
         roles = power.role
         for role in roles:
             role_id_list.append(role.id)
-        roles = RoleModels.query.filter(RoleModels.id.in_(role_id_list)).all()
+        roles = RoleModel.query.filter(RoleModel.id.in_(role_id_list)).all()
         for p in roles:
             power.role.remove(p)
-        r = RightModels.query.filter_by(id=power_id).delete()
+        r = RightModel.query.filter_by(id=power_id).delete()
         db.session.commit()
 
         if r:
@@ -257,7 +257,7 @@ class RightPowerResource(Resource):
             "url": res.power_url,
             "sort": res.sort
         }
-        power = RightModels.query.filter_by(id=power_id).update(data)
+        power = RightModel.query.filter_by(id=power_id).update(data)
         db.session.commit()
 
         if not power:
@@ -268,7 +268,7 @@ class RightPowerResource(Resource):
 class RightPowerEnableResource(Resource):
     def put(self, right_id):
 
-        power = RightModels.query.get(right_id)
+        power = RightModel.query.get(right_id)
         if power:
             power.enable = not power.enable
             db.session.commit()

@@ -6,7 +6,7 @@ from flask_restful import Resource, reqparse
 from common.gen_captcha import add_auth_session
 from common.utils.http import fail_api, success_api
 from common.utils.rights import record_logging
-from models import UserModels
+from models import UserModel
 
 
 class LoginResource(Resource):
@@ -28,7 +28,7 @@ class LoginResource(Resource):
 
         if req.captcha != s_code:
             return fail_api(message="验证码错误")
-        user = UserModels.query.filter_by(username=req.username).first()
+        user = UserModel.query.filter_by(username=req.username).first()
 
         if user is None:
             return fail_api(message="不存在的用户")

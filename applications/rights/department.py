@@ -3,13 +3,13 @@ from flask_restful import Resource, reqparse
 
 from common.utils.http import success_api, fail_api
 from extensions import db
-from models import DepartmentModels, UserModels
+from models import DepartmentModel, UserModel
 
 
 class DepartmentsResource(Resource):
 
     def get(self):
-        dept_data = DepartmentModels.query.order_by(DepartmentModels.sort).all()
+        dept_data = DepartmentModel.query.order_by(DepartmentModel.sort).all()
         # TODO dtree 需要返回状态信息
         res = {
             "status": {"code": 200, "message": "默认"},
@@ -44,7 +44,7 @@ class DepartmentsResource(Resource):
 
         res = parser.parse_args()
 
-        dept = DepartmentModels(
+        dept = DepartmentModel(
             parent_id=res.parent_id,
             dept_name=res.dept_name,
             sort=res.sort,
@@ -62,7 +62,7 @@ class DepartmentsResource(Resource):
 
 class DepartmentResource(Resource):
     def get(self, dept_id):
-        dept = DepartmentModels.query.filter_by(id=dept_id).first()
+        dept = DepartmentModel.query.filter_by(id=dept_id).first()
         dept_data = {
             'id': dept.id,
             'dept_name': dept.dept_name,
@@ -95,15 +95,15 @@ class DepartmentResource(Resource):
             "status": res.status,
             "address": res.address
         }
-        res = DepartmentModels.query.filter_by(id=dept_id).update(data)
+        res = DepartmentModel.query.filter_by(id=dept_id).update(data)
         if not res:
             return fail_api(message="更新失败")
         db.session.commit()
         return success_api(message="更新成功")
 
     def delete(self, dept_id):
-        ret = DepartmentModels.query.filter_by(id=dept_id).delete()
-        UserModels.query.filter_by(dept_id=dept_id).update({"dept_id": None})
+        ret = DepartmentModel.query.filter_by(id=dept_id).delete()
+        UserModel.query.filter_by(dept_id=dept_id).update({"dept_id": None})
         db.session.commit()
         if ret:
             return success_api(message="删除成功")
@@ -112,7 +112,7 @@ class DepartmentResource(Resource):
 
 class DeptEnableResource(Resource):
     def put(self, dept_id):
-        d = DepartmentModels.query.get(dept_id)
+        d = DepartmentModel.query.get(dept_id)
         if d:
             d.status = not d.status
             db.session.commit()
