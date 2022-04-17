@@ -14,6 +14,10 @@ def init_error_views(app):
     def internal_server_error(e):
         return render_template('errors/500.html'), 500
 
+    @app.errorhandler(429)
+    def handle_429_error(e):
+        return render_template('errors/429.html')
+
     # Return validation errors as JSON
     @app.errorhandler(422)
     @app.errorhandler(400)
