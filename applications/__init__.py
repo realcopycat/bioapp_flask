@@ -1,22 +1,24 @@
 import os
 
 from flask import Flask, Blueprint
-from common.flask_uploads import configure_uploads
 
+import config
+from applications.view import init_view
+from common import register_api
+from common.flask_uploads import configure_uploads
 from common.utils.upload import photos
 from extensions import init_plugs
-from applications.view import init_view
-import config
 
 api_bp: Blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
 
 from .rights import register_rights_api
-from .system import register_system_api
+from .system import FilePhotoAPI, LoginAPI
 from .users import register_users_api
 
 register_rights_api(api_bp)
 register_users_api(api_bp)
-register_system_api(api_bp)
+register_api(LoginAPI, 'login_api', '/passport/login', pk='_id', app=api_bp)
+register_api(FilePhotoAPI, 'photo_api', '/file/photo', pk='photo_id', app=api_bp)
 
 
 def init_api(app: Flask) -> None:
