@@ -1,14 +1,29 @@
 from flask import jsonify
-from flask_restful import Resource, reqparse
+from flask.views import MethodView
+from flask_restful import reqparse
 
 from common.utils.http import success_api, fail_api
 from extensions import db
 from models import DepartmentModel, UserModel
 
 
-class DepartmentsResource(Resource):
+class DepartmentsApi(MethodView):
 
-    def get(self):
+    def get(self, dept_id):
+        if dept_id:
+            dept = DepartmentModel.query.filter_by(id=dept_id).first()
+            dept_data = {
+                'id': dept.id,
+                'dept_name': dept.dept_name,
+                'leader': dept.leader,
+                'email': dept.email,
+                'phone': dept.phone,
+                'status': dept.status,
+                'sort': dept.sort,
+                'address': dept.address,
+            }
+            return dict(success=True, message='ok', dept=dept_data)
+
         dept_data = DepartmentModel.query.order_by(DepartmentModel.sort).all()
         # TODO dtree 需要返回状态信息
         res = {
@@ -59,22 +74,6 @@ class DepartmentsResource(Resource):
 
         return success_api(message="成功")
 
-
-class DepartmentResource(Resource):
-    def get(self, dept_id):
-        dept = DepartmentModel.query.filter_by(id=dept_id).first()
-        dept_data = {
-            'id': dept.id,
-            'dept_name': dept.dept_name,
-            'leader': dept.leader,
-            'email': dept.email,
-            'phone': dept.phone,
-            'status': dept.status,
-            'sort': dept.sort,
-            'address': dept.address,
-        }
-        return dict(success=True, message='ok', dept=dept_data)
-
     def put(self, dept_id):
         parser = reqparse.RequestParser()
         parser.add_argument('address', type=str)
@@ -110,7 +109,7 @@ class DepartmentResource(Resource):
         return fail_api(message="删除失败")
 
 
-class DeptEnableResource(Resource):
+class DeptEnableAPI(MethodView):
     def put(self, dept_id):
         d = DepartmentModel.query.get(dept_id)
         if d:

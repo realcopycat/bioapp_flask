@@ -2,8 +2,9 @@ import copy
 from collections import OrderedDict
 
 from flask import request, jsonify, current_app
+from flask.views import MethodView
 from flask_login import current_user
-from flask_restful import Resource, reqparse
+from flask_restful import reqparse
 
 from common.utils.http import success_api, fail_api
 from extensions import db
@@ -170,7 +171,7 @@ parser_power.add_argument('powerUrl', type=str, dest='power_url')
 parser_power.add_argument('sort', type=int, dest='sort')
 
 
-class RightRightsResource(Resource):
+class RightsApi(MethodView):
     def get(self):
         """获取选择父节点"""
 
@@ -202,9 +203,9 @@ class RightRightsResource(Resource):
         return success_api(message="批量删除成功")
 
 
-class RightPowerResource(Resource):
+class PowerApi(MethodView):
 
-    def post(self, power_id):
+    def post(self):
         res = parser_power.parse_args()
         power = RightModel(
             icon=res.icon,
@@ -226,9 +227,9 @@ class RightPowerResource(Resource):
 
         return success_api(message="成功")
 
-    def delete(self, power_id):
+    def delete(self, _id):
         # 删除权限（目前没有判断父节点自动删除子节点）
-        power = RightModel.query.filter_by(id=power_id).first()
+        power = RightModel.query.filter_by(id=_id).first()
         role_id_list = []
         roles = power.role
         for role in roles:
@@ -236,7 +237,7 @@ class RightPowerResource(Resource):
         roles = RoleModel.query.filter(RoleModel.id.in_(role_id_list)).all()
         for p in roles:
             power.role.remove(p)
-        r = RightModel.query.filter_by(id=power_id).delete()
+        r = RightModel.query.filter_by(id=_id).delete()
         db.session.commit()
 
         if r:
@@ -244,7 +245,7 @@ class RightPowerResource(Resource):
         else:
             return fail_api(message="删除失败")
 
-    def put(self, power_id):
+    def put(self, _id):
 
         res = parser_power.parse_args()
         data = {
@@ -257,7 +258,7 @@ class RightPowerResource(Resource):
             "url": res.power_url,
             "sort": res.sort
         }
-        power = RightModel.query.filter_by(id=power_id).update(data)
+        power = RightModel.query.filter_by(id=_id).update(data)
         db.session.commit()
 
         if not power:
@@ -265,25 +266,21 @@ class RightPowerResource(Resource):
         return success_api(message="更新权限成功")
 
 
-class RightPowerEnableResource(Resource):
-    def put(self, right_id):
-
-        power = RightModel.query.get(right_id)
-        if power:
-            power.enable = not power.enable
-            db.session.commit()
-            message = "修改成功"
-            return success_api(message=message)
-        else:
-            return fail_api(message="出错啦")
+def right_power_enable_resource(_id, action):
+    power = RightModel.query.get(_id)
+    if power:
+        power.enable = not power.enable
+        db.session.commit()
+        message = "修改成功"
+        return success_api(message=message)
+    else:
+        return fail_api(message="出错啦")
 
 
-class AdminConfigsResource(Resource):
-    def get(self):
-        return get_render_config()
+def admin_configs_resource():
+    return get_render_config()
 
 
-class AdminMenuResource(Resource):
-    def get(self):
-        menu_tree = make_menu_tree()
-        return jsonify(menu_tree)
+def admin_menu_resource():
+    menu_tree = make_menu_tree()
+    return jsonify(menu_tree)

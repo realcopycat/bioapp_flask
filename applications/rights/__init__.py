@@ -1,28 +1,42 @@
-from flask_restful import Api
-
-from .department import DepartmentsResource, DepartmentResource, DeptEnableResource
+from common import register_api
+from .department import DepartmentsApi, DeptEnableAPI
 from .rights import (
-    RightRightsResource, RightPowerResource, RightPowerEnableResource, AdminConfigsResource,
-    AdminMenuResource
+    RightsApi, PowerApi, right_power_enable_resource,
+    admin_configs_resource, admin_menu_resource
 )
-from .roles import RoleRolesResource, RoleRoleResource, RoleEnableResource, RolePowerResource
+from .roles import RoleRoleApi, RolePowerApi, role_deletes, role_enable_resource
 
 
 def register_rights_api(api_bp):
-    dept_api = Api(api_bp, prefix='/dept')
-    dept_api.add_resource(DepartmentsResource, '/departments')
-    dept_api.add_resource(DepartmentResource, '/department/<int:dept_id>')
-    dept_api.add_resource(DeptEnableResource, '/department/<int:dept_id>/status')
+    register_api(DepartmentsApi, 'rights_dept_api', '/dept/department/', pk='dept_id', app=api_bp)
+    api_bp.add_url_rule('/dept/department/<int:dept_id>/status',
+                        view_func=DeptEnableAPI.as_view('dept_status_api'),
+                        methods=['PUT', ])
+    api_bp.add_url_rule('/rights/rights',
+                        view_func=RightsApi.as_view('dept_rights_api'),
+                        methods=['GET', 'DELETE'])
 
-    rights_api = Api(api_bp, prefix='/rights')
-    rights_api.add_resource(RightRightsResource, '/rights')
-    rights_api.add_resource(RightPowerResource, '/power/<int:power_id>')
-    rights_api.add_resource(RightPowerEnableResource, '/power/<int:right_id>/status')
-    rights_api.add_resource(AdminConfigsResource, '/configs')
-    rights_api.add_resource(AdminMenuResource, '/menu')
+    register_api(PowerApi, 'rights_power_api', '/power/', pk='_id', app=api_bp)
+    api_bp.add_url_rule('/rights/configs',
+                        endpoint='rights_config_api',
+                        view_func=admin_configs_resource,
+                        methods=['GET'])
+    api_bp.add_url_rule('/rights/menu',
+                        endpoint='rights_menu_api',
+                        view_func=admin_menu_resource,
+                        methods=['GET'])
+    api_bp.add_url_rule('/power/<int:right_id>/<action>',
+                        endpoint='rights_power_action_api',
+                        view_func=right_power_enable_resource,
+                        methods=['PUT'])
+    api_bp.add_url_rule('/roles/role',
+                        endpoint='rights_roles_role_api',
+                        view_func=role_deletes,
+                        methods=['DELETE'])
 
-    role_api = Api(api_bp, prefix='/roles')
-    role_api.add_resource(RoleRolesResource, '/roles')
-    role_api.add_resource(RoleRoleResource, '/role/<int:role_id>')
-    role_api.add_resource(RoleEnableResource, '/role/<int:role_id>/status')
-    role_api.add_resource(RolePowerResource, '/role_power/<int:role_id>')
+    register_api(RoleRoleApi, 'rights_role_api', '/roles/role/', pk='_id', app=api_bp)
+    register_api(RolePowerApi, 'rights_role_power_api', '/roles/role_power/', pk='_id', app=api_bp)
+    api_bp.add_url_rule('/roles/role/<int:_id>/status',
+                        endpoint='rights_roles_enable_api',
+                        view_func=role_enable_resource,
+                        methods=['PUT'])

@@ -12,13 +12,12 @@ from extensions import init_plugs
 api_bp: Blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
 
 from .rights import register_rights_api
-from .system import FilePhotoAPI, LoginAPI
+from .system import register_sys_api
 from .users import register_users_api
 
 register_rights_api(api_bp)
 register_users_api(api_bp)
-register_api(LoginAPI, 'login_api', '/passport/login', pk='_id', app=api_bp)
-register_api(FilePhotoAPI, 'photo_api', '/file/photo', pk='photo_id', app=api_bp)
+register_sys_api(api_bp)
 
 
 def init_api(app: Flask) -> None:
