@@ -120,7 +120,7 @@
         table.render({
           parseData: parserTableData,
           elem: '#tables',
-          url: '/api/v1/users/users',
+          url: '/api/v1/users/user',
           page: true,
           cols: get_columns(),
           skin: 'line',
@@ -134,7 +134,7 @@
         dtree.render({
           elem: '#dept-tree',
           method: 'get',
-          url: '/api/v1/dept/departments',
+          url: '/api/v1/dept/department',
           dataFormat: 'list',
           line: true,
           skin: 'laySimple',
@@ -256,7 +256,7 @@
             let loading = layer.load()
             $.ajax({
 
-              url: '/api/v1/users/users',
+              url: '/api/v1/users/user',
               data: { ids: ids },
               dataType: 'json',
               type: 'delete',

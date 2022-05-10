@@ -1,16 +1,14 @@
-from flask_restful import Api
-
-from .profile import UserStatusResource, UserAvatarResource, UserInfoResource, UserPasswordResource
-from .user import UserUsersResource, UserUserResource, UserRoleResource
+from common import register_api
+from .user import UserApi, user_role_resource, user_info
 
 
 def register_users_api(api_bp):
-    users_api = Api(api_bp, prefix='/users')
+    api_bp.add_url_rule('/users/user/<int:_id>/<action>',
+                        view_func=user_info,
+                        methods=['PUT'])
 
-    users_api.add_resource(UserInfoResource, '/user/<int:user_id>/info')
-    users_api.add_resource(UserStatusResource, '/user/<int:user_id>/status')
-    users_api.add_resource(UserAvatarResource, '/user/<int:user_id>/avatar')
-    users_api.add_resource(UserPasswordResource, '/user/<int:user_id>/password')
-    users_api.add_resource(UserUsersResource, '/users')
-    users_api.add_resource(UserUserResource, '/user/<int:user_id>')
-    users_api.add_resource(UserRoleResource, '/user/<int:user_id>/role')
+    register_api(UserApi, 'users_api', '/users/user/', pk='_id', app=api_bp)
+
+    api_bp.add_url_rule('/users/user/<int:_id>/role',
+                        view_func=user_role_resource,
+                        methods=['PUT'])
