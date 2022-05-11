@@ -1,17 +1,31 @@
+import typing as t
+
 from flask import jsonify
 from flask.views import MethodView
-from flask_restful import reqparse
+from flask_pydantic import validate
+from pydantic import BaseModel, Field
 
 from common.utils.http import success_api, fail_api
 from extensions import db
 from models import DepartmentModel, UserModel
 
 
+class DeptModel(BaseModel):
+    address: t.Optional[str]
+    dept_name: t.Optional[str] = Field(alias='deptName')
+    email: t.Optional[str]
+    leader: t.Optional[str]
+    parent_id: t.Optional[str] = Field(alias='parentId')
+    phone: t.Optional[str]
+    sort: t.Optional[int]
+    status: t.Optional[int]
+
+
 class DepartmentsApi(MethodView):
 
-    def get(self, dept_id):
-        if dept_id:
-            dept = DepartmentModel.query.filter_by(id=dept_id).first()
+    def get(self, _id):
+        if _id:
+            dept = DepartmentModel.query.filter_by(id=_id).first()
             dept_data = {
                 'id': dept.id,
                 'dept_name': dept.dept_name,
@@ -46,18 +60,9 @@ class DepartmentsApi(MethodView):
         }
         return jsonify(res)
 
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('address', type=str)
-        parser.add_argument('deptName', type=str, dest='dept_name')
-        parser.add_argument('email', type=str)
-        parser.add_argument('leader', type=str)
-        parser.add_argument('parentId', type=int, dest='parent_id')
-        parser.add_argument('phone', type=str)
-        parser.add_argument('sort', type=int)
-        parser.add_argument('status', type=int)
-
-        res = parser.parse_args()
+    @validate()
+    def post(self, body: DeptModel):
+        res = body
 
         dept = DepartmentModel(
             parent_id=res.parent_id,
@@ -74,17 +79,9 @@ class DepartmentsApi(MethodView):
 
         return success_api(message="成功")
 
-    def put(self, dept_id):
-        parser = reqparse.RequestParser()
-        parser.add_argument('address', type=str)
-        parser.add_argument('deptName', type=str, dest='dept_name')
-        parser.add_argument('email', type=str)
-        parser.add_argument('leader', type=str)
-        parser.add_argument('phone', type=str)
-        parser.add_argument('sort', type=int)
-        parser.add_argument('status', type=int)
-
-        res = parser.parse_args()
+    @validate()
+    def put(self, _id, body: DeptModel):
+        res = body
         data = {
             "dept_name": res.dept_name,
             "sort": res.sort,
@@ -94,15 +91,15 @@ class DepartmentsApi(MethodView):
             "status": res.status,
             "address": res.address
         }
-        res = DepartmentModel.query.filter_by(id=dept_id).update(data)
+        res = DepartmentModel.query.filter_by(id=_id).update(data)
         if not res:
             return fail_api(message="更新失败")
         db.session.commit()
         return success_api(message="更新成功")
 
-    def delete(self, dept_id):
-        ret = DepartmentModel.query.filter_by(id=dept_id).delete()
-        UserModel.query.filter_by(dept_id=dept_id).update({"dept_id": None})
+    def delete(self, _id):
+        ret = DepartmentModel.query.filter_by(id=_id).delete()
+        UserModel.query.filter_by(dept_id=_id).update({"dept_id": None})
         db.session.commit()
         if ret:
             return success_api(message="删除成功")
@@ -110,8 +107,8 @@ class DepartmentsApi(MethodView):
 
 
 class DeptEnableAPI(MethodView):
-    def put(self, dept_id):
-        d = DepartmentModel.query.get(dept_id)
+    def put(self, _id):
+        d = DepartmentModel.query.get(_id)
         if d:
             d.status = not d.status
             db.session.commit()

@@ -53,7 +53,8 @@
       let btn = button.load({ elem: '.login' })
       $.ajax({
         url: '/api/v1/passport/login',
-        data: data.field,
+        data: JSON.stringify(data.field),
+        contentType: 'application/json',
         type: 'post',
         dataType: 'json',
         // 请求成功之后返回的数据

@@ -1,6 +1,6 @@
 from flask.views import MethodView
 
-from flask_restful import Resource, reqparse
+from flask_restful import reqparse
 
 from common.utils.http import table_api, success_api, fail_api
 from extensions import db

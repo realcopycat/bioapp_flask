@@ -11,8 +11,8 @@ class FilePhotoAPI(MethodView):
 
     def get(self, photo_id):
         if photo_id is None:
-            page = request.args.get('page', type=int)
-            limit = request.args.get('limit', type=int)
+            page = request.args.get('page', type=int, default=1)
+            limit = request.args.get('limit', type=int, default=10)
             photo_paginate = PhotoModel.query.order_by(desc(PhotoModel.create_at)
                                                        ).paginate(page=page,
                                                                   per_page=limit,

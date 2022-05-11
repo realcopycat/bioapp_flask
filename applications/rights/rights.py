@@ -1,10 +1,13 @@
 import copy
+from typing import Optional
 from collections import OrderedDict
 
 from flask import request, jsonify, current_app
 from flask.views import MethodView
 from flask_login import current_user
-from flask_restful import reqparse
+from flask_pydantic import validate
+
+from pydantic import BaseModel, Field
 
 from common.utils.http import success_api, fail_api
 from extensions import db
@@ -160,15 +163,15 @@ def batch_remove_power(ids):
         remove_power(_id)
 
 
-parser_power = reqparse.RequestParser(bundle_errors=True)
-parser_power.add_argument('icon', type=str)
-parser_power.add_argument('openType', type=str, dest='open_type')
-parser_power.add_argument('parentId', type=str, dest='parent_id')
-parser_power.add_argument('powerCode', type=str, dest='power_code')
-parser_power.add_argument('powerName', type=str, dest='power_name')
-parser_power.add_argument('powerType', type=str, dest='power_type')
-parser_power.add_argument('powerUrl', type=str, dest='power_url')
-parser_power.add_argument('sort', type=int, dest='sort')
+class PowerModel(BaseModel):
+    icon: str
+    open_type: Optional[str] = Field(alias='openType')
+    parent_id: Optional[str] = Field(alias='parentId')
+    power_code: Optional[str] = Field(alias='powerCode')
+    power_name: Optional[str] = Field(alias='powerName')
+    power_type: Optional[str] = Field(alias='powerType')
+    power_url: Optional[str] = Field(alias='powerUrl')
+    sort: Optional[int] = Field(alias='sort')
 
 
 class RightsApi(MethodView):
@@ -204,9 +207,9 @@ class RightsApi(MethodView):
 
 
 class PowerApi(MethodView):
-
-    def post(self):
-        res = parser_power.parse_args()
+    @validate()
+    def post(self, body: PowerModel):
+        res = body
         power = RightModel(
             icon=res.icon,
             open_type=res.open_type,
@@ -245,9 +248,9 @@ class PowerApi(MethodView):
         else:
             return fail_api(message="删除失败")
 
-    def put(self, _id):
-
-        res = parser_power.parse_args()
+    @validate()
+    def put(self, _id, body: PowerModel):
+        res = body
         data = {
             "icon": res.icon,
             "open_type": res.open_type,
