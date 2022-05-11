@@ -1,13 +1,17 @@
+import typing as t
+
 from flask import request, jsonify
 from flask.views import MethodView
 from flask_login import current_user
+from flask_pydantic import validate
 from flask_restful import reqparse
+from pydantic import BaseModel, Field
 from sqlalchemy import desc
 
 from common.utils.http import fail_api, success_api, table_api
 from extensions import db
-from models import UserModel, RoleModel, DepartmentModel
 from models import LogModel
+from models import UserModel, RoleModel, DepartmentModel
 
 
 def get_current_user_logs():
@@ -64,33 +68,44 @@ def users_delete():
     return success_api(message="批量删除成功")
 
 
+class QueryModel(BaseModel):
+    page: int = 1
+    limit: int = 10
+    real_name: t.Optional[str] = Field(alias='realName')
+    username: t.Optional[str]
+    dept_id: t.Optional[str] = Field(alias='deptId', default=0)
+    phone: t.Optional[str]
+    sort: t.Optional[int]
+    status: t.Optional[int]
+
+
+class PersonModel(BaseModel):
+    role_ids: str = Field(alias='roleIds')
+    username: str
+    real_name: str = Field(alias='realName')
+    password: str
+
+
 class UserApi(MethodView):
     """修改用户数据"""
 
-    def get(self, _id):
-        parser = reqparse.RequestParser()
-        parser.add_argument('page', type=int, default=1)
-        parser.add_argument('limit', type=int, default=10)
-        parser.add_argument('realName', type=str, dest='real_name')
-        parser.add_argument('username', type=str)
-        parser.add_argument('deptId', type=int, dest='dept_id', default=0)
-
-        res = parser.parse_args()
+    @validate()
+    def get(self, _id, body: QueryModel):
 
         filters = []
 
-        if res.real_name:
-            filters.append(UserModel.realname.like('%' + res.real_name + '%'))
-        if res.username:
-            filters.append(UserModel.username.like('%' + res.username + '%'))
-        if res.dept_id:
-            filters.append(UserModel.dept_id == res.dept_id)
+        if body.real_name:
+            filters.append(UserModel.realname.like('%' + body.real_name + '%'))
+        if body.username:
+            filters.append(UserModel.username.like('%' + body.username + '%'))
+        if body.dept_id:
+            filters.append(UserModel.dept_id == body.dept_id)
 
-        paginate = UserModel.query.filter(*filters).paginate(page=res.page,
-                                                             per_page=res.limit,
+        paginate = UserModel.query.filter(*filters).paginate(page=body.page,
+                                                             per_page=body.limit,
                                                              error_out=False)
 
-        dept_name = lambda dept_id: DepartmentModel.query.filter_by(id=dept_id).first().dept_name if dept_id else ""
+        dept_name = lambda _id: DepartmentModel.query.filter_by(id=_id).first().dept_name if _id else ""
         user_data = [{
             'id': item.id,
             'username': item.username,
@@ -104,25 +119,19 @@ class UserApi(MethodView):
                                  'total': paginate.total}
                          , code=0)
 
-    def post(self):
+    @validate()
+    def post(self, body: PersonModel):
         """新建单个用户"""
-        parser = reqparse.RequestParser()
-        parser.add_argument("roleIds", type=str, dest='role_ids')
-        parser.add_argument("username", type=str, required=True, help="用户名不能为空")
-        parser.add_argument("realName", type=str, required=True, help="真实姓名不能为空", dest='real_name')
-        parser.add_argument("password", type=str, required=True, help="密码不得为空")
 
-        res = parser.parse_args()
+        role_ids = body.role_ids.split(',')
 
-        role_ids = res.role_ids.split(',')
-
-        if is_user_exists(res.username):
+        if is_user_exists(body.username):
             return fail_api(message="用户已经存在")
 
         user = UserModel()
-        user.username = res.username
-        user.realname = res.real_name
-        user.set_password(res.password)
+        user.username = body.username
+        user.realname = body.real_name
+        user.set_password(body.password)
         db.session.add(user)
         db.session.commit()
 
@@ -143,21 +152,22 @@ class UserApi(MethodView):
         return success_api(message="删除成功")
 
 
-def user_role_resource(_id):
-    parser = reqparse.RequestParser()
-    parser.add_argument('roleIds', type=str, dest='role_ids')
-    parser.add_argument('userId', type=str, dest='user_id')
-    parser.add_argument('username', type=str)
-    parser.add_argument('realName', type=str, dest='real_name')
-    parser.add_argument('deptId', type=str, dest='dept_id')
+class PersonModel2(BaseModel):
+    role_ids: str = Field(alias='roleIds')
+    user_id: str = Field(alias='userId')
+    username: str
+    real_name: str = Field(alias='realName')
+    dept_id: str = Field(alias='deptId')
 
-    res = parser.parse_args()
-    role_ids = res.role_ids.split(',')
+
+@validate()
+def user_role_resource(_id, body: PersonModel2):
+    role_ids = body.role_ids.split(',')
 
     # 更新用户数据
-    UserModel.query.filter_by(id=_id).update({'username': res.username,
-                                              'realname': res.real_name,
-                                              'dept_id': res.dept_id})
+    UserModel.query.filter_by(id=_id).update({'username': body.username,
+                                              'realname': body.real_name,
+                                              'dept_id': body.dept_id})
     db.session.commit()
 
     update_user_role(_id, role_ids)
