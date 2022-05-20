@@ -13,10 +13,9 @@ class FilePhotoAPI(MethodView):
         if photo_id is None:
             page = request.args.get('page', type=int, default=1)
             limit = request.args.get('limit', type=int, default=10)
-            photo_paginate = PhotoModel.query.order_by(desc(PhotoModel.create_at)
-                                                       ).paginate(page=page,
-                                                                  per_page=limit,
-                                                                  error_out=False)
+            photo_paginate = PhotoModel.query.order_by(
+                desc(PhotoModel.create_at)).paginate(
+                page=page, per_page=limit, error_out=False)
             data = [
                 {
                     'id': item.id,
@@ -28,23 +27,30 @@ class FilePhotoAPI(MethodView):
                     'create_at': str(item.create_at),
                 } for item in photo_paginate.items
             ]
-            return table_api(result={'items': data,
-                                     'total': photo_paginate.total, },
-                             code=0)
+            return table_api(
+                result={
+                    'items': data,
+                    'total': photo_paginate.total,
+                },
+                code=0)
         else:
             # 显示一张图片
             item = PhotoModel.query.get(photo_id)
-            return table_api(result={'items': {
-                'id': item.id,
-                'name': item.name,
-                'href': item.href,
-                'mime': item.mime,
-                'size': item.size,
-                'ext': item.ext if hasattr(item, 'ext') else "",
-                'create_at': str(item.create_at),
-            },
-                'total': 1, },
-                code=0)
+            return table_api(
+                result={
+                    'items': {
+                        'id': item.id,
+                        'name': item.name,
+                        'href': item.href,
+                        'mime': item.mime,
+                        'size': item.size,
+                        'ext': item.ext if hasattr(item, 'ext') else "",
+                        'create_at': str(item.create_at),
+                    },
+                    'total': 1,
+                },
+                code=0
+            )
 
     def post(self):
         if 'file' in request.files:
@@ -56,8 +62,7 @@ class FilePhotoAPI(MethodView):
                 "message": "上传成功",
                 "code": 0,
                 "success": True,
-                "data":
-                    {"src": file_url}
+                "data": {"src": file_url},
             }
             return jsonify(res)
         return fail_api()

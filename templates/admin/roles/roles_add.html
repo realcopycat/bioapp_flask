@@ -68,7 +68,7 @@
 
         form.on('submit(role-save)', function (data) {
           $.ajax({
-            url: '/api/v1/roles/role/0',
+            url: '/api/v1/roles/role/',
             data: JSON.stringify(data.field),
             dataType: 'json',
             contentType: 'application/json',

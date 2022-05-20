@@ -62,17 +62,15 @@ class DepartmentsApi(MethodView):
 
     @validate()
     def post(self, body: DeptModel):
-        res = body
-
         dept = DepartmentModel(
-            parent_id=res.parent_id,
-            dept_name=res.dept_name,
-            sort=res.sort,
-            leader=res.leader,
-            phone=res.phone,
-            email=res.email,
-            status=res.status,
-            address=res.address
+            parent_id=body.parent_id,
+            dept_name=body.dept_name,
+            sort=body.sort,
+            leader=body.leader,
+            phone=body.phone,
+            email=body.email,
+            status=body.status,
+            address=body.address
         )
         db.session.add(dept)
         db.session.commit()
@@ -81,18 +79,17 @@ class DepartmentsApi(MethodView):
 
     @validate()
     def put(self, _id, body: DeptModel):
-        res = body
         data = {
-            "dept_name": res.dept_name,
-            "sort": res.sort,
-            "leader": res.leader,
-            "phone": res.phone,
-            "email": res.email,
-            "status": res.status,
-            "address": res.address
+            "dept_name": body.dept_name,
+            "sort": body.sort,
+            "leader": body.leader,
+            "phone": body.phone,
+            "email": body.email,
+            "status": body.status,
+            "address": body.address
         }
-        res = DepartmentModel.query.filter_by(id=_id).update(data)
-        if not res:
+        body = DepartmentModel.query.filter_by(id=_id).update(data)
+        if not body:
             return fail_api(message="更新失败")
         db.session.commit()
         return success_api(message="更新成功")

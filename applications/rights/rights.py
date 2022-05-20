@@ -64,22 +64,28 @@ def get_render_config():
             # 是否允许用户切换主题，false 时关闭自定义主题面板
             "allowCustom": True
         },
-        'colors': [{
-            "id": "1",
-            "color": "#2d8cf0"
-        }, {
-            "id": "2",
-            "color": "#5FB878"
-        }, {
-            "id": "3",
-            "color": "#1E9FFF"
-        }, {
-            "id": "4",
-            "color": "#FFB800"
-        }, {
-            "id": "5",
-            "color": "darkgray"
-        }],
+        'colors': [
+            {
+                "id": "1",
+                "color": "#2d8cf0"
+            },
+            {
+                "id": "2",
+                "color": "#5FB878"
+            },
+            {
+                "id": "3",
+                "color": "#1E9FFF"
+            },
+            {
+                "id": "4",
+                "color": "#FFB800"
+            },
+            {
+                "id": "5",
+                "color": "darkgray"
+            },
+        ],
         'links': current_app.config.get("SYSTEM_PANEL_LINKS"),
         'other': {
             # 主页动画时长
@@ -209,16 +215,15 @@ class RightsApi(MethodView):
 class PowerApi(MethodView):
     @validate()
     def post(self, body: PowerModel):
-        res = body
         power = RightModel(
-            icon=res.icon,
-            open_type=res.open_type,
-            parent_id=res.parent_id,
-            code=res.power_code,
-            name=res.power_name,
-            type=res.power_type,
-            url=res.power_url,
-            sort=res.sort,
+            icon=body.icon,
+            open_type=body.open_type,
+            parent_id=body.parent_id,
+            code=body.power_code,
+            name=body.power_name,
+            type=body.power_type,
+            url=body.power_url,
+            sort=body.sort,
             enable=1
         )
         try:
@@ -250,16 +255,15 @@ class PowerApi(MethodView):
 
     @validate()
     def put(self, _id, body: PowerModel):
-        res = body
         data = {
-            "icon": res.icon,
-            "open_type": res.open_type,
-            "parent_id": res.parent_id,
-            "code": res.power_code,
-            "name": res.power_name,
-            "type": res.power_type,
-            "url": res.power_url,
-            "sort": res.sort
+            "icon": body.icon,
+            "open_type": body.open_type,
+            "parent_id": body.parent_id,
+            "code": body.power_code,
+            "name": body.power_name,
+            "type": body.power_type,
+            "url": body.power_url,
+            "sort": body.sort
         }
         power = RightModel.query.filter_by(id=_id).update(data)
         db.session.commit()

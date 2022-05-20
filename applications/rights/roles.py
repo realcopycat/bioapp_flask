@@ -1,3 +1,4 @@
+from flask import request
 from flask.views import MethodView
 
 from flask_restful import reqparse
@@ -49,49 +50,46 @@ class RoleRoleApi(MethodView):
 
     def get(self, _id):
         if not _id:
-            parser = reqparse.RequestParser(bundle_errors=True)
-            parser.add_argument('page', type=int, default=1)
-            parser.add_argument('limit', type=int, default=10)
-            parser.add_argument('roleName', type=str, dest='role_name', default="")
-            parser.add_argument('roleCode', type=str, dest='role_code', default="")
-
-            res = parser.parse_args()
+            page = request.args.get('page', default=1, type=int)
+            limit = request.args.get('limit', default=10, type=int)
+            role_name = request.args.get('roleName', default="", type=str)
+            role_code = request.args.get('roleCode', default="", type=str)
 
             filters = []
-            if res.role_name:
-                filters.append(RoleModel.name.like('%' + res.role_name + '%'))
-            if res.role_code:
-                filters.append(RoleModel.code.like('%' + res.role_code + '%'))
+            if role_name:
+                filters.append(RoleModel.name.like('%' + role_name + '%'))
+            if role_code:
+                filters.append(RoleModel.code.like('%' + role_code + '%'))
 
-            paginate = RoleModel.query.filter(*filters).paginate(page=res.page, per_page=res.limit, error_out=False)
+            paginate = RoleModel.query.filter(*filters).paginate(page=page, per_page=limit, error_out=False)
 
-            return table_api(result={'items': [{'id': item.id,
-                                                'roleName': item.name,
-                                                'roleCode': item.code,
-                                                'enable': item.enable,
-                                                'comment': item.comment,
-                                                'details': item.details,
-                                                'sort': item.sort,
-                                                } for item in paginate.items],
-                                     'total': paginate.total}
-                             , code=0)
+            return table_api(
+                result={
+                    'items': [{'id': item.id,
+                               'roleName': item.name,
+                               'roleCode': item.code,
+                               'enable': item.enable,
+                               'comment': item.comment,
+                               'details': item.details,
+                               'sort': item.sort,
+                               } for item in paginate.items],
+                    'total': paginate.total}
+                , code=0)
 
     def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('details', type=str)
-        parser.add_argument('enable', type=int)
-        parser.add_argument('roleCode', type=str, dest='role_code')
-        parser.add_argument('roleName', type=str, dest='role_name')
-        parser.add_argument('sort', type=int)
-
-        res = parser.parse_args()
+        # TODO 添加校验
+        details = request.json.get('details', '')
+        enable = request.json.get('enable', 0)
+        role_code = request.json.get('roleCode', '')
+        role_name = request.json.get('roleName', '')
+        sort = request.json.get('sort', 0)
 
         role = RoleModel(
-            details=res.details,
-            enable=res.enable,
-            code=res.role_code,
-            name=res.role_name,
-            sort=res.sort
+            details=details,
+            enable=int(enable),
+            code=role_code,
+            name=role_name,
+            sort=int(sort)
         )
         db.session.add(role)
         db.session.commit()
@@ -99,22 +97,19 @@ class RoleRoleApi(MethodView):
 
     # 更新角色
     def put(self, _id):
-        parser = reqparse.RequestParser()
-        parser.add_argument('roleId', dest='role_id', type=int)
-        parser.add_argument('roleCode', dest='role_code', type=str)
-        parser.add_argument('roleName', dest='role_name', type=str)
-        parser.add_argument('sort', type=int)
-        parser.add_argument('enable', type=int)
-        parser.add_argument('details', type=str)
-
-        res = parser.parse_args()
+        # TODO 添加校验
+        role_code = request.json.get('roleCode', 0)
+        role_name = request.json.get('roleName', '')
+        sort = request.json.get('sort', 0)  # int
+        enable = request.json.get('enable', 0)  # int
+        details = request.json.get('details', '')
 
         data = {
-            "code": res.role_code,
-            "name": res.role_name,
-            "sort": res.sort,
-            "enable": res.enable,
-            "details": res.details
+            "code": role_code,
+            "name": role_name,
+            "sort": sort,
+            "enable": enable,
+            "details": details
         }
 
         role = RoleModel.query.filter_by(id=_id).update(data)
@@ -144,17 +139,18 @@ class RolePowerApi(MethodView):
         # 获取权限列表的 id
         check_powers_list = [rp.id for rp in role.power]
         powers = RightModel.query.all()  # 获取所有的权限
-        powers = [{
-            'powerId': item.id,
-            'powerName': item.name,
-            'powerType': item.type,
-            'powerUrl': item.url,
-            'openType': item.open_type,
-            'parentId': item.parent_id,
-            'icon': item.icon,
-            'sort': item.sort,
-            'enable': item.enable,
-        } for item in powers]
+        powers = [
+            {
+                'powerId': item.id,
+                'powerName': item.name,
+                'powerType': item.type,
+                'powerUrl': item.url,
+                'openType': item.open_type,
+                'parentId': item.parent_id,
+                'icon': item.icon,
+                'sort': item.sort,
+                'enable': item.enable,
+            } for item in powers]
         for i in powers:
             if int(i.get("powerId")) in check_powers_list:
                 i["checkArr"] = "1"
@@ -167,12 +163,9 @@ class RolePowerApi(MethodView):
 
     # 保存角色权限
     def put(self, _id):
-        parser = reqparse.RequestParser()
-        parser.add_argument('powerIds', dest='power_ids')
-        parser.add_argument('roleId', dest='role_id')
+        power_ids = request.json.get('powerIds', '')
 
-        res = parser.parse_args()
-        power_list = res.power_ids.split(',')
+        power_list = power_ids.split(',')
 
         """ 更新角色权限 """
         role = RoleModel.query.filter_by(id=_id).first()

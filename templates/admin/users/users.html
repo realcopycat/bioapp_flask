@@ -284,6 +284,7 @@
             $.ajax({
               url: '/api/v1/users/user/' +  obj.data['id'],
               dataType: 'json',
+              contentType: 'application/json',
               type: 'delete',
               success: function (result) {
                 layer.close(loading)

@@ -90,20 +90,20 @@ class UserApi(MethodView):
     """修改用户数据"""
 
     @validate()
-    def get(self, _id, body: QueryModel):
+    def get(self, _id, query: QueryModel):
 
         filters = []
 
-        if body.real_name:
-            filters.append(UserModel.realname.like('%' + body.real_name + '%'))
-        if body.username:
-            filters.append(UserModel.username.like('%' + body.username + '%'))
-        if body.dept_id:
-            filters.append(UserModel.dept_id == body.dept_id)
+        if query.real_name:
+            filters.append(UserModel.realname.like('%' + query.real_name + '%'))
+        if query.username:
+            filters.append(UserModel.username.like('%' + query.username + '%'))
+        if query.dept_id:
+            filters.append(UserModel.dept_id == query.dept_id)
 
-        paginate = UserModel.query.filter(*filters).paginate(page=body.page,
-                                                             per_page=body.limit,
-                                                             error_out=False)
+        paginate = UserModel.query.filter(
+            *filters).paginate(
+            page=query.page, per_page=query.limit, error_out=False)
 
         dept_name = lambda _id: DepartmentModel.query.filter_by(id=_id).first().dept_name if _id else ""
         user_data = [{
@@ -115,9 +115,13 @@ class UserApi(MethodView):
             'update_at': str(item.update_at),
             'dept': dept_name(item.dept_id),
         } for item in paginate.items]
-        return table_api(result={'items': user_data,
-                                 'total': paginate.total}
-                         , code=0)
+        return table_api(
+            result={
+                'items': user_data,
+                'total': paginate.total,
+            }
+            , code=0
+        )
 
     @validate()
     def post(self, body: PersonModel):

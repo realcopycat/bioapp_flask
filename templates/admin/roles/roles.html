@@ -182,7 +182,7 @@
             layer.close(index)
             let loading = layer.load()
             $.ajax({
-              url: '/api/v1/roles/roles/role_power/' + obj.data['id'],
+              url: '/api/v1/roles/role_power/' + obj.data['id'],
               dataType: 'json',
               type: 'delete',
               success: function (result) {

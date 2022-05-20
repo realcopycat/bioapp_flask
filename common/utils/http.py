@@ -3,12 +3,12 @@ import typing as t
 
 def success_api(message: str = "成功", code: int = 200) -> t.Dict:
     """ 成功响应 默认值”成功“ """
-    return dict(success=True, message=message, code=code)
+    return {'success': True, 'message': message, 'code': code}
 
 
 def fail_api(message: str = "失败", code: int = 404) -> t.Dict:
     """ 失败响应 默认值“失败” """
-    return dict(success=False, message=message, code=code)
+    return {'success': False, 'message': message, 'code': code}
 
 
 def table_api(success: bool = True,
@@ -27,10 +27,9 @@ def table_api(success: bool = True,
 
         注：lay_ui 表格数据需要指定 code=0
     """
-    ret = {
+    return {
         'success': success,
         'message': message,
         'code': code,
         'result': result,
     }
-    return ret

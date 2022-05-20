@@ -75,9 +75,6 @@
 
 {% block models_script %}
     <script type="module">
-
-      import { ROLE_API } from '/static/api/http.js'
-
       layui.use(['form', 'jquery'], function () {
         let form = layui.form
         let $ = layui.jquery
@@ -93,7 +90,7 @@
               if (result.success) {
                 layer.msg(result.message, { icon: 1, time: 1000 }, function () {
                   parent.layer.close(parent.layer.getFrameIndex(window.name))//关闭当前页
-                  parent.layui.table.reload('role-table')
+                  parent.layui.table.reload('tables')
                 })
               } else {
                 layer.msg(result.message, { icon: 2, time: 1000 })
