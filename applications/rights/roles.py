@@ -1,48 +1,21 @@
 from flask import request
 from flask.views import MethodView
 
-from flask_restful import reqparse
-
 from common.utils.http import table_api, success_api, fail_api
 from extensions import db
-from models import RightModel, RoleModel, UserModel
-
-
-def remove_role(role_id):
-    """ 删除角色 """
-    role = RoleModel.query.filter_by(id=role_id).first()
-    # 删除该角色的权限
-    power_id_list = []
-    for p in role.power:
-        power_id_list.append(p.id)
-
-    powers = RightModel.query.filter(RightModel.id.in_(power_id_list)).all()
-    for p in powers:
-        role.power.remove(p)
-    user_id_list = []
-    for u in role.user:
-        user_id_list.append(u.id)
-    users = UserModel.query.filter(UserModel.id.in_(user_id_list)).all()
-    for u in users:
-        role.user.remove(u)
-    r = RoleModel.query.filter_by(id=role_id).delete()
-    db.session.commit()
-    return r
-
-
-def batch_remove_role(role_ids):
-    """ 批量删除 """
-    for role_id in role_ids:
-        remove_role(role_id)
+from models import RightModel, RoleModel
 
 
 def role_deletes():
-    parser = reqparse.RequestParser()
-    parser.add_argument('ids[]', action='append', dest='ids')
+    ids = request.form.getlist('ids[]')
+    for id in ids:
+        role = RoleModel.query.filter_by(id=id).first()
+        # 删除该角色的权限和用户
+        role.power = []
+        role.user = []
 
-    res = parser.parse_args()
-
-    batch_remove_role(res.ids)
+        r = RoleModel.query.filter_by(id=id).delete()
+        db.session.commit()
     return success_api(message="批量删除成功")
 
 
@@ -169,21 +142,21 @@ class RolePowerApi(MethodView):
 
         """ 更新角色权限 """
         role = RoleModel.query.filter_by(id=_id).first()
-        power_id_list = []
-        for p in role.power:
-            power_id_list.append(p.id)
-        powers = RightModel.query.filter(RightModel.id.in_(power_id_list)).all()
-        for p in powers:
-            role.power.remove(p)
         powers = RightModel.query.filter(RightModel.id.in_(power_list)).all()
-        for p in powers:
-            role.power.append(p)
+        role.power = powers
+
         db.session.commit()
         return success_api(message="授权成功")
 
     # 角色删除
     def delete(self, _id):
-        res = remove_role(_id)
-        if not res:
+        role = RoleModel.query.filter_by(id=_id).first()
+        # 删除该角色的权限和用户
+        role.power = []
+        role.user = []
+
+        r = RoleModel.query.filter_by(id=_id).delete()
+        db.session.commit()
+        if not r:
             return fail_api(message="角色删除失败")
         return success_api(message="角色删除成功")

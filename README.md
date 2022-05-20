@@ -94,7 +94,7 @@ venv\Scripts\activate
 # source venv/bin/activate  # （Linux激活虚拟环境）
 
 # 安装依赖
-pip install -r requirement\requirement-dev.txt
+pip install -r requirement.txt
 ```
 
 + 数据迁移

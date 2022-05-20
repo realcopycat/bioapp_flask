@@ -4,7 +4,6 @@ from flask import request, jsonify
 from flask.views import MethodView
 from flask_login import current_user
 from flask_pydantic import validate
-from flask_restful import reqparse
 from pydantic import BaseModel, Field
 from sqlalchemy import desc
 
@@ -181,35 +180,31 @@ def user_role_resource(_id, body: PersonModel2):
 
 def user_info(_id, action):
     if action == 'info':
-        parser = reqparse.RequestParser()
-        parser.add_argument('realName', type=str, dest='real_name')
-        parser.add_argument('username', type=str)
-        parser.add_argument('remark', type=str)
-        parser.add_argument('details', type=str)
-
-        res = parser.parse_args()
+        real_name = request.json.get('realName', '')
+        username = request.json.get('username', '')
+        remark = request.json.get('remark', '')
+        details = request.json.get('details', '')
 
         ret = UserModel.query.get(_id)
-        ret.username = res.username
-        ret.realname = res.real_name
-        ret.remark = res.details
+        ret.username = username
+        ret.realname = real_name
+        ret.remark = details
         db.session.commit()
         if not ret:
             return fail_api(message="出错啦")
         return success_api(message="更新成功")
     elif action == 'status':
-        parser = reqparse.RequestParser()
-        parser.add_argument('userId', type=int, required=True, dest='user_id')
-        parser.add_argument('operate', type=int, required=True, dest='operate', choices=[0, 1])
+        user_id = int(request.json.get('userId', 0))  # int
+        operate = int(request.json.get('operate', 0))  # int
+        if operate not in [0, 1]:
+            return {'status': 'error', 'message': '请求有误'}
 
-        res = parser.parse_args()
-
-        if res.operate == 1:
+        if operate == 1:
             user = UserModel.query.get(_id)
-            user.enable = res.operate
+            user.enable = operate
             message = success_api(message="启动成功")
         else:
-            user = UserModel.query.filter_by(id=res.user_id).update({"enable": res.operate})
+            user = UserModel.query.filter_by(id=user_id).update({"enable": operate})
             message = success_api(message="禁用成功")
         if user:
             db.session.commit()
@@ -225,22 +220,21 @@ def user_info(_id, action):
             return fail_api(message="出错啦")
         return success_api(message="修改成功")
     elif action == 'password':
-        parser = reqparse.RequestParser()
-        parser.add_argument('oldPassword', type=str, required=True, help='旧密码不得为空')
-        parser.add_argument('newPassword', type=str, required=True, help='新密码不得为空')
-        parser.add_argument('confirmPassword', type=str, required=True, help='确认密码不能为空')
+        oldPassword = request.json.get('oldPassword', '')
+        newPassword = request.json.get('newPassword', '')
+        confirmPassword = request.json.get('confirmPassword', '')
+        if not all([oldPassword, newPassword, confirmPassword]):
+            return {'status': 'error', 'message': '密码不能为空'}
 
-        res = parser.parse_args()
-
-        if res.newPassword != res.confirmPassword:
+        if newPassword != confirmPassword:
             return fail_api(message='确认密码不一致')
 
         """ 修改当前用户密码 """
         user = UserModel.query.get(_id)
-        is_right = user.validate_password(res.oldPassword)
+        is_right = user.validate_password(oldPassword)
         if not is_right:
             return jsonify(success=False, message="旧密码错误")
-        user.set_password(res.newPassword)
+        user.set_password(newPassword)
         db.session.add(user)
         db.session.commit()
 

@@ -130,7 +130,7 @@
         form.on('submit(power-save)', function (data) {
           data.field.icon = 'layui-icon ' + data.field.icon
           $.ajax({
-            url: '/api/v1/rights/power/0',
+            url: '/api/v1/rights/power/',
             data: JSON.stringify(data.field),
             dataType: 'json',
             contentType: 'application/json',
