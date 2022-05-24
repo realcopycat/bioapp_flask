@@ -1,12 +1,11 @@
 import copy
-from typing import Optional
 from collections import OrderedDict
+from typing import Optional
 
 from flask import request, jsonify, current_app
 from flask.views import MethodView
 from flask_login import current_user
 from flask_pydantic import validate
-
 from pydantic import BaseModel, Field
 
 from common.utils.http import success_api, fail_api
@@ -148,27 +147,6 @@ def make_menu_tree():
     return sorted(menu_dict.get(0), key=lambda item: item['sort'])
 
 
-# 删除权限（目前没有判断父节点自动删除子节点）
-def remove_power(power_id):
-    power = RightModel.query.filter_by(id=power_id).first()
-    role_id_list = []
-    roles = power.role
-    for role in roles:
-        role_id_list.append(role.id)
-    roles = RoleModel.query.filter(RoleModel.id.in_(role_id_list)).all()
-    for p in roles:
-        power.role.remove(p)
-    r = RightModel.query.filter_by(id=power_id).delete()
-    db.session.commit()
-    return r
-
-
-# 批量删除权限
-def batch_remove_power(ids):
-    for _id in ids:
-        remove_power(_id)
-
-
 class PowerModel(BaseModel):
     icon: str
     open_type: Optional[str] = Field(alias='openType')
@@ -208,7 +186,14 @@ class RightsApi(MethodView):
 
     def delete(self):
         ids = request.form.getlist('ids[]')
-        batch_remove_power(ids)
+        for id in ids:
+            role = RoleModel.query.filter_by(id=id).first()
+            # 删除该角色的权限和用户
+            role.power = []
+            role.user = []
+
+            r = RoleModel.query.filter_by(id=id).delete()
+            db.session.commit()
         return success_api(message="批量删除成功")
 
 
