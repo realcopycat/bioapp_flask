@@ -1,24 +1,79 @@
 from flask import Blueprint
-from flask import render_template
-from flask_login import login_required, current_user
+from flask import send_file
+from flask import session, render_template
+
+from common.gen_captcha import get_captcha_image
+
+# 获取验证码
 
 index_bp = Blueprint('index', __name__)
 
 
 @index_bp.route('/')
+@index_bp.route('/admin')
 def index():
-    return render_template('index/index.html')
+    return render_template('index.html')
 
 
-# 首页
-@index_bp.get('/admin/')
-@login_required
-def admin_index():
-    return render_template('index/admin_index.html', user=current_user)
+@index_bp.route('/config/pear.config.json')
+def pear_config():
+    return send_file('static/config/pear.config.json')
 
 
-# 控制台页面
-@index_bp.get('/admin/welcome')
-@login_required
-def welcome():
-    return render_template('index/welcome.html')
+@index_bp.route('/admin/data/menu.json')
+def menu():
+    return send_file('static/admin/data/menu.json')
+
+
+@index_bp.route('/admin/data/message.json')
+def message():
+    return send_file('static/admin/data/message.json')
+
+
+@index_bp.route('/view/console/console1.html')
+def console1():
+    # 控制后台
+    return render_template('view/console/console1.html')
+
+
+@index_bp.route('/view/console/console2.html')
+def console2():
+    # 数据分析
+    return render_template('view/console/console2.html')
+
+
+@index_bp.route('/view/system/theme.html')
+def theme():
+    # 酸爽翻倍
+    return render_template('view/system/theme.html')
+
+
+@index_bp.route('/view/document/core.html')
+def core():
+    # 酸爽翻倍
+    return render_template('view/document/core.html')
+
+
+@index_bp.get('/passport/getCaptcha')
+def get_captcha():
+    resp, code = get_captcha_image()
+    session["code"] = code
+    return resp
+
+
+# 退出登录
+@index_bp.post('/logout')
+# @login_required
+def logout():
+    # logout_user()
+    # session.pop('permissions')
+    print({"message": "注销成功", "success": True})
+    return {"message": "注销成功", "success": True}
+
+
+@index_bp.get('/login')
+def login():
+    # if current_user.is_authenticated:
+    #     return redirect(url_for('admin.index'))
+    # TODO 分离视图操作 最终实现接口登录与视图登录两套逻辑
+    return render_template('login.html')
