@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="utf-8">
     <title>登录</title>
@@ -37,20 +37,22 @@
         </button>
     </div>
 </form>
-{% include 'admin/common/footer.html' %}
-<script>
-  layui.use(['form', 'jquery', 'layer', 'button', 'popup'], function () {
-    let form = layui.form
-    let $ = layui.jquery
-    let layer = layui.layer
-    let button = layui.button
-    let popup = layui.popup
-    let captchaPath = '/passport/getCaptcha'
 
-    form.on('submit(login)', function (data) {
+<script src="/static/admin/component/layui/layui.js"></script>
+<script src="/static/admin/component/pear/pear.js"></script>
+<script>
+  layui.use(['form', 'jquery', 'layer', 'button', 'popup'], function() {
+    let form = layui.form;
+    let $ = layui.jquery;
+    let layer = layui.layer;
+    let button = layui.button;
+    let popup = layui.popup;
+    let captchaPath = '/passport/getCaptcha';
+
+    form.on('submit(login)', function(data) {
       // data 是表单的数据
-      let loader = layer.load()  // 加载按钮
-      let btn = button.load({ elem: '.login' })
+      let loader = layer.load();  // 加载按钮
+      let btn = button.load({elem: '.login'});
       $.ajax({
         url: '/api/v1/passport/login',
         data: JSON.stringify(data.field),
@@ -58,38 +60,38 @@
         type: 'post',
         dataType: 'json',
         // 请求成功之后返回的数据
-        success: function (result) {
-          layer.close(loader)  // 关闭加载按钮
-          btn.stop(function () {
+        success: function(result) {
+          layer.close(loader);  // 关闭加载按钮
+          btn.stop(function() {
             if (result.success) {
-              popup.success(result.message, function () {
-                location.href = '/admin'
-              })
+              popup.success(result.message, function() {
+                location.href = '/admin';
+              });
             } else {
-              popup.failure(result.message, function () {
-                document.getElementById('captchaImage').src = captchaPath + '?' + Math.random()
-              })
+              popup.failure(result.message, function() {
+                document.getElementById('captchaImage').src = captchaPath + '?' + Math.random();
+              });
             }
-          })
-        }
-      })
-      return false
-    })
+          });
+        },
+      });
+      return false;
+    });
 
     // 点击按钮更新验证码
-    $('#captchaImage').click(function () {
-      document.getElementById('captchaImage').src = captchaPath + '?' + Math.random()
-    })
+    $('#captchaImage').click(function() {
+      document.getElementById('captchaImage').src = captchaPath + '?' + Math.random();
+    });
 
     // 定时器，定时更新验证码
-    setInterval(function () {
-      document.getElementById('captchaImage').src = captchaPath + '?' + Math.random()
-    }, 30 * 1000)
-  })
+    setInterval(function() {
+      document.getElementById('captchaImage').src = captchaPath + '?' + Math.random();
+    }, 30 * 1000);
+  });
 </script>
 <script>
   if (window !== top) {
-    top.location.href = location.href
+    top.location.href = location.href;
   }
 </script>
 </body>

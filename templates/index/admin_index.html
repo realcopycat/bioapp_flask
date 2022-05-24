@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -79,43 +79,43 @@
 <!-- 依 赖 脚 本 -->
 {% include 'admin/common/footer.html' %}
 <script>
-  layui.use(['admin', 'jquery', 'layer', 'popup'], function () {
-    let admin = layui.admin
-    let $ = layui.jquery
-    let layer = layui.layer
-    let popup = layui.popup
-    let MODULE_PATH = '/api/v1/rights/'
+  layui.use(['admin', 'jquery', 'layer', 'popup'], function() {
+    let admin = layui.admin;
+    let $ = layui.jquery;
+    let layer = layui.layer;
+    let popup = layui.popup;
+    let MODULE_PATH = '/api/v1/rights/';
 
     // 框架初始化时会读取 根目录下 pear.configs.yml 文件作为初始化配置
     // 你可以通过 admin.setConfigPath 方法修改配置文件位置
     // 你可以通过 admin.setConfigType 方法修改配置文件类型
-    admin.setConfigType('json')
-    admin.setConfigPath(MODULE_PATH + 'configs')
+    admin.setConfigType('json');
+    admin.setConfigPath(MODULE_PATH + 'configs');
 
-    admin.render()
+    admin.render();
 
     // 注销实现
-    admin.logout(function () {
-      let loading = layer.load()
+    admin.logout(function() {
+      let loading = layer.load();
       $.ajax({
         url: '/passport/logout',
         dataType: 'json',
         type: 'post',
-        success: function (result) {
-          layer.close(loading)
+        success: function(result) {
+          layer.close(loading);
           if (result.success) {
-            popup.success(result.message, function () {
-              location.href = '/admin'
-            })
-            return true
+            popup.success(result.message, function() {
+              location.href = '/admin';
+            });
+            return true;
           }
-        }
-      })
-    })
+        },
+      });
+    });
 
     // 初始化消息事件
-    admin.message()
-  })
+    admin.message();
+  });
 </script>
 </body>
 </html>
