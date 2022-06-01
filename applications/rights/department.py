@@ -1,11 +1,10 @@
 import typing as t
 
-from flask import jsonify
 from flask.views import MethodView
 from flask_pydantic import validate
 from pydantic import BaseModel, Field
 
-from common.utils.http import success_api, fail_api
+from common.utils.http import success_api, fail_api, table_api
 from extensions import db
 from models import DepartmentModel, UserModel
 
@@ -39,26 +38,25 @@ class DepartmentsApi(MethodView):
             return dict(success=True, message='ok', dept=dept_data)
 
         dept_data = DepartmentModel.query.order_by(DepartmentModel.sort).all()
-        # TODO dtree 需要返回状态信息
-        res = {
-            "status": {"code": 200, "message": "默认"},
-            "data": [
-                {
-                    'deptId': item.id,
-                    'parentId': item.parent_id,
-                    'deptName': item.dept_name,
-                    'sort': item.sort,
-                    'leader': item.leader,
-                    'phone': item.phone,
-                    'email': item.email,
-                    'status': item.status,
-                    'comment': item.comment,
-                    'address': item.address,
-                    'create_at': item.create_at.strftime('%Y-%m-%d %H:%M:%S')
-                } for item in dept_data
-            ]
-        }
-        return jsonify(res)
+        return table_api(
+            result={
+                'items': [
+                    {
+                        'deptId': item.id,
+                        'parentId': item.parent_id,
+                        'deptName': item.dept_name,
+                        'sort': item.sort,
+                        'leader': item.leader,
+                        'phone': item.phone,
+                        'email': item.email,
+                        'status': item.status,
+                        'comment': item.comment,
+                        'address': item.address,
+                        'create_at': item.create_at.strftime('%Y-%m-%d %H:%M:%S')
+                    } for item in dept_data
+                ],
+                'total': len(dept_data)}
+            , code=0)
 
     @validate()
     def post(self, body: DeptModel):

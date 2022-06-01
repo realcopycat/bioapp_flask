@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <title>用户编辑</title>
-    {% include 'admin/common/header.html' %}
+    {% include 'view/includes/links.html' %}
 </head>
 <body class="pear-container">
 <form class="layui-form" action="">
@@ -70,7 +70,7 @@
 </form>
 
 
-{% include 'admin/common/footer.html' %}
+{% include 'view/includes/scripts.html' %}
 <script>
   layui.use(['form', 'jquery', 'dtree'], function() {
     let form = layui.form;

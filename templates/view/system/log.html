@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>行为日志</title>
-    <link rel="stylesheet" href="/static/component/pear/css/pear.css"/>
+    {% include 'view/includes/links.html' %}
 </head>
 <body class="pear-container">
 <div class="layui-card">
@@ -40,33 +40,34 @@
     {{ '{{layui.util.toDateString(d.createTime,  "yyyy-MM-dd HH:mm:ss")}}'|safe }}
 </script>
 
-<script src="/static/component/layui/layui.js"></script>
-<script src="/static/component/pear/pear.js"></script>
+{% include 'view/includes/scripts.html' %}
 <script>
   layui.use(['table', 'form', 'jquery', 'element'], function() {
     let table = layui.table;
     let form = layui.form;
     let element = layui.element;
 
-    let MODULE_PATH = '/system/logging/';
+    let MODULE_PATH = '/logs/';
 
     let cols = [
       [
-        {title: '模块', field: 'title', align: 'center'},
-        {title: '请求方式', field: 'requestMethod', align: 'center'},
-        {title: '接口', field: 'method', align: 'center'},
-        {title: '浏览器', field: 'browser', align: 'center'},
-        {title: '操作地址', field: 'operateAddress', align: 'center'},
-        {title: '操作系统', field: 'systemOs', align: 'center'},
-        {title: '访问时间', field: 'createTime', templet: '#log-createTime', align: 'center'},
-        {title: '操作人', field: 'operateName', align: 'center'},
+        {title: 'ID', field: 'id', align: 'center'},
+        {#{title: '模块', field: 'title', align: 'center'},#}
+        {title: '请求方式', field: 'method', align: 'center'},
+        {title: '接口', field: 'url', align: 'center'},
+        {title: '浏览器', field: 'user_agent', align: 'center'},
+        {title: '操作地址', field: 'ip', align: 'center'},
+        {title: '描述', field: 'desc', align: 'center'},
+        {title: '访问时间', field: 'create_at', templet: '#log-createTime', align: 'center'},
+        {title: '操作人', field: 'uid', align: 'center'},
         {title: '访问状态', toolbar: '#log-bar', align: 'center', width: 150},
       ],
     ];
 
     table.render({
+      parseData: parserTableData,
       elem: '#log-operate-table',
-      url: '/static/admin/data/operateLog.json',
+      url: MODULE_PATH + 'access_log',
       page: true,
       cols: cols,
       skin: 'line',
@@ -75,7 +76,7 @@
 
     table.render({
       elem: '#log-login-table',
-      url: '/static/admin/data/loginLog.json',
+      url: MODULE_PATH + 'login_log',
       page: true,
       cols: cols,
       skin: 'line',

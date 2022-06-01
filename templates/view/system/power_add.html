@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <title>权限</title>
-    {% include 'admin/common/header.html' %}
+    {% include 'view/includes/links.html' %}
 </head>
 <body class="pear-container">
 <form class="layui-form" action="">
@@ -86,7 +86,7 @@
 </form>
 
 
-{% include 'admin/common/footer.html' %}
+{% include 'view/includes/scripts.html' %}
 <script>
   layui.use(['form', 'jquery', 'iconPicker', 'dtree'], function() {
     let form = layui.form;
@@ -129,7 +129,7 @@
     form.on('submit(power-save)', function(data) {
       data.field.icon = 'layui-icon ' + data.field.icon;
       $.ajax({
-        url: '/api/v1/rights/power/0',
+        url: '/api/v1/rights/power/',
         data: JSON.stringify(data.field),
         dataType: 'json',
         contentType: 'application/json',

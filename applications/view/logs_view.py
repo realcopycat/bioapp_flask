@@ -8,12 +8,6 @@ from models import LogModel
 logs_bp = Blueprint('logs', __name__, url_prefix='/logs')
 
 
-@logs_bp.get('/')
-@permission_required("admin:log:main")
-def index():
-    return render_template('admin/logs_temp/main.html')
-
-
 @logs_bp.get('/login_log')
 @permission_required("admin:log:main")
 def login_log():

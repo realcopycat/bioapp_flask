@@ -5,11 +5,11 @@ from models import RightModel
 from applications.view import index_bp
 
 
-@index_bp.get('/rights/')
-@view_logging_required
-@permission_required("admin:power:main")
-def rights_index():
-    return render_template('admin/rights/rights.html')
+# @index_bp.get('/rights/')
+# @view_logging_required
+# @permission_required("admin:power:main")
+# def rights_index():
+#     return render_template('admin/rights/rights.html')
 
 
 @index_bp.get('/rights/power/<int:power_id>')
@@ -22,11 +22,11 @@ def rights_edit(power_id):
         icon = icon[1]
     else:
         icon = None
-    return render_template('admin/rights/rights_edit.html', power=power, icon=icon)
+    return render_template('view/system/power_edit.html', power=power, icon=icon)
 
 
 @index_bp.get('/rights/add')
 @view_logging_required
 @permission_required("admin:power:main")
 def rights_add():
-    return render_template('admin/rights/rights_add.html')
+    return render_template('view/system/power_add.html')

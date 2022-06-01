@@ -1,6 +1,7 @@
-from flask import Blueprint
+from flask import Blueprint, redirect, url_for
 from flask import send_file
 from flask import session, render_template
+from flask_login import current_user, logout_user, login_required
 
 from common.gen_captcha import get_captcha_image
 
@@ -63,17 +64,16 @@ def get_captcha():
 
 # 退出登录
 @index_bp.post('/logout')
-# @login_required
+@login_required
 def logout():
-    # logout_user()
-    # session.pop('permissions')
+    logout_user()
+    session.pop('permissions')
     print({"message": "注销成功", "success": True})
     return {"message": "注销成功", "success": True}
 
 
 @index_bp.get('/login')
 def login():
-    # if current_user.is_authenticated:
-    #     return redirect(url_for('admin.index'))
-    # TODO 分离视图操作 最终实现接口登录与视图登录两套逻辑
+    if current_user.is_authenticated:
+        return redirect(url_for('admin.index'))
     return render_template('login.html')

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>部门管理</title>
-    <link rel="stylesheet" href="/static/component/pear/css/pear.css"/>
+    {% include 'view/includes/links.html' %}
     <link rel="stylesheet" href="/static/admin/css/other/department.css"/>
 </head>
 <body class="pear-container">
@@ -11,6 +11,12 @@
     <div class="layui-card-body">
         <form class="layui-form" action="">
             <div class="layui-form-item">
+                <div class="layui-form-item layui-inline">
+                    <label class="layui-form-label">部门名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="deptName" placeholder="" class="layui-input">
+                    </div>
+                </div>
                 <div class="layui-form-item layui-inline">
                     <label class="layui-form-label">用户名</label>
                     <div class="layui-input-inline">
@@ -24,13 +30,7 @@
                     </div>
                 </div>
                 <div class="layui-form-item layui-inline">
-                    <label class="layui-form-label">邮箱</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="realName" placeholder="" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item layui-inline">
-                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="form_search">
                         <i class="layui-icon layui-icon-search"></i>
                         查询
                     </button>
@@ -79,8 +79,18 @@
     <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i
             class="layui-icon layui-icon-delete"></i></button>
 </script>
-<script src="/static/component/layui/layui.js"></script>
-<script src="/static/component/pear/pear.js"></script>
+{#表格内的切换按钮#}
+<script type="text/html" id="dept-status">
+    <input type="checkbox"
+           name="status"
+           value="{{ "{{ d.deptId }}" }}"
+           lay-skin="switch"
+           lay-text="启用|禁用"
+           lay-filter="dept_enable"
+            {{ "{{# if(d.status==1){ }} checked {{# } }}" }}>
+</script>
+
+{% include 'view/includes/scripts.html' %}
 <script>
   layui.use(['table', 'form', 'jquery', 'dtree'], function() {
     let table = layui.table;
@@ -88,39 +98,19 @@
     let $ = layui.jquery;
     let dtree = layui.dtree;
 
-    let MODULE_PATH = 'operate/';
+    let MODULE_PATH = '/dept/';
 
     let cols = [
       [
-        {
-          type: 'checkbox',
-        },
-        {
-          title: '名称',
-          field: 'name',
-          align: 'center',
-        },
-        {
-          title: '人数',
-          field: 'userCount',
-          align: 'center',
-        },
-        {
-          title: '位置',
-          field: 'location',
-          align: 'center',
-        },
-        {
-          title: '负责人',
-          field: 'leader',
-          align: 'center',
-        },
-        {
-          title: '操作',
-          toolbar: '#organization-bar',
-          align: 'center',
-          width: 130,
-        },
+        {type: 'checkbox'},
+        {field: 'deptName', minWidth: 200, title: '部门名称'},
+        {field: 'leader', title: '负责人'},
+        {field: 'phone', title: '联系方式'},
+        {field: 'email', title: '邮箱'},
+        {field: 'address', title: '详细地址'},
+        {field: 'status', title: '状态', templet: '#dept-status'},
+        {field: 'sort', title: '排序', width: 100},
+        {title: '操作', toolbar: '#organization-bar', align: 'center', width: 130},
       ],
     ];
 
@@ -136,8 +126,9 @@
     });
 
     table.render({
+      parseData: parserTableData,
       elem: '#organization-table',
-      url: '/static/admin/data/organization.json',
+      url: '/api/v1/dept/department/',
       height: 'full-150',
       page: true,
       cols: cols,
@@ -187,13 +178,39 @@
       return false;
     });
 
+    /*切换选择状态*/
+    form.on('switch(dept_enable)', function(obj) {
+      let operate;
+      if (obj.elem.checked) {
+        operate = 1;
+      } else {
+        operate = 0;
+      }
+      let loading = layer.load();
+      $.ajax({
+        url: '/api/v1/dept/department/' + this.value + '/status',
+        data: JSON.stringify({deptId: this.value, operate: operate}),
+        dataType: 'json',
+        contentType: 'application/json',
+        type: 'put',
+        success: function(result) {
+          layer.close(loading);
+          if (result.success) {
+            layer.msg(result.message);
+          } else {
+            layer.msg(result.message);
+          }
+        },
+      });
+    });
+
     window.add = function() {
       layer.open({
         type: 2,
         title: '新增',
         shade: 0.1,
         area: ['500px', '400px'],
-        content: MODULE_PATH + 'add.html',
+        content: '/dept/add',
       });
     };
 
@@ -203,35 +220,26 @@
         title: '修改',
         shade: 0.1,
         area: ['500px', '400px'],
-        content: MODULE_PATH + 'edit.html',
+        content: MODULE_PATH + 'edit?deptId=' + obj.data['deptId'],
       });
     };
 
     window.remove = function(obj) {
-      layer.confirm('确定要删除该用户', {
-        icon: 3,
-        title: '提示',
-      }, function(index) {
+      layer.confirm('确定要删除该部门', {icon: 3, title: '提示'}, function(index) {
         layer.close(index);
         let loading = layer.load();
         $.ajax({
-          url: MODULE_PATH + 'remove/' + obj.data['organizationId'],
+          url: '/api/v1/dept/department/' + obj.data['deptId'],
           dataType: 'json',
           type: 'delete',
           success: function(result) {
             layer.close(loading);
             if (result.success) {
-              layer.msg(result.msg, {
-                icon: 1,
-                time: 1000,
-              }, function() {
+              popup.success(result.message, function() {
                 obj.del();
               });
             } else {
-              layer.msg(result.msg, {
-                icon: 2,
-                time: 1000,
-              });
+              popup.failure(result.message);
             }
           },
         });

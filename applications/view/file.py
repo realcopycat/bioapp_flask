@@ -8,11 +8,11 @@ from common.utils.rights import view_logging_required, permission_required
 @view_logging_required
 @permission_required("admin:file:main")
 def file_index():
-    return render_template('admin/file/photo.html')
+    return render_template('view/system/photo.html')
 
 
 @index_bp.get('/file/photo/add')
 @view_logging_required
 @permission_required("admin:file:main")
 def file_photo_add():
-    return render_template('admin/file/photo_add.html')
+    return render_template('view/system/photo_add.html')

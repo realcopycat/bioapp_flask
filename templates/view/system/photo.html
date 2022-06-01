@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <title>图片上传</title>
-    {% include 'admin/common/header.html' %}
+    {% include 'view/includes/links.html' %}
 </head>
 
 <body class="pear-container">
@@ -13,7 +13,6 @@
 </div>
 
 
-{% include 'admin/common/footer.html' %}
 <script type="text/html" id="toolbar">
     <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="toolbar-add">
         <i class="layui-icon layui-icon-add-1"></i>
@@ -29,6 +28,7 @@
         <i class="layui-icon layui-icon-delete"></i>
     </button>
 </script>
+{% include 'view/includes/scripts.html' %}
 <script>
   layui.use(['table', 'form', 'jquery', 'element', 'form', 'upload'], function() {
     let table = layui.table;
