@@ -28,7 +28,7 @@ class ModelFilter:
         :param field_name: 模型字段名称
         :param value: 值
         """
-        if value and value != '':
+        if (value is not None) and (value != ''):
             self.filter_field[field_name] = {"data": value, "type": self.type_exact}
 
     def neq(self, field_name, value):
@@ -37,7 +37,7 @@ class ModelFilter:
         :param field_name: 模型字段名称
         :param value: 值
         """
-        if value and value != '':
+        if (value is not None) and (value != ''):
             self.filter_field[field_name] = {"data": value, "type": self.type_neq}
 
     def greater(self, field_name, value):
@@ -46,7 +46,7 @@ class ModelFilter:
         :param field_name: 模型字段名称
         :param value: 值
         """
-        if value and value != '':
+        if (value is not None) and (value != ''):
             self.filter_field[field_name] = {"data": value, "type": self.type_greater}
 
     def less(self, field_name, value):
@@ -55,7 +55,7 @@ class ModelFilter:
         :param field_name: 模型字段名称
         :param value: 值
         """
-        if value and value != '':
+        if (value is not None) and (value != ''):
             self.filter_field[field_name] = {"data": value, "type": self.type_less}
 
     def vague(self, field_name, value: str):
@@ -64,7 +64,7 @@ class ModelFilter:
         :param field_name: 模型字段名称
         :param value: 值
         """
-        if value and value != '':
+        if (value is not None) and (value != ''):
             self.filter_field[field_name] = {"data": ('%' + value + '%'), "type": self.type_vague}
 
     def left_vague(self, field_name, value: str):
@@ -73,7 +73,7 @@ class ModelFilter:
         :param field_name: 模型字段名称
         :param value: 值
         """
-        if value and value != '':
+        if (value is not None) and (value != ''):
             self.filter_field[field_name] = {"data": ('%' + value), "type": self.type_vague}
 
     def right_vague(self, field_name, value: str):
@@ -82,7 +82,7 @@ class ModelFilter:
         :param field_name: 模型字段名称
         :param value: 值
         """
-        if value and value != '':
+        if (value is not None) and (value != ''):
             self.filter_field[field_name] = {"data": (value + '%'), "type": self.type_vague}
 
     def contains(self, field_name, value: str):
@@ -91,16 +91,18 @@ class ModelFilter:
         :param field_name: 模型字段名称
         :param value: 值
         """
-        if value and value != '':
+        if (value is not None) and (value != ''):
             self.filter_field[field_name] = {"data": value, "type": self.type_contains}
 
     def between(self, field_name, value1, value2):
         """
         范围查询字段
         :param field_name: 模型字段名称
-        :param value: 值
+        :param value1: 值
+        :param value2: 值
         """
-        if value1 and value2 and value1 != '' and value2 != '':
+        if (value1 is not None) and (value1 != '') \
+                and (value2 is not None) and (value2 != ''):
             self.filter_field[field_name] = {"data": [value1, value2], "type": self.type_between}
 
     def get_filter(self, model: db.Model):
