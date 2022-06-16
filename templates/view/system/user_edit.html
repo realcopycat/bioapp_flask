@@ -77,9 +77,10 @@
     let $ = layui.jquery;
     let dtree = layui.dtree;
 
+    // TODO 加载修改是会卡死
     dtree.renderSelect({
       elem: '#selectParent',
-      url: '/api/v1/dept/department',
+      url: '/api/v1/dept/department/',
       method: 'get',
       selectInputName: {nodeId: 'deptId', context: 'deptName'},
       skin: 'layui',

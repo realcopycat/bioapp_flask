@@ -5,13 +5,12 @@ from flask_login import current_user, logout_user, login_required
 
 from common.gen_captcha import get_captcha_image
 
-# 获取验证码
-
 index_bp = Blueprint('index', __name__)
 
 
 @index_bp.route('/')
 @index_bp.route('/admin')
+@login_required
 def index():
     return render_template('index.html')
 

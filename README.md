@@ -40,7 +40,6 @@ Pear Admin Flask 基于 Flask 生态的后台管理系统，该项目旨在为 p
 + [flask](https://dormousehole.readthedocs.io/en/latest/)
 + [flask-login](https://flask-login.readthedocs.io/en/latest/)
 + [flask-sqlalchemy](http://www.pythondoc.com/flask-sqlalchemy/quickstart.html)
-+ [flask-restful](https://flask-restful.readthedocs.io/en/latest/) 
 
 
 ## 预览
@@ -52,7 +51,7 @@ Pear Admin Flask 有以下几个版本：
 
 [Mini 分支版本 ](https://gitee.com/pear-admin/pear-admin-flask/tree/mini/) 
 
->flask 2.x	+	flask-sqlalchemy   +	Flask-restful  +	基于角色的权限管理
+>flask 2.x	+	flask-sqlalchemy   +	基于角色的权限管理
 
 |  |  |
 |---------------------|---------------------|
