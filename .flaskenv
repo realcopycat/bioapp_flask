@@ -1,5 +1,5 @@
 # flask配置
-FLASK_APP=app.py
+FLASK_APP="applications:create_app('development')"
 FLASK_ENV=development
 FLASK_DEBUG=1
 FLASK_RUN_HOST = 127.0.0.1
