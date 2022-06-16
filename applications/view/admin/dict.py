@@ -12,6 +12,18 @@ from applications.schemas import DictTypeOutSchema, DictDataOutSchema
 admin_dict = Blueprint('adminDict', __name__, url_prefix='/admin/dict')
 
 
+# 字典使用
+def get_dict(typecode: str):
+    dict_list = []
+    if DictType.query.filter_by(type_code=typecode, enable=1).first():
+        dicts = DictData.query.filter_by(type_code=typecode, enable=1).all()
+        for d in dicts:
+            dict_dict = {"key": d.data_label, "value": d.data_value}
+            dict_list.append(dict_dict)
+    else:
+        return None
+    return dict_list
+
 # 数据字典
 @admin_dict.get('/')
 @authorize("admin:dict:main", log=True)
