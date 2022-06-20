@@ -1,8 +1,8 @@
-FROM python:3.7-alpine
+FROM python:3.7.13-alpine3.15
 
 
-RUN echo http://mirrors.aliyun.com/alpine/v3.12/main > /etc/apk/repositories \
-    && echo http://mirrors.aliyun.com/alpine/v3.12/community >> /etc/apk/repositories \
+RUN echo http://mirrors.aliyun.com/alpine/v3.15/main > /etc/apk/repositories \
+    && echo http://mirrors.aliyun.com/alpine/v3.15/community >> /etc/apk/repositories \
     && apk update \
     && apk --update add --no-cache gcc \
     && apk --update add --no-cache g++ \
