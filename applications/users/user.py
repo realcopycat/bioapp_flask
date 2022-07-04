@@ -67,7 +67,7 @@ def users_delete():
     return success_api(message="批量删除成功")
 
 
-class QueryModel(BaseModel):
+class QuerySchema(BaseModel):
     page: int = 1
     limit: int = 10
     real_name: t.Optional[str] = Field(alias='realName')
@@ -78,7 +78,7 @@ class QueryModel(BaseModel):
     status: t.Optional[int]
 
 
-class PersonModel(BaseModel):
+class PersonSchema(BaseModel):
     role_ids: str = Field(alias='roleIds')
     username: str
     real_name: str = Field(alias='realName')
@@ -89,7 +89,7 @@ class UserApi(MethodView):
     """修改用户数据"""
 
     @validate()
-    def get(self, _id, query: QueryModel):
+    def get(self, _id, query: QuerySchema):
 
         filters = []
 
@@ -123,7 +123,7 @@ class UserApi(MethodView):
         )
 
     @validate()
-    def post(self, body: PersonModel):
+    def post(self, body: PersonSchema):
         """新建单个用户"""
 
         role_ids = body.role_ids.split(',')

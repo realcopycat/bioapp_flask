@@ -1,5 +1,3 @@
-from flask import Blueprint
-
 from common import register_api
 from .file import FilePhotoAPI
 from .passport import LoginAPI

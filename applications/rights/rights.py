@@ -147,7 +147,7 @@ def make_menu_tree():
     return sorted(menu_dict.get(0), key=lambda item: item['sort'])
 
 
-class PowerModel(BaseModel):
+class PowerSchema(BaseModel):
     icon: str
     open_type: Optional[str] = Field(alias='openType')
     parent_id: Optional[str] = Field(alias='parentId')
@@ -199,7 +199,7 @@ class RightsApi(MethodView):
 
 class PowerApi(MethodView):
     @validate()
-    def post(self, body: PowerModel):
+    def post(self, body: PowerSchema):
         power = RightModel(
             icon=body.icon,
             open_type=body.open_type,
@@ -239,7 +239,7 @@ class PowerApi(MethodView):
             return fail_api(message="删除失败")
 
     @validate()
-    def put(self, _id, body: PowerModel):
+    def put(self, _id, body: PowerSchema):
         data = {
             "icon": body.icon,
             "open_type": body.open_type,

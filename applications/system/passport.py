@@ -11,7 +11,7 @@ from common.utils.rights import record_logging
 from models import UserModel
 
 
-class LoginModel(BaseModel):
+class LoginSchema(BaseModel):
     username: str
     password: str
     captcha: str
@@ -25,7 +25,7 @@ class LoginAPI(MethodView):
         return make_response(render_template('index/login.html'))
 
     @validate()
-    def post(self, body: LoginModel):
+    def post(self, body: LoginSchema):
         s_code = session.get("code", None)
         session["code"] = None
 

@@ -20,25 +20,6 @@ class UserModel(db.Model, UserMixin):
 
     role = db.relationship('RoleModel', secondary="rt_user_role", backref=db.backref('user'), lazy='dynamic')
 
-    """
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='用户ID')
-    username = db.Column(db.String(20), comment='用户名')
-    password_hash = db.Column(db.String(128), comment='哈希密码')
-    salt = db.Column(db.String(128))
-    status = db.Column(db.String(20), default=0, comment='启用')
-    realName = db.Column(db.String(20), comment='真实名字')
-    email = db.Column(db.String(50), comment='邮箱')
-    avatar = db.Column(db.String(255), comment='头像', default="/static/admin/admin/images/avatar.jpg")
-    sex = db.Column(db.String(3), comment='性别')
-    phone = db.Column(db.String(11), comment='电话号码')
-    enable = db.Column(db.String(3), comment='启用')
-    login = db.Column(db.String(3), comment='登录状态')
-    # roleIds = db.Column(db.String(255), comment='登录状态')
-
-    comment = db.Column(db.String(255), comment='备注')
-    dept_id = db.Column(db.Integer, comment='部门id')
-    role = db.relationship('RoleModel', secondary="rt_user_role", backref=db.backref('user'), lazy='dynamic')
-    """
     def set_password(self, password):
         """设置密码，对密码进行加密存储"""
         self.password_hash = generate_password_hash(password)
@@ -65,14 +46,3 @@ class DepartmentModel(db.Model):
     sort = db.Column(db.Integer, comment="排序")
 
     create_at = db.Column(db.DateTime, default=datetime.now, comment='创建时间')
-    """
-    id = db.Column(db.Integer, primary_key=True, comment="部门ID")
-    name = db.Column(db.String(50), comment="部门名称")
-    userCount = db.Column(db.String(50), comment="部门人数")
-    address = db.Column(db.String(255), comment="详细地址")
-    leader = db.Column(db.String(50), comment="负责人")
-
-    status = db.Column(db.Boolean, comment='状态(1开启,0关闭)')
-    parent_id = db.Column(db.Integer, comment="父级编号")
-    sort = db.Column(db.Integer, comment="排序")
-    """

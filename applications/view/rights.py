@@ -5,13 +5,6 @@ from models import RightModel
 from applications.view import index_bp
 
 
-# @index_bp.get('/rights/')
-# @view_logging_required
-# @permission_required("admin:power:main")
-# def rights_index():
-#     return render_template('admin/rights/rights.html')
-
-
 @index_bp.get('/rights/power/<int:power_id>')
 @view_logging_required
 @permission_required("admin:power:edit")

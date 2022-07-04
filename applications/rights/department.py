@@ -9,7 +9,7 @@ from extensions import db
 from models import DepartmentModel, UserModel
 
 
-class DeptModel(BaseModel):
+class DeptSchema(BaseModel):
     address: t.Optional[str]
     dept_name: t.Optional[str] = Field(alias='deptName')
     email: t.Optional[str]
@@ -59,7 +59,7 @@ class DepartmentsApi(MethodView):
             , code=0)
 
     @validate()
-    def post(self, body: DeptModel):
+    def post(self, body: DeptSchema):
         dept = DepartmentModel(
             parent_id=body.parent_id,
             dept_name=body.dept_name,
@@ -76,7 +76,7 @@ class DepartmentsApi(MethodView):
         return success_api(message="成功")
 
     @validate()
-    def put(self, _id, body: DeptModel):
+    def put(self, _id, body: DeptSchema):
         data = {
             "dept_name": body.dept_name,
             "sort": body.sort,
@@ -88,9 +88,9 @@ class DepartmentsApi(MethodView):
         }
         body = DepartmentModel.query.filter_by(id=_id).update(data)
         if not body:
-            return fail_api(message="更新失败")
+            return {'success': False, 'message': "更新失败", 'code': 404}
         db.session.commit()
-        return success_api(message="更新成功")
+        return {'success': True, 'message': '更新成功', 'code': 200}
 
     def delete(self, _id):
         ret = DepartmentModel.query.filter_by(id=_id).delete()
