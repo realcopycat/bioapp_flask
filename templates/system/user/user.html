@@ -10,7 +10,8 @@
     <div class=layui-card-body>
         <form class=layui-form>
             <div class=layui-form-item>
-                <div class="layui-form-item layui-inline"><label class=layui-form-label>用户名</label>
+                <div class="layui-form-item layui-inline">
+                    <label class=layui-form-label>用户名</label>
                     <div class=layui-input-inline>
                         <input type=text name=realName class=layui-input>
                     </div>
@@ -65,6 +66,21 @@
 <script src=/static/component/layui/layui.js></script>
 <script src=/static/component/pear/pear.js></script>
 <script>
+  function formatDate(value) {//调用时间戳为日期显示
+    let date = new Date(value);
+    let y = date.getFullYear();  //获取年份
+    let month = date.getMonth() + 1;  //获取月份
+    month = month < 10 ? '0' + month : month;  //月份不满10天显示前加0
+    let d = date.getDate();  //获取日期
+    d = d < 10 ? '0' + d : d;  //日期不满10天显示前加0
+
+    //也可以获取更精准时间
+    let h = date.getHours();                   //小时
+    let m = date.getMinutes();                 //分
+    let s = date.getSeconds();                 //秒
+    return y + '-' + month + '-' + d + ' ' + h + ':' + m + ':' + s;
+    //let ls = date.getMilliseconds()            //毫秒
+  }
 
   layui.use(['table', 'form', 'jquery', 'common'], function() {
     let table = layui.table;
@@ -72,7 +88,7 @@
     let $ = layui.jquery;
     let common = layui.common;
 
-    let MODULE_PATH = 'operate/';
+    let MODULE_PATH = 'user/';
 
     let cols = [
       [
@@ -87,29 +103,28 @@
         },
         {
           title: '姓名',
-          field: 'realName',
+          field: 'nickname',
           align: 'center',
         },
         {
           title: '性别',
-          field: 'sex',
+          field: 'gender',
           align: 'center',
           width: 80,
-          templet: (d) => d.sex == 1 ? '<span>男</span>' : '<span>女</span>',
         },
         {
           title: '电话',
-          field: 'phone',
+          field: 'mobile',
           align: 'center',
         },
         {
           title: '启用',
-          field: 'enable',
+          field: 'state',
           align: 'center',
-          templet: (d) => `<input type="checkbox" name="enable"
+          templet: (d) => `<input type="checkbox" name="state"
                         value="${d.id}" lay-skin="switch"
                         lay-text="启用|禁用" lay-filter="user-enable"
-                        ${d.enable == true ? 'checked' : ''} />`,
+                        ${d.state == true ? 'checked' : ''} />`,
         },
         {
           title: '登录',
@@ -119,8 +134,11 @@
         },
         {
           title: '注册',
-          field: 'createTime',
+          field: 'create_at',
           align: 'center',
+          templet: (d) => {
+            return formatDate(d.create_at);
+          },
         },
         {
           title: '操作',
@@ -133,7 +151,15 @@
 
     table.render({
       elem: '#user-table',
-      url: '/static/admin/data/user.json',
+      url: '/api/private/v1/user/',
+      parseData: function(res) { //res 即为原始返回的数据
+        return {
+          'code': res.meta.status === 'success' ? 0 : 1, //解析接口状态
+          'msg': res.meta.message, //解析提示文本
+          'count': res.result.total, //解析数据长度
+          'data': res.result.users, //解析数据列表
+        };
+      },
       page: true,
       cols: cols,
       skin: 'line',
@@ -180,8 +206,8 @@
         type: 2,
         title: '新增',
         shade: 0.1,
-        area: [common.isModile() ? '100%' : '500px', common.isModile() ? '100%' : '400px'],
-        content: MODULE_PATH + 'add.html',
+        area: ['60%', '80%'],
+        content: MODULE_PATH + 'add',
       });
     };
 
@@ -191,7 +217,7 @@
         title: '修改',
         shade: 0.1,
         area: ['500px', '400px'],
-        content: MODULE_PATH + 'edit.html',
+        content: MODULE_PATH + 'edit' + `?uid=${obj.data.id}`,
       });
     };
 
@@ -203,20 +229,20 @@
         layer.close(index);
         let loading = layer.load();
         $.ajax({
-          url: MODULE_PATH + 'remove/' + obj.data['userId'],
+          url: '/api/private/v1/user/' + obj.data['id'],
           dataType: 'json',
           type: 'delete',
           success: function(result) {
             layer.close(loading);
-            if (result.success) {
-              layer.msg(result.msg, {
+            if (result.meta.status === 'success') {
+              layer.msg(result.meta.message, {
                 icon: 1,
                 time: 1000,
               }, function() {
                 obj.del();
               });
             } else {
-              layer.msg(result.msg, {
+              layer.msg(result.meta.message, {
                 icon: 2,
                 time: 1000,
               });
@@ -227,6 +253,9 @@
     };
 
     window.batchRemove = function(obj) {
+
+      layer.msg('暂不支持批量删除')
+      return
 
       var checkIds = common.checkField(obj, 'userId');
 
