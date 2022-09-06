@@ -203,7 +203,10 @@ def init_databases():
     for user in user_list:
         user_obj = UserORM()
         for key, value in user.items():
-            setattr(user_obj, key, value)
+            if key == "password":
+                user_obj.password = value
+            else:
+                setattr(user_obj, key, value)
         user_obj.role.append(RoleORM.query.get(user_obj.id))
         db.session.add(user_obj)
     db.session.commit()

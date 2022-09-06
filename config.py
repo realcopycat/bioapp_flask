@@ -21,3 +21,4 @@ REDIS_PORT = 6379
 
 
 JWT_SECRET_KEY = "pear_admin_flask_jwt_token"
+JWT_TOKEN_LOCATION = ["headers", "cookies"]
