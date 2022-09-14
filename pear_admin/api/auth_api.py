@@ -40,13 +40,13 @@ def login_api():
             },
         }
     )
-    set_access_cookies(response, access_token)
+    response.set_cookie("is_login", "true")
     return response
 
 
 @jwt_required()
 def logout_api():
-    response = jsonify(
+    response = make_response(
         {
             "meta": {
                 "status": "success",
@@ -54,5 +54,5 @@ def logout_api():
             },
         }
     )
-    unset_access_cookies(response)
+    response.set_cookie("is_login", "")
     return response

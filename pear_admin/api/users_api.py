@@ -2,6 +2,7 @@
 from typing import List
 
 from flask.views import MethodView
+from flask_jwt_extended import jwt_required
 from flask_pydantic import validate
 from flask_sqlalchemy import Pagination
 from pydantic import BaseModel, Field
@@ -62,6 +63,7 @@ class UserApi(MethodView):
             },
         }
 
+    @jwt_required()
     @validate()
     def post(self, body: UserModel):
         user = UserORM()
@@ -81,12 +83,13 @@ class UserApi(MethodView):
             },
         }
 
+    @jwt_required()
     @validate()
     def put(self, uid, body: UserModel):
         user = UserORM.query.get(uid)
         user.username = body.username
         user.nickname = body.nickname
-        if body.username:
+        if body.password:
             user.password = body.password
         user.mobile = body.mobile
         user.email = body.email
@@ -102,6 +105,7 @@ class UserApi(MethodView):
             },
         }
 
+    @jwt_required()
     def delete(self, uid):
         if uid in [1, 2, 3]:
             return {

@@ -88,6 +88,19 @@
 <script src=/static/component/layui/layui.js></script>
 <script src=/static/component/pear/pear.js></script>
 <script>
+  async function edit_user(uid, data) {
+    const options = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+      },
+      body: JSON.stringify(data),
+    };
+    const response = await fetch(`/api/private/v1/user/${uid}`, options);
+    return await response.json();
+  }
+
   layui.use(['form', 'jquery'], function() {
     let form = layui.form;
     let $ = layui.jquery;
@@ -103,32 +116,29 @@
       , 'education': '{{user.education}}',
     });
 
+    // form 表单提交不能用 async
     form.on('submit(user-save)', function(data) {
       let send_data = Object.assign({}, data.field);
       send_data.state = send_data.state === 'on';
-      $.ajax({
-        url: `/api/private/v1/user/${data.field.uid}`,
-        data: JSON.stringify(send_data),
-        dataType: 'json',
-        contentType: 'application/json',
-        type: 'put',
-        success: function(result) {
-          if (result.meta.status === 'success') {
-            layer.msg(result.meta.message, {
-              icon: 1,
-              time: 1000,
-            }, function() {
-              parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-              parent.layui.table.reload('user-table');
-            });
-          } else {
-            layer.msg(result.meta.message, {
-              icon: 2,
-              time: 1000,
-            });
-          }
-        },
+
+      let response = edit_user(data.field.uid, send_data);
+      response.then(function(result) {
+        if (result.meta.status === 'success') {
+          layer.msg(result.meta.message, {
+            icon: 1,
+            time: 1000,
+          }, function() {
+            parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+            parent.layui.table.reload('user-table');
+          });
+        } else {
+          layer.msg(result.meta.message, {
+            icon: 2,
+            time: 1000,
+          });
+        }
       });
+
       return false;
     });
   });

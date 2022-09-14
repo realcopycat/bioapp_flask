@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from flask import Blueprint, abort, redirect, render_template, request
-from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 
 from pear_admin.models import UserORM
 
@@ -8,10 +7,9 @@ view_bp = Blueprint("views", __name__)
 
 
 @view_bp.get("/")
-@jwt_required(optional=True)
 def index():
-    current_identity = get_jwt_identity()
-    if not current_identity:
+    is_login = request.cookies.get("is_login")
+    if is_login != "true":
         return redirect("/login")
     return render_template("index.html")
 

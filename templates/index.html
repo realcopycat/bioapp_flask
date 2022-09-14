@@ -68,7 +68,6 @@
       },
       body: JSON.stringify({}),
     };
-    console.log(options);
     const response = await fetch('/api/private/v1/logout', options);
     return await response.json();
   }
@@ -88,9 +87,6 @@
 
       const res_data = await logout();
       if (res_data?.meta && res_data?.meta.status === 'success') {
-        localStorage.setItem('jwt', '');
-        document.cookie = 'access_token_cookie=; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-        document.cookie = 'csrf_access_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT';
         popup.success('注销成功', function() {
           location.href = '/login';
         });
