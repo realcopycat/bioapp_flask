@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, abort, redirect, render_template, request
+from io import BytesIO
+from random import choices
+
+from captcha.image import ImageCaptcha
+from flask import Blueprint, abort, make_response, redirect, render_template, request
+from PIL import Image
 
 from pear_admin.models import UserORM
 
@@ -17,6 +22,23 @@ def index():
 @view_bp.get("/login")
 def login():
     return render_template("login.html")
+
+
+@view_bp.get("/login/captcha")
+def gen_captcha_image():
+    """生成验证码"""
+    content = "0123456789"
+    image = ImageCaptcha()
+    # 获取字符串
+    code = "".join(choices(content, k=4))
+    # 生成图像
+    image = Image.open(image.generate(code))
+    out = BytesIO()
+    image.save(out, "png")
+    out.seek(0)
+    resp = make_response(out.read())
+    resp.content_type = "image/png"
+    return resp
 
 
 @view_bp.get("/dashboard")

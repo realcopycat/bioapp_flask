@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
-from flask import jsonify, make_response, request
-from flask_jwt_extended import (
-    create_access_token,
-    jwt_required,
-    set_access_cookies,
-    unset_access_cookies,
-)
+from flask import make_response, request
+from flask_jwt_extended import create_access_token, jwt_required
 
 from pear_admin.models import UserORM
 
