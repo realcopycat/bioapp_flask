@@ -6,7 +6,8 @@ from captcha.image import ImageCaptcha
 from flask import Blueprint, abort, make_response, redirect, render_template, request
 from PIL import Image
 
-from pear_admin.models import UserORM
+from pear_admin.extensions import redis_client
+from pear_admin.models import RoleORM, UserORM
 
 view_bp = Blueprint("views", __name__)
 
@@ -26,11 +27,14 @@ def login():
 
 @view_bp.get("/login/captcha")
 def gen_captcha_image():
+    image_code = request.args.get("image_code")
+
     """生成验证码"""
     content = "0123456789"
     image = ImageCaptcha()
     # 获取字符串
     code = "".join(choices(content, k=4))
+    redis_client.set(f"image_code_{image_code}", code, ex=60)
     # 生成图像
     image = Image.open(image.generate(code))
     out = BytesIO()
@@ -67,7 +71,23 @@ def user_edit_view():
 
 @view_bp.get("/role")
 def role_view():
-    return render_template("system/role.html")
+    return render_template("system/role/role.html")
+
+
+@view_bp.get("/role/add")
+def role_add_view():
+    return render_template("system/role/role_add.html")
+
+
+@view_bp.get("/role/edit/<int:rid>")
+def role_edit_view(rid):
+    role = RoleORM.query.get(rid)
+    return render_template("system/role/role_edit.html", role=role)
+
+
+@view_bp.get("/role/permission/<pid>")
+def role_permission_view(pid):
+    return render_template("system/role/role_permission.html")
 
 
 @view_bp.get("/permission")

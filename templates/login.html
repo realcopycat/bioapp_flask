@@ -15,15 +15,15 @@
         <div class=desc>明 湖 区 最 具 影 响 力 的 设 计 规 范 之 一</div>
     </div>
     <div class=layui-form-item>
-        <input name="username" value="admin" placeholder="账 户 : admin" lay-verify=required hover class=layui-input>
+        <input name="username" value="admin" placeholder="账 户 : admin" lay-verify=username hover class=layui-input>
     </div>
     <div class=layui-form-item>
-        <input name="password" value="123456" placeholder="密 码 : admin" lay-verify=required hover class=layui-input>
+        <input name="password" value="123456" placeholder="密 码 : admin" lay-verify=password hover class=layui-input>
     </div>
     <div class=layui-form-item>
-        <input name="captcha_code" value="vbjfq" placeholder="验证码 :" hover lay-verify=required
+        <input name="captcha_code" value="" placeholder="验证码 :" hover lay-verify=captcha_code
                class="code layui-input layui-input-inline">
-        <img src=/login/captcha class=codeImage></div>
+        <img src="" class=codeImage id=codeImage></div>
     <div class=layui-form-item>
         <input type=checkbox title=记住密码 lay-skin=primary checked>
     </div>
@@ -45,17 +45,57 @@
     return await response.json();
   }
 
+  function generateUUID() {
+    var d = new Date().getTime();
+    if (window.performance && typeof window.performance.now === 'function') {
+      d += performance.now(); //use high-precision timer if available
+    }
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,
+        function(c) {
+          var r = (d + Math.random() * 16) % 16 | 0;
+          d = Math.floor(d / 16);
+          return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+    return uuid;
+  }
+
   layui.use(['form', 'button', 'popup'], function() {
     var form = layui.form;
     var button = layui.button;
     var popup = layui.popup;
+    var $ = layui.$;
+    let imageCodeId = '';
+    let captchaPath = '/login/captcha';
+
+    /// 验证登录验证
+    form.verify({
+      username: function(value, item) { //value：表单的值、item：表单的DOM对象
+        if (!new RegExp('^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$').test(value)) {
+          return '用户名不能有特殊字符';
+        }
+        if (/(^\_)|(\__)|(\_+$)/.test(value)) {
+          return '用户名首尾不能出现下划线\'_\'';
+        }
+        if (/^\d+\d+\d$/.test(value)) {
+          return '用户名不能全为数字';
+        }
+      }
+      , password: [
+        /^[\S]{6,12}$/
+        , '密码必须6到12位，且不能出现空格',
+      ]
+      , captcha_code: [
+        /^[\S]{4}$/
+        , '验证码必须4位，且不能出现空格',
+      ],
+    });
 
     // 登 录 提 交
     form.on('submit(login)', async function(form) {
-      /// 验证 do something
 
       /// 登录 do something
-      const res_data = await login(form.field);
+      let data = Object.assign({'image_code': imageCodeId}, form.field)
+      const res_data = await login(data);
 
       if (res_data.meta.status === 'success') {
         localStorage.setItem('jwt', res_data.result.access_token);
@@ -74,6 +114,19 @@
       }
       return false;
     });
+
+    // 点击按钮更新验证码
+    $('#codeImage').click(function() {
+      // 浏览器要发起图片验证码请求/image_code?imageCodeId=xxxxx
+      update_captcha_image();
+    });
+
+    function update_captcha_image() {
+      imageCodeId = generateUUID();
+      document.getElementById('codeImage').src = captchaPath + '?image_code=' + imageCodeId;
+    }
+
+    update_captcha_image();
   });
 </script>
 </body>
