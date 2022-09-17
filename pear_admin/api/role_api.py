@@ -2,6 +2,7 @@
 
 from typing import List
 
+from flask import request
 from flask.views import MethodView
 from flask_jwt_extended import jwt_required
 from flask_pydantic import validate
@@ -9,7 +10,7 @@ from flask_sqlalchemy import Pagination
 from pydantic import BaseModel, Field
 
 from pear_admin.extensions import db
-from pear_admin.models import RoleORM
+from pear_admin.models import PermissionORM, RoleORM
 
 
 class RoleApi(MethodView):
@@ -98,3 +99,19 @@ class RoleApi(MethodView):
                 "status": "success",
             },
         }
+
+
+def role_permission(rid):
+    role: RoleORM = RoleORM.query.get(rid)
+    ids: str = request.json.get("ids")
+    per_arr = PermissionORM.query.filter(PermissionORM.id.in_(ids.split(","))).all()
+    role.permission = []
+    role.permission = per_arr
+    role.permission_ids = ids
+    db.session.commit()
+    return {
+        "meta": {
+            "message": "修改角色权限成功",
+            "status": "success",
+        },
+    }

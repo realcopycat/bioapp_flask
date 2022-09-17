@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset=UTF-8>
+    <title>角色权限授予</title>
+    <link rel=stylesheet href=/static/component/pear/css/pear.css>
+</head>
+<body>
+<form class=layui-form lay-filter=user-form>
+    <div class=mainBox>
+        <div class=main-container>
+            <div id="test12" class="demo-tree-more"></div>
+        </div>
+    </div>
+    <div class=bottom>
+        <div class=button-container>
+            <button type=submit class="pear-btn pear-btn-primary pear-btn-sm" lay-submit lay-filter=permission-save>
+                <i class="layui-icon layui-icon-ok"></i> 提交
+            </button>
+            <button type=reset class="pear-btn pear-btn-sm">
+                <i class="layui-icon layui-icon-refresh"></i> 重置
+            </button>
+        </div>
+    </div>
+</form>
+<script src=/static/component/layui/layui.js></script>
+<script src=/static/component/pear/pear.js></script>
+<script>
+  function isArray(obj) {
+    return obj && typeof (obj) === 'object' && obj.constructor === Array;
+  }
+
+  function get_ids(items) {
+    if (isArray(items)) {
+      let rets = []
+      for (let item of items) {
+        rets.push(item.id)
+        if(item?.children){
+          rets.push(...get_ids(item.children))
+        }
+      }
+      return rets
+    }
+  }
+
+  layui.use(['form', 'jquery'], function() {
+    let form = layui.form;
+    let tree = layui.tree;
+    let $ = layui.jquery;
+    let data = {{ data | safe }};
+
+    //基本演示
+    tree.render({
+      elem: '#test12'
+      , data: data
+      , showCheckbox: true  //是否显示复选框
+      , id: 'demoId1',
+    });
+
+    form.on('submit(permission-save)', function(data) {
+      //获得选中的节点
+      var checkData = tree.getChecked('demoId1');
+      let ids = get_ids(checkData);
+      console.log(ids.join(','));
+
+      $.ajax({
+        url: `/api/private/v1/role/permission/{{ role.id }}`,
+        data: JSON.stringify({'ids': ids.join(',')}),
+        dataType: 'json',
+        contentType: 'application/json',
+        type: 'put',
+        success: function(result) {
+          if (result.meta.status === 'success') {
+            layer.msg(result.meta.message, {
+              icon: 1,
+              time: 1000,
+            }, function() {
+              parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+              parent.layui.table.reload('role-table');
+            });
+          } else {
+            layer.msg(result.meta.message, {
+              icon: 2,
+              time: 1000,
+            });
+          }
+        },
+      });
+      return false;
+    });
+  });
+</script>
+</body>
+</html>

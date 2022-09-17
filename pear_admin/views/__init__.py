@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
+import copy
+import json
+from collections import OrderedDict
 from io import BytesIO
 from random import choices
+from typing import List
 
 from captcha.image import ImageCaptcha
 from flask import Blueprint, abort, make_response, redirect, render_template, request
 from PIL import Image
 
 from pear_admin.extensions import redis_client
-from pear_admin.models import RoleORM, UserORM
+from pear_admin.models import PermissionORM, RoleORM, UserORM
 
 view_bp = Blueprint("views", __name__)
 
@@ -87,7 +91,36 @@ def role_edit_view(rid):
 
 @view_bp.get("/role/permission/<pid>")
 def role_permission_view(pid):
-    return render_template("system/role/role_permission.html")
+    role: RoleORM = RoleORM.query.get(pid)
+    # 获取权限列表的 id
+    check_powers_list = [rp.id for rp in role.permission]
+
+    permission: List[PermissionORM] = PermissionORM.query.all()
+    permission_list = [
+        {
+            "id": item.id,
+            "title": item.name,
+            "sort": item.sort or 0,
+            "pid": item.pid,
+            "spread": True,
+            "checked": True if item.id in check_powers_list else False,
+        }
+        for item in permission
+    ]
+    permission_list.sort(key=lambda x: x["id"], reverse=True)
+    menu_dict = OrderedDict()
+    for _dict in permission_list:
+        if _dict["id"] in menu_dict.keys():
+            _dict["children"] = copy.deepcopy(menu_dict[_dict["id"]])
+            _dict["children"].sort(key=lambda item: item["sort"])
+            del menu_dict[_dict["id"]]
+
+        if _dict["pid"] not in menu_dict:
+            menu_dict[_dict["pid"]] = [_dict]
+        else:
+            menu_dict[_dict["pid"]].append(_dict)
+    data = json.dumps(menu_dict.get(0))
+    return render_template("system/role/role_permission.html", data=data, role=role)
 
 
 @view_bp.get("/permission")

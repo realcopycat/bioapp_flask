@@ -4,7 +4,7 @@ from flask import Blueprint, Flask
 from pear_admin.utils.functools import register_rest_api_func
 
 from .auth_api import login_api, logout_api
-from .role_api import RoleApi
+from .role_api import RoleApi, role_permission
 from .users_api import UserApi
 
 
@@ -14,4 +14,7 @@ def register_api(app: Flask):
     api.add_url_rule("/logout", view_func=logout_api, methods=["POST"])
     register_rest_api_func(api, UserApi, "user_api", "/user/", pk="uid")
     register_rest_api_func(api, RoleApi, "role_api", "/role/", pk="rid")
+    api.add_url_rule(
+        "/role/permission/<int:rid>", view_func=role_permission, methods=["PUT"]
+    )
     app.register_blueprint(api)
