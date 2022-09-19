@@ -5,7 +5,7 @@ from pear_admin.utils.functools import register_rest_api_func
 
 from .auth_api import login_api, logout_api
 from .role_api import RoleApi, role_permission
-from .users_api import UserApi
+from .users_api import UserApi, user_role
 
 
 def register_api(app: Flask):
@@ -13,6 +13,9 @@ def register_api(app: Flask):
     api.add_url_rule("/login", view_func=login_api, methods=["POST"])
     api.add_url_rule("/logout", view_func=logout_api, methods=["POST"])
     register_rest_api_func(api, UserApi, "user_api", "/user/", pk="uid")
+    api.add_url_rule(
+        "/user/role/<int:uid>", view_func=user_role, methods=["GET", "PUT"]
+    )
     register_rest_api_func(api, RoleApi, "role_api", "/role/", pk="rid")
     api.add_url_rule(
         "/role/permission/<int:rid>", view_func=role_permission, methods=["PUT"]

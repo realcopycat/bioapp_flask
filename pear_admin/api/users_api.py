@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import List
 
+from flask import request
 from flask.views import MethodView
 from flask_jwt_extended import jwt_required
 from flask_pydantic import validate
@@ -8,7 +9,7 @@ from flask_sqlalchemy import Pagination
 from pydantic import BaseModel, Field
 
 from pear_admin.extensions import db
-from pear_admin.models import UserORM
+from pear_admin.models import RoleORM, UserORM
 
 
 class UserApi(MethodView):
@@ -74,6 +75,13 @@ class UserApi(MethodView):
         user.email = body.email
         user.gender = body.gender
         user.education = body.education
+
+        role_ids: str = request.json.get("role_ids")
+        role_ids_arr = role_ids.split(",")
+        roles = RoleORM.query.filter(RoleORM.id.in_(role_ids_arr)).all()
+        user.role = []
+        user.role = roles
+
         db.session.add(user)
         db.session.commit()
         return {
@@ -98,6 +106,13 @@ class UserApi(MethodView):
         user.state = body.state
         db.session.add(user)
         db.session.commit()
+
+        role_ids: str = request.json.get("role_ids")
+        role_ids_arr = role_ids.split(",")
+        roles = RoleORM.query.filter(RoleORM.id.in_(role_ids_arr)).all()
+        user.role = []
+        user.role = roles
+        db.session.commit()
         return {
             "meta": {
                 "message": "修改数据成功",
@@ -120,6 +135,31 @@ class UserApi(MethodView):
         return {
             "meta": {
                 "message": "删除数据成功",
+                "status": "success",
+            },
+        }
+
+
+def user_role(uid):
+    roles: List[RoleORM] = RoleORM.query.all()
+    if request.method == "GET":
+        user: UserORM = UserORM.query.get(uid)
+        rets = []
+        for role in roles:
+            if role in user.role:
+                rets.append(
+                    {
+                        "id": role.id,
+                        "name": role.name,
+                        "desc": role.desc,
+                    }
+                )
+        return {
+            "result": {
+                "user_role": rets,
+            },
+            "meta": {
+                "message": "查询数据成功",
                 "status": "success",
             },
         }

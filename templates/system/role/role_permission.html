@@ -32,14 +32,14 @@
 
   function get_ids(items) {
     if (isArray(items)) {
-      let rets = []
+      let rets = [];
       for (let item of items) {
-        rets.push(item.id)
-        if(item?.children){
-          rets.push(...get_ids(item.children))
+        rets.push(item.id);
+        if (item?.children) {
+          rets.push(...get_ids(item.children));
         }
       }
-      return rets
+      return rets;
     }
   }
 
@@ -61,7 +61,6 @@
       //获得选中的节点
       var checkData = tree.getChecked('demoId1');
       let ids = get_ids(checkData);
-      console.log(ids.join(','));
 
       $.ajax({
         url: `/api/private/v1/role/permission/{{ role.id }}`,

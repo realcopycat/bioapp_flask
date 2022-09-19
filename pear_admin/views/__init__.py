@@ -61,7 +61,8 @@ def user_view():
 
 @view_bp.get("/user/add")
 def user_add_view():
-    return render_template("system/user/user_add.html")
+    roles: List[RoleORM] = RoleORM.query.all()
+    return render_template("system/user/user_add.html", roles=roles)
 
 
 @view_bp.get("/user/edit")
@@ -69,8 +70,9 @@ def user_edit_view():
     uid = request.args.get("uid", type=int)
     if not uid:
         return abort(404)
-    user = UserORM.query.get(uid)
-    return render_template("system/user/user_edit.html", user=user)
+    user: UserORM = UserORM.query.get(uid)
+    roles: List[RoleORM] = RoleORM.query.all()
+    return render_template("system/user/user_edit.html", user=user, roles=roles)
 
 
 @view_bp.get("/role")

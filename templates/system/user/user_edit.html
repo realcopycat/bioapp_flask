@@ -72,6 +72,18 @@
                            placeholder=请输入标题 class=layui-input>
                 </div>
             </div>
+            <div class=layui-form-item>
+                <label class=layui-form-label>用户角色</label>
+                <div class=layui-input-block>
+                    {% for role in roles %}
+                        <input {% if role in user.role %}
+                            checked
+                        {% endif %}
+                            value="{{ role.id }}" title="{{ role.name }}" type="checkbox"
+                            name="role_ids" lay-skin="primary">
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
     <div class=bottom>
@@ -119,6 +131,13 @@
     // form 表单提交不能用 async
     form.on('submit(user-save)', function(data) {
       let send_data = Object.assign({}, data.field);
+      let role_ids = '';
+      $('input[type=checkbox]:checked').each(function() {
+        role_ids += $(this).val() + ',';
+      });
+      role_ids = role_ids.substr(0, role_ids.length - 1);
+      send_data.role_ids = role_ids;
+
       send_data.state = send_data.state === 'on';
 
       let response = edit_user(data.field.uid, send_data);
