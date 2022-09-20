@@ -101,6 +101,157 @@ class RoleApi(MethodView):
         }
 
 
+class PermissionApi(MethodView):
+    class PermissionModel(BaseModel):
+        pid: int
+        name: str
+        code: str
+        level: str
+        path: str
+        open_type: str
+        icon: str
+        sort: int
+
+    def get(self, pid):
+        if pid:
+            permission: PermissionORM = PermissionORM.query.get(pid)
+            return {
+                "result": {
+                    "permission": [
+                        {
+                            "id": permission.id,
+                            "pid": permission.pid,
+                            "level": permission.level,
+                            "name": permission.name,
+                            "code": permission.code,
+                            "icon": permission.icon,
+                            "path": permission.path,
+                            "open_type": permission.open_type,
+                            "enable": permission.enable,
+                            "sort": permission.sort,
+                        }
+                    ],
+                },
+                "meta": {
+                    "message": "查询数据成功",
+                    "status": "success",
+                },
+            }
+        else:
+            permission_list: List[PermissionORM] = PermissionORM.query.all()
+            _type = request.args.get("type")
+            if _type == "dtree":
+                rets = [
+                    {
+                        "id": permission.id,
+                        "pid": permission.pid,
+                        "level": permission.level,
+                        "name": permission.name,
+                        "code": permission.code,
+                        "icon": permission.icon,
+                        "path": permission.path,
+                        "open_type": permission.open_type,
+                        "enable": permission.enable,
+                        "sort": permission.sort or 0,
+                    }
+                    for permission in permission_list
+                ]
+                rets.append({"id": 0, "name": "顶级权限", "pid": -1})
+                return {
+                    "status": {"code": 200, "message": "默认"},  # 兼容 dtree
+                    "data": rets,
+                }
+            return {
+                "result": {
+                    "permission_list": [
+                        {
+                            "id": permission.id,
+                            "pid": permission.pid,
+                            "level": permission.level,
+                            "name": permission.name,
+                            "code": permission.code,
+                            "icon": permission.icon,
+                            "path": permission.path,
+                            "open_type": permission.open_type,
+                            "enable": permission.enable,
+                            "sort": permission.sort or 0,
+                        }
+                        for permission in permission_list
+                    ],
+                },
+                "meta": {
+                    "message": "查询数据成功",
+                    "status": "success",
+                },
+            }
+
+    @validate()
+    def post(self, body: PermissionModel):
+        permission = PermissionORM()
+        permission.pid = body.pid
+        permission.name = body.name
+        permission.code = body.code
+        permission.level = body.level
+        permission.path = body.path
+        permission.open_type = body.open_type
+        permission.icon = body.icon
+        permission.sort = body.sort
+        db.session.add(permission)
+        db.session.commit()
+        return {
+            "meta": {
+                "message": "添加数据成功",
+                "status": "success",
+            },
+        }
+
+    @validate()
+    def put(self, pid, body: PermissionModel):
+        if pid <= 11:
+            return {
+                "meta": {
+                    "message": "默认数据禁止修改",
+                    "status": "fail",
+                },
+            }
+        permission = PermissionORM.query.get(pid)
+        permission.pid = body.pid
+        permission.name = body.name
+        permission.code = body.code
+        permission.level = body.level
+        permission.path = body.path
+        permission.open_type = body.open_type
+        permission.icon = body.icon
+        permission.sort = body.sort
+        db.session.add(permission)
+        db.session.commit()
+        return {
+            "meta": {
+                "message": "修改权限数据成功",
+                "status": "success",
+            },
+        }
+
+    @validate()
+    def delete(self, pid):
+        if pid <= 11:
+            return {
+                "meta": {
+                    "message": "测试数据禁止删除",
+                    "status": "fail",
+                },
+            }
+        permission = PermissionORM.query.get(pid)
+        db.session.delete(permission)
+        db.session.commit()
+        return {
+            "meta": {
+                "message": "删除权限数据成功",
+                "status": "success",
+            },
+        }
+
+
 def role_permission(rid):
     role: RoleORM = RoleORM.query.get(rid)
     ids: str = request.json.get("ids")
@@ -112,6 +263,19 @@ def role_permission(rid):
     return {
         "meta": {
             "message": "修改角色权限成功",
+            "status": "success",
+        },
+    }
+
+
+def permission_enable(pid):
+    permission = PermissionORM.query.get(pid)
+    enable = request.json.get("enable")
+    permission.enable = enable
+    db.session.commit()
+    return {
+        "meta": {
+            "message": "修改权限状态成功",
             "status": "success",
         },
     }

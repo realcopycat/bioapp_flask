@@ -127,7 +127,25 @@ def role_permission_view(pid):
 
 @view_bp.get("/permission")
 def permission_view():
-    return render_template("system/permission.html")
+    return render_template("system/permission/permission.html")
+
+
+@view_bp.get("/permission/add")
+def permission_add_view():
+    return render_template("system/permission/permission_add.html")
+
+
+@view_bp.get("/permission/edit/<int:pid>")
+def permission_edit_view(pid):
+    permission = PermissionORM.query.filter_by(id=pid).first()
+    icon = str(permission.icon).split()
+    if len(icon) == 2:
+        icon = icon[1]
+    else:
+        icon = None
+    return render_template(
+        "system/permission/permission_edit.html", permission=permission, icon=icon
+    )
 
 
 @view_bp.get("/department")

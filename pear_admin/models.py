@@ -104,8 +104,8 @@ class PermissionORM(db.Model):
     icon = db.Column(db.String(128), comment="图标")
     path = db.Column(db.String(30), comment="访问路径")
     open_type = db.Column(db.String(30), comment="打开方式")
-    enable = db.Column(db.Boolean, comment="是否开启")
-    sort = db.Column(db.Integer, comment="排序")
+    enable = db.Column(db.Boolean, comment="是否开启", default=True)
+    sort = db.Column(db.Integer, comment="排序", default=0)
 
     pid = db.Column(db.Integer, db.ForeignKey("ums_permission.id"), comment="父类编号")
     parent = db.relationship("PermissionORM", remote_side=[id])  # 自关联
