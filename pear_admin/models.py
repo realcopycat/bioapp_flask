@@ -12,7 +12,7 @@ user_role = db.Table(
     db.Column("role_id", db.Integer, db.ForeignKey("ums_role.id"), comment="角色编号"),
 )
 
-role_power = db.Table(
+role_permission = db.Table(
     "ums_role_permission",  # 中间表名称
     db.Column("id", db.Integer, primary_key=True, autoincrement=True, comment="标识"),
     db.Column(
@@ -58,6 +58,10 @@ class UserORM(db.Model):
         secondary="ums_user_role",
         backref=db.backref("user"),
         lazy="dynamic",
+    )
+
+    department_id = db.Column(
+        db.Integer, db.ForeignKey("ums_department.id"), default=1, comment="部门id"
     )
 
     @property
@@ -109,3 +113,17 @@ class PermissionORM(db.Model):
 
     pid = db.Column(db.Integer, db.ForeignKey("ums_permission.id"), comment="父类编号")
     parent = db.relationship("PermissionORM", remote_side=[id])  # 自关联
+
+
+class DepartmentORM(db.Model):
+    __tablename__ = "ums_department"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), comment="部门名称")
+    leader = db.Column(db.String(50), comment="负责人")
+    phone = db.Column(db.String(20), comment="联系方式")
+    address = db.Column(db.String(255), comment="详细地址")
+
+    users = db.relationship("UserORM", backref="department")
+
+    pid = db.Column(db.Integer, db.ForeignKey("ums_department.id"))
+    parent = db.relationship("DepartmentORM", remote_side=[id], backref="child")  # 自关联

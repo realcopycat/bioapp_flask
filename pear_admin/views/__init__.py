@@ -150,7 +150,7 @@ def permission_edit_view(pid):
 
 @view_bp.get("/department")
 def department_view():
-    return render_template("system/department.html")
+    return render_template("system/department/department.html")
 
 
 @view_bp.get("/sys_log")

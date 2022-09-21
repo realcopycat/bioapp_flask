@@ -127,6 +127,11 @@
     }
 
     update_captcha_image();
+
+    // 定时器，定时更新验证码
+    setInterval(function() {
+      document.getElementById('captchaImage').src = captchaPath + '?' + Math.random();
+    }, 60 * 1000);
   });
 </script>
 </body>

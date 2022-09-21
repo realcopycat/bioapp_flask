@@ -113,7 +113,8 @@
       ficon: ['1', '-1'], // 设定一级图标样式。0表示方形加减图标，8表示小圆点图标
       icon: ['0', '2'], // 设定二级图标样式。0表示文件夹图标，5表示叶子图标
       method: 'get',
-      url: '/static/admin/data/organizationtree.json',
+      {#url: '/static/admin/data/organizationtree.json',#}
+      url: '/api/private/v1/department/',
     });
 
     table.render({
@@ -138,8 +139,7 @@
         var $div = obj.dom;
         DTree.clickSpread($div); //调用内置函数展开节点
       } else {
-        layer.msg('叶子节点就不展开了,刷新右侧列表');
-        table.reload('organization-table');
+        table.reload('organization-table', {where: {'id': obj.param.nodeId}});
       }
     });
 

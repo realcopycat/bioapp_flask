@@ -11,39 +11,8 @@
 		"children": [{
 				"id": "001",
 				"title": "杭州市",
-				"last": false,
-				"parentId": "0",
-				"children": [{
-						"id": "001001",
-						"title": "软件部",
-						"last": true,
-						"parentId": "001"
-					},
-					{
-						"id": "001002",
-						"title": "销售部",
-						"last": true,
-						"parentId": "001"
-					},
-					{
-						"id": "001003",
-						"title": "财务部",
-						"last": true,
-						"parentId": "001"
-					},
-					{
-						"id": "001004",
-						"title": "人事部",
-						"last": true,
-						"parentId": "001"
-					},
-					{
-						"id": "001005",
-						"title": "行政部",
-						"last": true,
-						"parentId": "001"
-					}
-				]
+				"last": true,
+				"parentId": "0"
 			},
 			{
 				"id": "002",

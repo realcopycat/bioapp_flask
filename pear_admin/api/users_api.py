@@ -9,7 +9,7 @@ from flask_sqlalchemy import Pagination
 from pydantic import BaseModel, Field
 
 from pear_admin.extensions import db
-from pear_admin.models import RoleORM, UserORM
+from pear_admin.models import DepartmentORM, RoleORM, UserORM
 
 
 class UserApi(MethodView):
@@ -138,6 +138,35 @@ class UserApi(MethodView):
                 "status": "success",
             },
         }
+
+
+def get_dept_tree(department: DepartmentORM):
+    child_list = department.child
+    current = {
+        "id": department.id,
+        "real_id": department.id,
+        "title": department.name,
+        "last": False if child_list else True,
+        "parentId": department.pid,
+    }
+    if child_list:
+        current["children"] = [
+            get_dept_tree(sub_department) for sub_department in child_list
+        ]
+    return current
+
+
+class DepartmentApi(MethodView):
+    def get(self, did):
+        if did is None:
+            department = DepartmentORM.query.get(1)
+            result = get_dept_tree(department)
+
+            # return result
+            return {
+                "status": {"code": 200, "message": "操作成功"},
+                "data": [result],
+            }
 
 
 def user_role(uid):

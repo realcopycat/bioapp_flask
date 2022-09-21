@@ -4,7 +4,7 @@ from flask import Flask
 import config
 from pear_admin.api import register_api
 from pear_admin.extensions import db, register_extensions
-from pear_admin.models import PermissionORM, RoleORM, UserORM
+from pear_admin.models import DepartmentORM, PermissionORM, RoleORM, UserORM
 from pear_admin.views import view_bp
 
 
@@ -25,6 +25,38 @@ def create_app() -> Flask:
 def init_databases():
     db.drop_all()
     db.create_all()
+
+    department_list = [
+        {"id": 1, "name": "济南总部", "pid": 0},
+        {"id": 2, "name": "杭州市", "pid": 1},
+        {"id": 3, "name": "软件部", "pid": 2},
+        {"id": 4, "name": "销售部", "pid": 2},
+        {"id": 5, "name": "财务部", "pid": 2},
+        {"id": 6, "name": "人事部", "pid": 2},
+        {"id": 7, "name": "行政部", "pid": 2},
+        {"id": 8, "name": "湖北省", "pid": 1},
+        {"id": 9, "name": "武汉市", "pid": 8},
+        {"id": 10, "name": "黄冈市", "pid": 8},
+        {"id": 11, "name": "潜江市", "pid": 8},
+        {"id": 12, "name": "荆州市", "pid": 8},
+        {"id": 13, "name": "襄阳市", "pid": 8},
+        {"id": 14, "name": "广东省", "pid": 1},
+        {"id": 15, "name": "广州市", "pid": 14},
+        {"id": 16, "name": "天河区", "pid": 15},
+        {"id": 17, "name": "花都区", "pid": 15},
+        {"id": 18, "name": "深圳市", "pid": 14},
+        {"id": 19, "name": "中山市", "pid": 14},
+        {"id": 20, "name": "东莞市", "pid": 14},
+        {"id": 21, "name": "珠海市", "pid": 14},
+        {"id": 22, "name": "韶关市", "pid": 14},
+    ]
+    for department in department_list:
+        department_obj = DepartmentORM()
+        for key, value in department.items():
+            setattr(department_obj, key, value)
+        db.session.add(department_obj)
+    db.session.commit()
+
     permission_list = [
         {
             "id": 1,

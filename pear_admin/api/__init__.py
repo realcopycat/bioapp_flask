@@ -5,7 +5,7 @@ from pear_admin.utils.functools import register_rest_api_func
 
 from .auth_api import login_api, logout_api
 from .role_api import PermissionApi, RoleApi, permission_enable, role_permission
-from .users_api import UserApi, user_role
+from .users_api import DepartmentApi, UserApi, user_role
 
 
 def register_api(app: Flask):
@@ -25,5 +25,8 @@ def register_api(app: Flask):
     )
     api.add_url_rule(
         "/permission/<int:pid>/enable", view_func=permission_enable, methods=["PUT"]
+    )
+    register_rest_api_func(
+        api, DepartmentApi, "department_api", "/department/", pk="did"
     )
     app.register_blueprint(api)
