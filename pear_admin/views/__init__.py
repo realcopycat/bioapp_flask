@@ -11,7 +11,7 @@ from flask import Blueprint, abort, make_response, redirect, render_template, re
 from PIL import Image
 
 from pear_admin.extensions import redis_client
-from pear_admin.models import PermissionORM, RoleORM, UserORM
+from pear_admin.models import DepartmentORM, PermissionORM, RoleORM, UserORM
 
 view_bp = Blueprint("views", __name__)
 
@@ -153,6 +153,20 @@ def department_view():
     return render_template("system/department/department.html")
 
 
+@view_bp.get("/department/add")
+def department_add_view():
+    return render_template("system/department/department_add.html")
+
+
+@view_bp.get("/department/edit")
+def department_edit_view():
+    did = request.args.get("did", type=int)
+    department: DepartmentORM = DepartmentORM.query.get(did)
+    return render_template(
+        "system/department/department_edit.html", department=department
+    )
+
+
 @view_bp.get("/sys_log")
 def sys_log_view():
     return render_template("system/sys_log.html")
@@ -170,4 +184,9 @@ def echarts_column_view():
 
 @view_bp.get("/person")
 def person_view():
-    return render_template("system/person.html")
+    return render_template("system/person/person.html")
+
+
+@view_bp.get("/person/profile")
+def person_profile_view():
+    return render_template("system/person/profile.html")

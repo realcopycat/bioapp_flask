@@ -151,8 +151,6 @@
         $ = layui.jquery,
         convert = layui.convert;
 
-    let MODULE_PATH = 'operate/';
-
     var image = new Image();
     image.src = '/static/admin/images/avatar.jpg';
     image.onload = function() {
@@ -170,7 +168,7 @@
         title: '更换图片',
         shade: 0.1,
         area: ['900px', '500px'],
-        content: MODULE_PATH + 'profile.html',
+        content: '/person/profile',
         btn: ['确定', '取消'],
         yes: function(index, layero) {
           window['layui-layer-iframe' + index].submitForm();

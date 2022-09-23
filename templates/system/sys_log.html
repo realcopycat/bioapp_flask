@@ -48,7 +48,7 @@
         {title: '访问时间', field: 'createTime', align: 'center'},
         {title: '操作人', field: 'operateName', align: 'center'},
         {
-          title: '访问状态', toolbar: () => {
+          title: '访问状态', toolbar: (d) => {
           if (d.success == true){
             return `<button class="pear-btn pear-btn-sm pear-btn-success" lay-event="edit"><i class="layui-icon layui-icon-ok"></i> 成功</button>`
           }else if(d.success == false){

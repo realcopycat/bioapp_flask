@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import typing as t
 from typing import List
 
 from flask import request
@@ -9,7 +10,7 @@ from flask_sqlalchemy import Pagination
 from pydantic import BaseModel, Field
 
 from pear_admin.extensions import db
-from pear_admin.models import DepartmentORM, RoleORM, UserORM
+from pear_admin.models import DepartmentORM, PermissionORM, RoleORM, UserORM
 
 
 class UserApi(MethodView):
@@ -140,33 +141,143 @@ class UserApi(MethodView):
         }
 
 
-def get_dept_tree(department: DepartmentORM):
-    child_list = department.child
-    current = {
-        "id": department.id,
-        "real_id": department.id,
-        "title": department.name,
-        "last": False if child_list else True,
-        "parentId": department.pid,
-    }
-    if child_list:
-        current["children"] = [
-            get_dept_tree(sub_department) for sub_department in child_list
-        ]
-    return current
-
-
 class DepartmentApi(MethodView):
-    def get(self, did):
-        if did is None:
-            department = DepartmentORM.query.get(1)
-            result = get_dept_tree(department)
+    class PaginationModel(BaseModel):
+        query: str = Field(default="")
+        page: int = Field(default=1)
+        pre_page: int = Field(default=10)
 
-            # return result
-            return {
-                "status": {"code": 200, "message": "操作成功"},
-                "data": [result],
+    class DepartmentModel(BaseModel):
+        address: t.Optional[str]
+        name: t.Optional[str]
+        email: t.Optional[str]
+        leader: t.Optional[str]
+        pid: t.Optional[int]
+        phone: t.Optional[str]
+        sort: t.Optional[int]
+        enable: t.Optional[bool]
+
+    @validate()
+    def get(self, did, query: PaginationModel):
+        if did:
+            dept = DepartmentORM.query.filter_by(id=did).first()
+            dept_data = {
+                "id": dept.id,
+                "name": dept.name,
+                "leader": dept.leader,
+                "email": dept.email,
+                "phone": dept.phone,
+                "status": dept.status,
+                "sort": dept.sort,
+                "address": dept.address,
             }
+            return dict(success=True, message="ok", dept=dept_data)
+        else:
+            department_list: List[DepartmentORM] = DepartmentORM.query.all()
+
+            action = request.args.get("action")
+            if action == "tree":
+                return {
+                    "status": {"code": 200, "message": "默认"},
+                    "data": [
+                        {
+                            "id": department.id,
+                            "pid": department.pid,
+                            "name": department.name,
+                            "sort": department.sort,
+                            "leader": department.leader,
+                            "phone": department.phone,
+                            "email": department.email,
+                            "enable": department.enable,
+                        }
+                        for department in department_list
+                    ],
+                }
+
+            return {
+                "result": {
+                    "department_list": [
+                        {
+                            "id": department.id,
+                            "pid": department.pid,
+                            "name": department.name,
+                            "sort": department.sort,
+                            "leader": department.leader,
+                            "phone": department.phone,
+                            "email": department.email,
+                            "enable": department.enable,
+                        }
+                        for department in department_list
+                    ],
+                },
+                "meta": {
+                    "message": "查询数据成功",
+                    "status": "success",
+                },
+            }
+
+    @validate()
+    def post(self, body: DepartmentModel):
+        department = DepartmentORM(
+            pid=body.pid,
+            name=body.name,
+            sort=body.sort,
+            leader=body.leader,
+            phone=body.phone,
+            email=body.email,
+            enable=body.enable,
+            address=body.address,
+        )
+        db.session.add(department)
+        db.session.commit()
+
+        return {
+            "meta": {
+                "message": "新增部门数据成功",
+                "status": "success",
+            },
+        }
+
+    @validate()
+    def put(self, did, body: DepartmentModel):
+        department_data = {
+            "pid": body.pid,
+            "name": body.name,
+            "sort": body.sort,
+            "leader": body.leader,
+            "phone": body.phone,
+            "email": body.email,
+            "enable": body.enable,
+            "address": body.address,
+        }
+        ret = DepartmentORM.query.filter_by(id=did).update(department_data)
+        db.session.commit()
+        return {
+            "meta": {
+                "message": "更新部门数据成功",
+                "status": "success",
+            },
+        }
+
+    def delete(self, did):
+        ret = DepartmentORM.query.filter_by(id=did).delete()
+        UserORM.query.filter(UserORM.department_id == did).update(
+            {"department_id": None}
+        )
+        db.session.commit()
+        if ret:
+            return {
+                "meta": {
+                    "message": "删除部门数据成功",
+                    "status": "success",
+                },
+            }
+        return {
+            "meta": {
+                "message": "删除部门数据失败",
+                "status": "fail",
+            },
+        }
 
 
 def user_role(uid):
