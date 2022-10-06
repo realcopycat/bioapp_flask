@@ -9,8 +9,7 @@ from flask_pydantic import validate
 from flask_sqlalchemy import Pagination
 from pydantic import BaseModel, Field
 
-from pear_admin.extensions import db
-from pear_admin.models import DepartmentORM, PermissionORM, RoleORM, UserORM
+from pear_admin.models import DepartmentORM, RoleORM, UserORM
 
 
 class UserApi(MethodView):
@@ -45,19 +44,7 @@ class UserApi(MethodView):
                 "total": paginate.total,
                 "page": paginate.page,
                 "pre_page": paginate.per_page,
-                "users": [
-                    {
-                        "id": item.id,
-                        "username": item.username,
-                        "nickname": item.nickname,
-                        "gender": item.gender,
-                        "mobile": item.mobile,
-                        "email": item.email,
-                        "state": item.state,
-                        "create_at": item.create_at,
-                    }
-                    for item in items
-                ],
+                "users": [item.json() for item in items],
             },
             "meta": {
                 "message": "查询数据成功",
@@ -82,9 +69,7 @@ class UserApi(MethodView):
         roles = RoleORM.query.filter(RoleORM.id.in_(role_ids_arr)).all()
         user.role = []
         user.role = roles
-
-        db.session.add(user)
-        db.session.commit()
+        user.save_to_db()
         return {
             "meta": {
                 "message": "添加数据成功",
@@ -95,7 +80,7 @@ class UserApi(MethodView):
     @jwt_required()
     @validate()
     def put(self, uid, body: UserModel):
-        user = UserORM.query.get(uid)
+        user = UserORM.find_by_id(uid)
         user.username = body.username
         user.nickname = body.nickname
         if body.password:
@@ -105,15 +90,14 @@ class UserApi(MethodView):
         user.gender = body.gender
         user.education = body.education
         user.state = body.state
-        db.session.add(user)
-        db.session.commit()
+        user.save_to_db()
 
         role_ids: str = request.json.get("role_ids")
         role_ids_arr = role_ids.split(",")
         roles = RoleORM.query.filter(RoleORM.id.in_(role_ids_arr)).all()
         user.role = []
         user.role = roles
-        db.session.commit()
+        user.save_to_db()
         return {
             "meta": {
                 "message": "修改数据成功",
@@ -130,9 +114,8 @@ class UserApi(MethodView):
                     "status": "fail",
                 },
             }
-        user = UserORM.query.get(uid)
-        db.session.delete(user)
-        db.session.commit()
+        user: UserORM = UserORM.find_by_id(uid)
+        user.delete_from_db()
         return {
             "meta": {
                 "message": "删除数据成功",
@@ -160,18 +143,8 @@ class DepartmentApi(MethodView):
     @validate()
     def get(self, did, query: PaginationModel):
         if did:
-            dept = DepartmentORM.query.filter_by(id=did).first()
-            dept_data = {
-                "id": dept.id,
-                "name": dept.name,
-                "leader": dept.leader,
-                "email": dept.email,
-                "phone": dept.phone,
-                "status": dept.status,
-                "sort": dept.sort,
-                "address": dept.address,
-            }
-            return dict(success=True, message="ok", dept=dept_data)
+            dept: DepartmentORM = DepartmentORM.find_by_id(did)
+            return dict(success=True, message="ok", dept=dept.json())
         else:
             department_list: List[DepartmentORM] = DepartmentORM.query.all()
 
@@ -179,35 +152,13 @@ class DepartmentApi(MethodView):
             if action == "tree":
                 return {
                     "status": {"code": 200, "message": "默认"},
-                    "data": [
-                        {
-                            "id": department.id,
-                            "pid": department.pid,
-                            "name": department.name,
-                            "sort": department.sort,
-                            "leader": department.leader,
-                            "phone": department.phone,
-                            "email": department.email,
-                            "enable": department.enable,
-                        }
-                        for department in department_list
-                    ],
+                    "data": [department.json() for department in department_list],
                 }
 
             return {
                 "result": {
                     "department_list": [
-                        {
-                            "id": department.id,
-                            "pid": department.pid,
-                            "name": department.name,
-                            "sort": department.sort,
-                            "leader": department.leader,
-                            "phone": department.phone,
-                            "email": department.email,
-                            "enable": department.enable,
-                        }
-                        for department in department_list
+                        department.json() for department in department_list
                     ],
                 },
                 "meta": {
@@ -228,8 +179,7 @@ class DepartmentApi(MethodView):
             enable=body.enable,
             address=body.address,
         )
-        db.session.add(department)
-        db.session.commit()
+        department.save_to_db()
 
         return {
             "meta": {
@@ -250,8 +200,8 @@ class DepartmentApi(MethodView):
             "enable": body.enable,
             "address": body.address,
         }
-        ret = DepartmentORM.query.filter_by(id=did).update(department_data)
-        db.session.commit()
+        ret: DepartmentORM = DepartmentORM.find_by_id(did).update(department_data)
+        ret.save_to_db()
         return {
             "meta": {
                 "message": "更新部门数据成功",
@@ -260,11 +210,8 @@ class DepartmentApi(MethodView):
         }
 
     def delete(self, did):
-        ret = DepartmentORM.query.filter_by(id=did).delete()
-        UserORM.query.filter(UserORM.department_id == did).update(
-            {"department_id": None}
-        )
-        db.session.commit()
+        ret: DepartmentORM = DepartmentORM.find_by_id(did)
+        ret.delete_from_db()
         if ret:
             return {
                 "meta": {
@@ -283,7 +230,7 @@ class DepartmentApi(MethodView):
 def user_role(uid):
     roles: List[RoleORM] = RoleORM.query.all()
     if request.method == "GET":
-        user: UserORM = UserORM.query.get(uid)
+        user: UserORM = UserORM.find_by_id(uid)
         rets = []
         for role in roles:
             if role in user.role:

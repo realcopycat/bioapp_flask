@@ -39,14 +39,7 @@ class RoleApi(MethodView):
                 "total": paginate.total,
                 "page": paginate.page,
                 "pre_page": paginate.per_page,
-                "roles": [
-                    {
-                        "id": item.id,
-                        "name": item.name,
-                        "desc": item.desc,
-                    }
-                    for item in items
-                ],
+                "roles": [item.json() for item in items],
             },
             "meta": {
                 "message": "查询数据成功",
@@ -59,8 +52,7 @@ class RoleApi(MethodView):
         role = RoleORM()
         role.name = body.name
         role.desc = body.desc
-        db.session.add(role)
-        db.session.commit()
+        role.save_to_db()
         return {
             "meta": {
                 "message": "添加数据成功",
@@ -73,7 +65,7 @@ class RoleApi(MethodView):
         role = RoleORM.query.get(rid)
         role.name = body.name
         role.desc = body.desc
-        db.session.commit()
+        role.save_to_db()
         return {
             "meta": {
                 "message": "编辑角色数据成功",
@@ -90,9 +82,8 @@ class RoleApi(MethodView):
                     "status": "fail",
                 },
             }
-        role = RoleORM.query.get(rid)
-        db.session.delete(role)
-        db.session.commit()
+        role: RoleORM = RoleORM.find_by_id(rid)
+        role.delete_from_db()
         return {
             "meta": {
                 "message": "删除角色数据成功",
@@ -141,21 +132,7 @@ class PermissionApi(MethodView):
             permission_list: List[PermissionORM] = PermissionORM.query.all()
             _type = request.args.get("type")
             if _type == "dtree":
-                rets = [
-                    {
-                        "id": permission.id,
-                        "pid": permission.pid,
-                        "level": permission.level,
-                        "name": permission.name,
-                        "code": permission.code,
-                        "icon": permission.icon,
-                        "path": permission.path,
-                        "open_type": permission.open_type,
-                        "enable": permission.enable,
-                        "sort": permission.sort or 0,
-                    }
-                    for permission in permission_list
-                ]
+                rets = [permission.json() for permission in permission_list]
                 rets.append({"id": 0, "name": "顶级权限", "pid": -1})
                 return {
                     "status": {"code": 200, "message": "默认"},  # 兼容 dtree
@@ -164,19 +141,7 @@ class PermissionApi(MethodView):
             return {
                 "result": {
                     "permission_list": [
-                        {
-                            "id": permission.id,
-                            "pid": permission.pid,
-                            "level": permission.level,
-                            "name": permission.name,
-                            "code": permission.code,
-                            "icon": permission.icon,
-                            "path": permission.path,
-                            "open_type": permission.open_type,
-                            "enable": permission.enable,
-                            "sort": permission.sort or 0,
-                        }
-                        for permission in permission_list
+                        permission.json() for permission in permission_list
                     ],
                 },
                 "meta": {
@@ -196,8 +161,7 @@ class PermissionApi(MethodView):
         permission.open_type = body.open_type
         permission.icon = body.icon
         permission.sort = body.sort
-        db.session.add(permission)
-        db.session.commit()
+        permission.save_to_db()
         return {
             "meta": {
                 "message": "添加数据成功",
@@ -223,8 +187,7 @@ class PermissionApi(MethodView):
         permission.open_type = body.open_type
         permission.icon = body.icon
         permission.sort = body.sort
-        db.session.add(permission)
-        db.session.commit()
+        permission.save_to_db()
         return {
             "meta": {
                 "message": "修改权限数据成功",
@@ -241,9 +204,8 @@ class PermissionApi(MethodView):
                     "status": "fail",
                 },
             }
-        permission = PermissionORM.query.get(pid)
-        db.session.delete(permission)
-        db.session.commit()
+        permission: PermissionORM = PermissionORM.query.get(pid)
+        permission.delete_from_db()
         return {
             "meta": {
                 "message": "删除权限数据成功",
@@ -259,7 +221,7 @@ def role_permission(rid):
     role.permission = []
     role.permission = per_arr
     role.permission_ids = ids
-    db.session.commit()
+    role.save_to_db()
     return {
         "meta": {
             "message": "修改角色权限成功",
@@ -269,10 +231,10 @@ def role_permission(rid):
 
 
 def permission_enable(pid):
-    permission = PermissionORM.query.get(pid)
+    permission = PermissionORM.find_by_id(pid)
     enable = request.json.get("enable")
     permission.enable = enable
-    db.session.commit()
+    permission.save_to_db()
     return {
         "meta": {
             "message": "修改权限状态成功",

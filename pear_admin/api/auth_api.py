@@ -12,10 +12,9 @@ def login_api():
     captcha_code = request.json.get("captcha_code")
     image_code = request.json.get("image_code")
 
-    user: UserORM = UserORM.query.filter(UserORM.username == username).one_or_none()
+    user: UserORM = UserORM.find_by_username(username)
 
     code = redis_client.get(f"image_code_{image_code}")
-    print(code, captcha_code)
     if code != captcha_code:
         return {
             "meta": {
