@@ -1,2 +1,19 @@
-/** pear-admin-v3.10.0 MIT License By http://www.pearadmin.com/ */
- ;"use strict";layui.define(["jquery","element"],(function(e){layui.jquery,layui.element;e("context",new function(){this.put=function(e,t){localStorage.setItem(e,t)},this.get=function(e){return localStorage.getItem(e)}})}));
+layui.define(['jquery', 'element'], function(exports) {
+	"use strict";
+
+	var MOD_NAME = 'context',
+		$ = layui.jquery,
+		element = layui.element;
+
+	var context = new function() {
+		
+		this.put = function(key,value){
+			localStorage.setItem(key,value);
+		}
+
+		this.get = function(key){
+			return localStorage.getItem(key);
+		}
+	}
+	exports(MOD_NAME, context);
+});

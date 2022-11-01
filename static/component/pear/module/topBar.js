@@ -1,2 +1,13 @@
-/** pear-admin-v3.10.0 MIT License By http://www.pearadmin.com/ */
- ;"use strict";layui.define(["jquery","element","util"],(function(e){layui.jquery;var i=layui.util;layui.element;e("topBar",new function(){i.fixbar({})})}));
+layui.define(['jquery', 'element','util'], function(exports) {
+	"use strict";
+
+	var MOD_NAME = 'topBar',
+		$ = layui.jquery,
+		util = layui.util,
+		element = layui.element;
+	
+	var topBar = new function() {
+		util.fixbar({});
+	}
+	exports(MOD_NAME,topBar);
+});

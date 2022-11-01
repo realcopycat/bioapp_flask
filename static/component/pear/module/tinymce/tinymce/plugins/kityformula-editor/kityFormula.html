@@ -1,4 +1,12 @@
-<!DOCTYPE html><html><head><meta charset=utf-8><meta name=renderer content=webkit><link rel=stylesheet href=kityformula/assets/styles/base.css><link rel=stylesheet href=kityformula/assets/styles/ui.css><link rel=stylesheet href=kityformula/assets/styles/scrollbar.css><style>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <link rel="stylesheet" href="kityformula/assets/styles/base.css">
+    <link rel="stylesheet" href="kityformula/assets/styles/ui.css">
+    <link rel="stylesheet" href="kityformula/assets/styles/scrollbar.css">
+    <style>
         html, body {
             padding: 0;
             margin: 0;
@@ -28,7 +36,22 @@
             margin: 0;
         }
 
-    </style><title></title></head><body><div id=kfEditorContainer class=kf-editor><div id=tips class=tips>sorry! Beta版本仅支持IE9及以上版本的浏览器，正式版本将会支持低版本浏览器，谢谢您的关注！</div></div><script src=kityformula/js/jquery-3.6.0.min.js></script><script src=kityformula/js/kitygraph.all.js></script><script src=kityformula/js/kity-formula-render.all.js></script><script src=kityformula/js/kity-formula-parser.all.min.js></script><script src=kityformula/js/kityformula-editor.all.min.js></script><script>
+    </style>
+    <title></title>
+</head>
+<body>
+    <div id="kfEditorContainer" class="kf-editor">
+        <div id="tips" class="tips">
+            sorry! Beta版本仅支持IE9及以上版本的浏览器，正式版本将会支持低版本浏览器，谢谢您的关注！
+        </div>
+    </div>
+
+<script src="kityformula/js/jquery-3.6.0.min.js"></script>
+<script src="kityformula/js/kitygraph.all.js"></script>
+<script src="kityformula/js/kity-formula-render.all.js"></script>
+<script src="kityformula/js/kity-formula-parser.all.min.js"></script>
+<script src="kityformula/js/kityformula-editor.all.min.js"></script>
+<script>
 //获取url地址栏传参
 function getQueryVariable(variable){
     var query = window.location.search.substring(1);
@@ -83,4 +106,6 @@ jQuery( function ($) {
         $( "#tips").css( "padding", "10px" );
     }
 } );
-</script></body></html>
+</script>
+</body>
+</html>

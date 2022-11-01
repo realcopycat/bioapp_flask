@@ -1,2 +1,253 @@
-/** pear-admin-v3.10.0 MIT License By http://www.pearadmin.com/ */
- ;"use strict";layui.define(["layer","table"],(function(e){var t=layui.jquery,a=layui.layer,i=layui.table,r=[],n={render:function(e){e.method=e.method?e.method:"GET",n.checkParam(e)&&(e.data?n.init(e,e.data):"post"===e.method||"POST"===e.method?t.post(e.url,e.where,(function(t){e.parseData&&(t=e.parseData(t),e.data=t.data),n.init(e,t.data)})):t.get(e.url,e.where,(function(t){e.parseData&&(t=e.parseData(t),e.data=t.data),n.init(e,t.data)})))},init:function(e,a){for(var l=[],o=e.done,d=a,s=0;s<d.length;s++){var c=d[s];c.id||(c.id=c[e.treeIdName]),c.pid||(c.pid=c[e.treePidName])}!function e(t,a){for(var i=0;i<a.length;i++)if(a[i].pid==t){var r=l.length;r>0&&l[r-1].id==t&&(l[r-1].isParent=!0),l.push(a[i]),e(a[i].id,a)}}(e.treeSpid,d),e.prevUrl=e.url,e.url=void 0,e.data=l,e.page={count:e.data.length,limit:e.data.length},e.cols[0][e.treeColIndex].templet=function(t){for(var a=t.id,i=t.pid,r=t.isParent,o=n.getEmptyNum(i,l),d="",s=0;s<o;s++)d+='<span class="treeTable-empty"></span>';return d+=r?'<i class="layui-icon layui-icon-triangle-d"></i> <i class="layui-icon layui-icon-layer"></i>':'<i class="layui-icon layui-icon-file"></i>','<span class="treeTable-icon open" lay-tid="'+a+'" lay-tpid="'+i+'" lay-ttype="'+(r?"dir":"file")+'">'+(d+="&nbsp;&nbsp;")+t[e.cols[0][e.treeColIndex].field]+"</span>"},e.done=function(a,i,r){t(e.elem).next().addClass("treeTable"),t(".treeTable .layui-table-page").css("display","none"),t(e.elem).next().attr("treeLinkage",e.treeLinkage),e.treeDefaultClose&&n.foldAll(e.elem),o&&o(a,i,r)},i.render(e),r.some((function(t){return t.key===e.elem}))||r.push({key:e.elem,value:e})},reload:function(e){r.forEach((function(a){a.key===e&&(t(e).next().remove(),a.value.data=void 0,a.value.url=a.value.prevUrl,n.render(a.value))}))},search:function(e,i){var r=t(e).next(".treeTable").find(".layui-table-body tbody tr td");if(!i)return r.css("background-color","transparent"),void a.msg("请输入关键字",{icon:5});var l=0;r.each((function(){t(this).css("background-color","transparent"),t(this).text().indexOf(i)>=0&&(t(this).css("background-color","rgba(250,230,160,0.5)"),0==l&&(t("body,html").stop(!0),t("body,html").animate({scrollTop:t(this).offset().top-150},500)),l++)})),0==l?a.msg("没有匹配结果",{icon:5}):n.expandAll(e)},getEmptyNum:function(e,t){var a,i=0;if(!e)return i;for(var r=0;r<t.length;r++)if(e==t[r].id){i+=1,a=t[r].pid;break}return i+n.getEmptyNum(a,t)},toggleRows:function(e,a){if("file"!=e.attr("lay-ttype")){var i=e.attr("lay-tid"),r=e.hasClass("open");r?e.removeClass("open"):e.addClass("open"),e.closest("tbody").find("tr").each((function(){var e=t(this).find(".treeTable-icon"),n=e.attr("lay-tpid"),l=e.attr("lay-ttype"),o=e.hasClass("open");i==n&&(r?(t(this).hide(),"dir"==l&&o==r&&e.trigger("click")):(t(this).show(),a&&"dir"==l&&o==r&&e.trigger("click")))}))}},checkParam:function(e){return e.treeSpid||0==e.treeSpid?e.treeIdName?e.treePidName?!(!e.treeColIndex&&0!=e.treeColIndex)||(a.msg("参数treeColIndex不能为空",{icon:5}),!1):(a.msg("参数treePidName不能为空",{icon:5}),!1):(a.msg("参数treeIdName不能为空",{icon:5}),!1):(a.msg("参数treeSpid不能为空",{icon:5}),!1)},expandAll:function(e){t(e).next(".treeTable").find(".layui-table-body tbody tr").each((function(){var e=t(this).find(".treeTable-icon"),a=e.attr("lay-ttype"),i=e.hasClass("open");"dir"!=a||i||e.trigger("click")}))},foldAll:function(e){t(e).next(".treeTable").find(".layui-table-body tbody tr").each((function(){var e=t(this).find(".treeTable-icon"),a=e.attr("lay-ttype"),i=e.hasClass("open");"dir"==a&&i&&e.trigger("click")}))}};t("body").on("click",".treeTable .treeTable-icon",(function(){"true"==t(this).parents(".treeTable").attr("treeLinkage")?n.toggleRows(t(this),!0):n.toggleRows(t(this),!1)})),e("treetable",n)}));
+layui.define(['layer', 'table'], function (exports) {
+    var $ = layui.jquery;
+    var layer = layui.layer;
+    var table = layui.table;
+
+    var instances = [];
+
+    var treetable = {
+
+        render: function (param) {
+            param.method = param.method?param.method:"GET";
+            if (!treetable.checkParam(param)) {
+                return;
+            }
+            if (param.data) {
+                treetable.init(param, param.data);
+            } else {
+                if(param.method === 'post' || param.method === 'POST') {
+                    $.post(param.url, param.where, function(res){
+                        if(param.parseData){
+                            res = param.parseData(res);
+                            param.data = res.data;
+                        }
+                        treetable.init(param, res.data);
+                    });
+                } else {
+                    $.get(param.url, param.where, function(res){
+                        if(param.parseData){
+                            res = param.parseData(res);
+                            param.data = res.data;
+                        }
+                        treetable.init(param, res.data);
+                    });
+                }
+            }
+        },
+        // 渲染表格
+        init: function (param, data) {
+            var mData = [];
+            var doneCallback = param.done;
+            var tNodes = data;
+            for (var i = 0; i < tNodes.length; i++) {
+                var tt = tNodes[i];
+                if (!tt.id) {
+                    tt.id = tt[param.treeIdName];
+                }
+                if (!tt.pid) {
+                    tt.pid = tt[param.treePidName];
+                }
+            }
+
+            var sort = function (s_pid, data) {
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].pid == s_pid) {
+                        var len = mData.length;
+                        if (len > 0 && mData[len - 1].id == s_pid) {
+                            mData[len - 1].isParent = true;
+                        }
+                        mData.push(data[i]);
+                        sort(data[i].id, data);
+                    }
+                }
+            };
+            sort(param.treeSpid, tNodes);
+
+            param.prevUrl = param.url;
+            param.url = undefined;
+            param.data = mData;
+            param.page = {
+                count: param.data.length,
+                limit: param.data.length
+            };
+            param.cols[0][param.treeColIndex].templet = function (d) {
+                var mId = d.id;
+                var mPid = d.pid;
+                var isDir = d.isParent;
+                var emptyNum = treetable.getEmptyNum(mPid, mData);
+                var iconHtml = '';
+                for (var i = 0; i < emptyNum; i++) {
+                    iconHtml += '<span class="treeTable-empty"></span>';
+                }
+                if (isDir) {
+                    iconHtml += '<i class="layui-icon layui-icon-triangle-d"></i> <i class="layui-icon layui-icon-layer"></i>';
+                } else {
+                    iconHtml += '<i class="layui-icon layui-icon-file"></i>';
+                }
+                iconHtml += '&nbsp;&nbsp;';
+                var ttype = isDir ? 'dir' : 'file';
+                var vg = '<span class="treeTable-icon open" lay-tid="' + mId + '" lay-tpid="' + mPid + '" lay-ttype="' + ttype + '">';
+                return vg + iconHtml + d[param.cols[0][param.treeColIndex].field] + '</span>'
+            };
+
+            param.done = function (res, curr, count) {
+                $(param.elem).next().addClass('treeTable');
+                $('.treeTable .layui-table-page').css('display', 'none');
+                $(param.elem).next().attr('treeLinkage', param.treeLinkage);
+                if (param.treeDefaultClose) {
+                    treetable.foldAll(param.elem);
+                }
+                if (doneCallback) {
+                    doneCallback(res, curr, count);
+                }
+            };
+
+            // 渲染表格
+            table.render(param);
+            var result = instances.some(item=>item.key===param.elem);
+            if(!result){
+                instances.push({key:param.elem,value:param});
+            }
+        },
+        reload: function(elem) {
+            instances.forEach(function(item){
+                if(item.key === elem) {
+                    $(elem).next().remove();
+                    item.value.data = undefined;
+                    item.value.url = item.value.prevUrl;
+                    treetable.render(item.value);
+                }
+            })
+        },
+		search: function(elem,keyword) {
+			var $tds = $(elem).next('.treeTable').find('.layui-table-body tbody tr td');
+			if (!keyword) {
+			    $tds.css('background-color', 'transparent');
+			    layer.msg("请输入关键字", {icon: 5});
+			    return;
+			}
+			var searchCount = 0;
+			$tds.each(function () {
+			    $(this).css('background-color', 'transparent');
+			    if ($(this).text().indexOf(keyword) >= 0) {
+			        $(this).css('background-color', 'rgba(250,230,160,0.5)');
+			        if (searchCount == 0) {
+			            $('body,html').stop(true);
+			            $('body,html').animate({scrollTop: $(this).offset().top - 150}, 500);
+			        }
+			        searchCount++;
+			    }
+			});
+			if (searchCount == 0) {
+			    layer.msg("没有匹配结果", {icon: 5});
+			} else {
+			    treetable.expandAll(elem);
+			}
+		},
+        getEmptyNum: function (pid, data) {
+            var num = 0;
+            if (!pid) {
+                return num;
+            }
+            var tPid;
+            for (var i = 0; i < data.length; i++) {
+                if (pid == data[i].id) {
+                    num += 1;
+                    tPid = data[i].pid;
+                    break;
+                }
+            }
+            return num + treetable.getEmptyNum(tPid, data);
+        },
+        // 展开/折叠行
+        toggleRows: function ($dom, linkage) {
+            var type = $dom.attr('lay-ttype');
+            if ('file' == type) {
+                return;
+            }
+            var mId = $dom.attr('lay-tid');
+            var isOpen = $dom.hasClass('open');
+            if (isOpen) {
+                $dom.removeClass('open');
+            } else {
+                $dom.addClass('open');
+            }
+            $dom.closest('tbody').find('tr').each(function () {
+                var $ti = $(this).find('.treeTable-icon');
+                var pid = $ti.attr('lay-tpid');
+                var ttype = $ti.attr('lay-ttype');
+                var tOpen = $ti.hasClass('open');
+                if (mId == pid) {
+                    if (isOpen) {
+                        $(this).hide();
+                        if ('dir' == ttype && tOpen == isOpen) {
+                            $ti.trigger('click');
+                        }
+                    } else {
+                        $(this).show();
+                        if (linkage && 'dir' == ttype && tOpen == isOpen) {
+                            $ti.trigger('click');
+                        }
+                    }
+                }
+            });
+        },
+        // 检查参数
+        checkParam: function (param) {
+            if (!param.treeSpid && param.treeSpid != 0) {
+                layer.msg('参数treeSpid不能为空', {icon: 5});
+                return false;
+            }
+
+            if (!param.treeIdName) {
+                layer.msg('参数treeIdName不能为空', {icon: 5});
+                return false;
+            }
+
+            if (!param.treePidName) {
+                layer.msg('参数treePidName不能为空', {icon: 5});
+                return false;
+            }
+
+            if (!param.treeColIndex && param.treeColIndex != 0) {
+                layer.msg('参数treeColIndex不能为空', {icon: 5});
+                return false;
+            }
+            return true;
+        },
+        // 展开所有
+        expandAll: function (dom) {
+            $(dom).next('.treeTable').find('.layui-table-body tbody tr').each(function () {
+                var $ti = $(this).find('.treeTable-icon');
+                var ttype = $ti.attr('lay-ttype');
+                var tOpen = $ti.hasClass('open');
+                if ('dir' == ttype && !tOpen) {
+                    $ti.trigger('click');
+                }
+            });
+        },
+        // 折叠所有
+        foldAll: function (dom) {
+            $(dom).next('.treeTable').find('.layui-table-body tbody tr').each(function () {
+                var $ti = $(this).find('.treeTable-icon');
+                var ttype = $ti.attr('lay-ttype');
+                var tOpen = $ti.hasClass('open');
+                if ('dir' == ttype && tOpen) {
+                    $ti.trigger('click');
+                }
+            });
+        }
+    };
+
+    // 给图标列绑定事件
+    $('body').on('click', '.treeTable .treeTable-icon', function () {
+        var treeLinkage = $(this).parents('.treeTable').attr('treeLinkage');
+        if ('true' == treeLinkage) {
+            treetable.toggleRows($(this), true);
+        } else {
+            treetable.toggleRows($(this), false);
+        }
+    });
+
+    exports('treetable', treetable);
+});

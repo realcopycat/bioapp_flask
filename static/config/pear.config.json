@@ -1,7 +1,7 @@
 {
 	"logo": {
 		"title": "Pear Admin",
-		"image": "admin/images/logo.png"
+		"image": "/static/admin/images/logo.png"
 	},
 	"menu": {
 		"data": "/static/admin/data/menu.json",

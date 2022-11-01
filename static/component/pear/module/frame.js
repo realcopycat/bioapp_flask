@@ -1,2 +1,67 @@
-/** pear-admin-v3.10.0 MIT License By http://www.pearadmin.com/ */
- ;"use strict";layui.define(["jquery","element"],(function(e){var t=layui.jquery,i=function(e){this.option=e};function n(e,i,n){n&&(i.css({display:"block"}),t(e).on("load",(function(){i.fadeOut(1e3)})))}i.prototype.render=function(e){var n={elem:e.elem,url:e.url,title:e.title,width:e.width,height:e.height,done:e.done?e.done:function(){console.log("菜单渲染成功")}};return function(e){var i="<iframe class='pear-frame-content' style='width:100%;height:100%;'  scrolling='auto' frameborder='0' src='"+e.url+"' allowfullscreen='true' ></iframe>",n='<div class="pear-frame-loading"><div class="ball-loader"><span></span><span></span><span></span><span></span></div></div></div>';t("#"+e.elem).html("<div class='pear-frame'>"+i+n+"</div>")}(n),t("#"+n.elem).width(n.width),t("#"+n.elem).height(n.height),new i(n)},i.prototype.changePage=function(e,i){var a=t("#"+this.option.elem).find(".pear-frame-loading"),r=t("#"+this.option.elem+" iframe");r.attr("src",e),n(r,a,i)},i.prototype.changePageByElement=function(e,i,a,r){var o=t("#"+e).find(".pear-frame-loading"),l=t("#"+e+" iframe");l.attr("src",i),t("#"+e+" .title").html(a),n(l,o,r)},i.prototype.refresh=function(e){var i=t("#"+this.option.elem).find(".pear-frame-loading"),a=t("#"+this.option.elem).find("iframe");a.attr("src",a.attr("src")),n(a,i,e)},e("frame",new i)}));
+layui.define(['jquery', 'element'], function (exports) {
+	"use strict";
+
+	var $ = layui.jquery;
+
+	var pearFrame = function (opt) {
+		this.option = opt;
+	};
+
+	pearFrame.prototype.render = function (opt) {
+		var option = {
+			elem: opt.elem,
+			url: opt.url,
+			title: opt.title,
+			width: opt.width,
+			height: opt.height,
+			done: opt.done ? opt.done : function () { console.log("菜单渲染成功"); }
+		}
+		createFrameHTML(option);
+		$("#" + option.elem).width(option.width);
+		$("#" + option.elem).height(option.height);
+		return new pearFrame(option);
+	}
+
+	pearFrame.prototype.changePage = function (url, loading) {
+		var $frameLoad = $("#" + this.option.elem).find(".pear-frame-loading");
+		var $frame = $("#" + this.option.elem + " iframe");
+		$frame.attr("src", url);
+		frameLoading($frame, $frameLoad, loading);
+	}
+
+	pearFrame.prototype.changePageByElement = function (elem, url, title, loading) {
+		var $frameLoad = $("#" + elem).find(".pear-frame-loading");
+		var $frame = $("#" + elem + " iframe");
+		$frame.attr("src", url);
+		$("#" + elem + " .title").html(title);
+		frameLoading($frame, $frameLoad, loading);
+	}
+
+	pearFrame.prototype.refresh = function (loading) {
+		var $frameLoad = $("#" + this.option.elem).find(".pear-frame-loading");
+		var $frame = $("#" + this.option.elem).find("iframe");
+		$frame.attr("src", $frame.attr("src"));
+		frameLoading($frame, $frameLoad, loading);
+	}
+
+	function createFrameHTML(option) {
+		var iframe = "<iframe class='pear-frame-content' style='width:100%;height:100%;'  scrolling='auto' frameborder='0' src='" + option.url + "' allowfullscreen='true' ></iframe>";
+		var loading = '<div class="pear-frame-loading">' +
+			'<div class="ball-loader">' +
+			'<span></span><span></span><span></span><span></span>' +
+			'</div>' +
+			'</div></div>';
+		$("#" + option.elem).html("<div class='pear-frame'>" + iframe + loading + "</div>");
+	}
+
+	function frameLoading(iframeEl, loadingEl, isLoading) {
+		if (isLoading) {
+			loadingEl.css({ display: 'block' });
+			$(iframeEl).on('load', function () {
+				loadingEl.fadeOut(1000);
+			})
+		}
+	}
+
+	exports('frame', new pearFrame());
+});

@@ -1,68 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset=utf-8>
-    <meta name=viewport content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>Login Page</title>
-    <link rel=stylesheet href=/static/component/pear/css/pear.css>
-    <link rel=stylesheet href=/static/admin/css/other/login.css>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>登录</title>
+    <!-- 样 式 文 件 -->
+    <link rel="stylesheet" href="/static/component/pear/css/pear.css"/>
+    <link rel="stylesheet" href="/static/admin/css/other/login.css"/>
 </head>
-<body background=/static/admin/images/background.svg style="background-size: cover;">
-<form class=layui-form action=javascript:void(0);>
-    <div class=layui-form-item>
-        <img class=logo src=/static/admin/images/logo.png>
-        <div class=title>Pear Admin</div>
-        <div class=desc>明 湖 区 最 具 影 响 力 的 设 计 规 范 之 一</div>
+<!-- 代 码 结 构 -->
+<body background="/static/admin/images/background.svg" style="background-size: cover;">
+<form class="layui-form" action="javascript:void(0);">
+    <div class="layui-form-item">
+        <img class="logo" src="/static/admin/images/logo.png"/>
+        <div class="title">Pear Admin</div>
+        <div class="desc">
+            明 湖 区 最 具 影 响 力 的 设 计 规 范 之 一
+        </div>
     </div>
-    <div class=layui-form-item>
-        <input name="username" value="admin" placeholder="账 户 : admin" lay-verify=username hover class=layui-input>
+    <div class="layui-form-item">
+        <input type="text" name="username" value="admin" placeholder="账 户 : admin " lay-verify="required" hover class="layui-input"/>
     </div>
-    <div class=layui-form-item>
-        <input name="password" value="123456" placeholder="密 码 : admin" lay-verify=password hover class=layui-input>
+    <div class="layui-form-item">
+        <input type="password" name="password" value="123456" placeholder="密 码 : 123456 " lay-verify="required" hover class="layui-input"/>
     </div>
-    <div class=layui-form-item>
-        <input name="captcha_code" value="" placeholder="验证码 :" hover lay-verify=captcha_code
-               class="code layui-input layui-input-inline">
-        <img src="" class=codeImage id=codeImage></div>
-    <div class=layui-form-item>
-        <input type=checkbox title=记住密码 lay-skin=primary checked>
+    <div class="layui-form-item">
+        <input name="captcha_code" placeholder="验证码 : " hover lay-verify="required" class="code layui-input layui-input-inline" lay-verify="captcha_code"/>
+        <img src="/static/admin/images/captcha.gif" class="codeImage"/>
     </div>
-    <div class=layui-form-item>
-        <button type=button class="pear-btn pear-btn-success login" lay-submit lay-filter=login>登 入</button>
+    <div class="layui-form-item">
+        <input type="checkbox" name="" title="记住密码" lay-skin="primary" checked>
+    </div>
+    <div class="layui-form-item">
+        <button type="button" class="pear-btn pear-btn-success login" lay-submit lay-filter="login">
+            登 入
+        </button>
     </div>
 </form>
+<!-- 资 源 引 入 -->
 <script src=/static/component/layui/layui.js></script>
 <script src=/static/component/pear/pear.js></script>
+<script src="/static/js/pear_admin_flask.js"></script>
+
 <script>
-  async function login(data) {
-    const response = await fetch('/api/private/v1/login', {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-    return await response.json();
-  }
-
-  function generateUUID() {
-    var d = new Date().getTime();
-    if (window.performance && typeof window.performance.now === 'function') {
-      d += performance.now(); //use high-precision timer if available
-    }
-    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,
-        function(c) {
-          var r = (d + Math.random() * 16) % 16 | 0;
-          d = Math.floor(d / 16);
-          return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-        });
-    return uuid;
-  }
-
   layui.use(['form', 'button', 'popup'], function() {
     var form = layui.form;
     var button = layui.button;
     var popup = layui.popup;
+
     var $ = layui.$;
     let imageCodeId = '';
     let captchaPath = '/login/captcha';
@@ -94,11 +79,12 @@
     form.on('submit(login)', async function(form) {
 
       /// 登录 do something
-      let data = Object.assign({'image_code': imageCodeId}, form.field)
+      let data = Object.assign({'image_code': imageCodeId}, form.field);
       const res_data = await login(data);
 
       if (res_data.meta.status === 'success') {
         localStorage.setItem('jwt', res_data.result.access_token);
+
         /// 动画
         button.load({
           elem: '.login',
@@ -116,21 +102,21 @@
     });
 
     // 点击按钮更新验证码
-    $('#codeImage').click(function() {
+    $('.codeImage').click(function() {
       // 浏览器要发起图片验证码请求/image_code?imageCodeId=xxxxx
       update_captcha_image();
     });
 
     function update_captcha_image() {
       imageCodeId = generateUUID();
-      document.getElementById('codeImage').src = captchaPath + '?image_code=' + imageCodeId;
+      document.querySelector('.codeImage').src = captchaPath + '?image_code=' + imageCodeId;
     }
 
     update_captcha_image();
 
     // 定时器，定时更新验证码
     setInterval(function() {
-      document.getElementById('captchaImage').src = captchaPath + '?' + Math.random();
+      document.querySelector('.codeImage').src = captchaPath + '?' + Math.random();
     }, 60 * 1000);
   });
 </script>

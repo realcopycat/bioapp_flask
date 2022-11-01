@@ -3,36 +3,36 @@
 <head>
     <meta charset=utf-8>
     <title>用户管理</title>
-    <link rel=stylesheet href=/static/component/pear/css/pear.css>
+    <link rel="stylesheet" href="/static/component/pear/css/pear.css">
 </head>
-<body class=pear-container>
-<div class=layui-card>
-    <div class=layui-card-body>
-        <form class=layui-form>
-            <div class=layui-form-item>
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form class="layui-form">
+            <div class="layui-form-item">
                 <div class="layui-form-item layui-inline">
-                    <label class=layui-form-label>用户名</label>
-                    <div class=layui-input-inline>
-                        <input type=text name=realName class=layui-input>
+                    <label class="layui-form-label">用户名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="realName" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-inline">
-                    <label class=layui-form-label>性别</label>
-                    <div class=layui-input-inline>
-                        <input type=text name=realName class=layui-input>
+                    <label class="layui-form-label">性别</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="realName" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-inline">
-                    <label class=layui-form-label>邮箱</label>
-                    <div class=layui-input-inline>
-                        <input type=text name=realName class=layui-input>
+                    <label class="layui-form-label">邮箱</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="realName" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-inline">
-                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter=user-query>
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
                         <i class="layui-icon layui-icon-search"></i> 查询
                     </button>
-                    <button type=reset class="pear-btn pear-btn-md">
+                    <button type="reset" class="pear-btn pear-btn-md">
                         <i class="layui-icon layui-icon-refresh"></i> 重置
                     </button>
                 </div>
@@ -40,12 +40,13 @@
         </form>
     </div>
 </div>
-<div class=layui-card>
-    <div class=layui-card-body>
-        <table id=user-table lay-filter=user-table></table>
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="user-table" lay-filter="user-table"></table>
     </div>
 </div>
-<script type=text/html id=user-toolbar>
+
+<script type="text/html" id="user-toolbar">
     <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
         <i class="layui-icon layui-icon-add-1"></i> 新增
     </button>
@@ -53,7 +54,8 @@
         <i class="layui-icon layui-icon-delete"></i> 删除
     </button>
 </script>
-<script type=text/html id=user-bar>
+
+<script type="text/html" id="user-bar">
     <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit">
         <i class="layui-icon layui-icon-edit"></i>
     </button>
@@ -62,26 +64,23 @@
     </button>
 </script>
 
+<script type="text/html" id="user-gender">
+    {{ '{{#if (d.gender == "男") { }}' | safe }}
+    <span>男</span>
+    {{ '{{# }else if(d.gender == "女"){ }}' | safe }}
+    <span>女</span>
+    {{ '{{# } }}' | safe }}
+</script>
 
-<script src=/static/component/layui/layui.js></script>
-<script src=/static/component/pear/pear.js></script>
+
+<script type="text/html" id="user-enable">
+    {{ '<input type="checkbox" name="enable" value="{{ d.id }}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{ d.state== true ? "checked" : "" }} />' | safe }}
+</script>
+<script src="/static/component/layui/layui.js"></script>
+<script src="/static/component/pear/pear.js"></script>
+<script src="/static/js/pear_admin_flask.js"></script>
+
 <script>
-  function formatDate(value) {//调用时间戳为日期显示
-    let date = new Date(value);
-    let y = date.getFullYear();  //获取年份
-    let month = date.getMonth() + 1;  //获取月份
-    month = month < 10 ? '0' + month : month;  //月份不满10天显示前加0
-    let d = date.getDate();  //获取日期
-    d = d < 10 ? '0' + d : d;  //日期不满10天显示前加0
-
-    //也可以获取更精准时间
-    let h = date.getHours();                   //小时
-    let m = date.getMinutes();                 //分
-    let s = date.getSeconds();                 //秒
-    return y + '-' + month + '-' + d + ' ' + h + ':' + m + ':' + s;
-    //let ls = date.getMilliseconds()            //毫秒
-  }
-
   layui.use(['table', 'form', 'jquery', 'common'], function() {
     let table = layui.table;
     let form = layui.form;
@@ -92,60 +91,14 @@
 
     let cols = [
       [
-        {
-          type: 'checkbox',
-        },
-        {
-          title: '账号',
-          field: 'username',
-          align: 'center',
-          width: 100,
-        },
-        {
-          title: '姓名',
-          field: 'nickname',
-          align: 'center',
-        },
-        {
-          title: '性别',
-          field: 'gender',
-          align: 'center',
-          width: 80,
-        },
-        {
-          title: '电话',
-          field: 'mobile',
-          align: 'center',
-        },
-        {
-          title: '启用',
-          field: 'state',
-          align: 'center',
-          templet: (d) => `<input type="checkbox" name="state"
-                        value="${d.id}" lay-skin="switch"
-                        lay-text="启用|禁用" lay-filter="user-enable"
-                        ${d.state == true ? 'checked' : ''} />`,
-        },
-        {
-          title: '登录',
-          field: 'login',
-          align: 'center',
-          templet: (d) => d.login == 0 ? `<span>在线</span>` : `<span>离线</span>`,
-        },
-        {
-          title: '注册',
-          field: 'create_at',
-          align: 'center',
-          templet: (d) => {
-            return formatDate(d.create_at);
-          },
-        },
-        {
-          title: '操作',
-          toolbar: '#user-bar',
-          align: 'center',
-          width: 130,
-        },
+        {type: 'checkbox'},
+        {title: '账号', field: 'username', align: 'center', width: 100},
+        {title: '姓名', field: 'nickname', align: 'center'},
+        {title: '性别', field: 'gender', align: 'center', templet: '#user-gender', width: 80},
+        {title: '电话', field: 'mobile', align: 'center'},
+        {title: '启用', field: 'state', align: 'center', templet: '#user-enable'},
+        {title: '注册', field: 'create_at', align: 'center', templet: (d) => {return formatDate(d.create_at);}},
+        {title: '操作', toolbar: '#user-bar', align: 'center', width: 130},
       ],
     ];
 
@@ -220,18 +173,6 @@
         content: MODULE_PATH + 'edit' + `?uid=${obj.data.id}`,
       });
     };
-
-    async function remove_user(uid) {
-      const options = {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-        },
-      };
-      const response = await fetch(`/api/private/v1/user/${uid}`, options);
-      return await response.json();
-    }
 
     window.remove = function(obj) {
       layer.confirm('确定要删除该用户', {

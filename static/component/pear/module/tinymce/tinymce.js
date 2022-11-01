@@ -1,2 +1,213 @@
-/** pear-admin-v3.10.0 MIT License By http://www.pearadmin.com/ */
- ;"use strict";var _typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};layui.define(["jquery"],(function(e){var t=layui.$,n=layui.cache.modules.tinymce,a=n.substr(0,n.lastIndexOf(".")),i=(layui.setter||{}).response||{},r="tinymce.min.js",o={base_url:a,images_upload_url:"",language:"zh_CN",response:{statusName:i.statusName||"code",msgName:i.msgName||"msg",dataName:i.dataName||"data",statusCode:i.statusCode||{ok:0}},success:function(e,t,n){e[this.response.statusName]==this.response.statusCode.ok?t(e[this.response.dataName]):n(e[this.response.msgName])}},l={};function s(){"undefined"==typeof tinymce&&t.ajax({url:o.base_url+"/"+r,dataType:"script",cache:!0,async:!1})}function u(e){return null!=e}l.render=function(e,n){s();var a=function(e,n){var a=layui.admin||{},i=e.form||{},l=i.name||"edit",s=i.data||{};return e.suffix=u(e.suffix)?e.suffix:r.indexOf(".min")>-1?".min":"",e.base_url=u(e.base_url)?e.base_url:o.base_url,e.language=u(e.language)?e.language:o.language,e.selector=u(e.selector)?e.selector:e.elem,e.quickbars_selection_toolbar=u(e.quickbars_selection_toolbar)?e.quickbars_selection_toolbar:"cut copy | bold italic underline strikethrough ",e.plugins=u(e.plugins)?e.plugins:"code kityformula-editor quickbars print preview searchreplace autolink fullscreen image link media codesample table charmap hr advlist lists wordcount imagetools indent2em",e.toolbar=u(e.toolbar)?e.toolbar:"code undo redo | kityformula-editor forecolor backcolor bold italic underline strikethrough | indent2em alignleft aligncenter alignright alignjustify outdent indent | link bullist numlist image table codesample | formatselect fontselect fontsizeselect",e.resize=!!u(e.resize)&&e.resize,e.elementpath=!!u(e.elementpath)&&e.elementpath,e.branding=!!u(e.branding)&&e.branding,e.contextmenu_never_use_native=!u(e.contextmenu_never_use_native)||e.contextmenu_never_use_native,e.menubar=u(e.menubar)?e.menubar:"file edit insert format table",e.menu=u(e.menu)?e.menu:{file:{title:"文件",items:"newdocument | print preview fullscreen | wordcount"},edit:{title:"编辑",items:"undo redo | cut copy paste pastetext selectall | searchreplace"},format:{title:"格式",items:"bold italic underline strikethrough superscript subscript | formats | forecolor backcolor | removeformat"},table:{title:"表格",items:"inserttable tableprops deletetable | cell row column"}},e.init_instance_callback=u(e.init_instance_callback)?e.init_instance_callback:function(t){"function"==typeof n&&n(e,t)},e.images_upload_url=u(e.images_upload_url)?e.images_upload_url:o.images_upload_url,e.images_upload_handler=u(e.images_upload_handler)?e.images_upload_handler:function(n,i,r){if(function(e){if(null==e||""===e)return!0;if(e instanceof Array&&0===e.length)return!0;if("object"===(void 0===e?"undefined":_typeof(e))&&0===Object.keys(e).length)return!0;return!1}(e.images_upload_url))return r("上传接口未配置"),console.error("images_upload_url未配置");var u=new FormData;if(u.append(l,n.blob()),"object"==(void 0===s?"undefined":_typeof(s)))for(var c in s)u.append(c,s[c]);var m={url:e.images_upload_url,dataType:"json",type:"POST",data:u,processData:!1,contentType:!1,success:function(e){o.success(e,i,r)},error:function(e){r("网络错误："+e.status)}};"function"==typeof a.req?a.req(m):t.ajax(m)},layui.sessionData("layui-tinymce",{key:e.selector,value:e}),e}(e,n),i=l.get(a.elem);return i&&i.destroy(),tinymce.init(a),l.get(a.elem)},l.init=l.render,l.get=function(e){if(s(),e&&/^#|\./.test(e)){var t=e.substr(1);return tinymce.editors[t]}return!1},l.reload=function(e,n,a){var i={};"string"==typeof e?(n.elem=e,i=t.extend({},n)):"object"==(void 0===e?"undefined":_typeof(e))&&"string"==typeof e.elem&&(i=t.extend({},e),a=n);var r=layui.sessionData("layui-tinymce")[i.elem];return delete r.init_instance_callback,t.extend(r,i),l.render(r,a)},e("tinymce",l)}));
+layui.define(['jquery'],function (exports) {
+    var $ = layui.$
+
+    var modFile = layui.cache.modules['tinymce'];
+
+    var modPath = modFile.substr(0, modFile.lastIndexOf('.'))
+
+    var setter = layui.setter || {}
+
+    var response = setter.response || {}
+
+    var plugin_filename = 'tinymce.min.js'//插件路径，不包含base_url部分
+
+    var settings = {
+        base_url: modPath
+        , images_upload_url: ''//图片上传接口，可在option传入，也可在这里修改，option的值优先
+        , language: 'zh_CN'//语言，可在option传入，也可在这里修改，option的值优先
+        , response: {//后台返回数据格式设置
+            statusName: response.statusName || 'code'//返回状态字段
+            , msgName: response.msgName || 'msg'//返回消息字段
+            , dataName: response.dataName || 'data'//返回的数据
+            , statusCode: response.statusCode || {
+                ok: 0//数据正常
+            }
+        }
+        , success: function (res, succFun, failFun) {//图片上传完成回调 根据自己需要修改
+            if (res[this.response.statusName] == this.response.statusCode.ok) {
+                succFun(res[this.response.dataName]);
+            } else {
+                failFun(res[this.response.msgName]);
+            }
+        }
+    };
+
+    //  ----------------  以下代码无需修改  ----------------
+
+    var t = {};
+
+    //初始化
+    t.render = function (options,callback) {
+
+        initTinymce();
+
+        var option = initOptions(options,callback)
+
+        ,edit = t.get(option.elem);
+
+        if (edit) {
+            edit.destroy();
+        }
+
+        tinymce.init(option);
+
+        return t.get(option.elem);
+    };
+
+    t.init = t.render
+
+    // 获取ID对应的编辑器对象
+    t.get = function (elem) {
+
+        initTinymce();
+
+        if (elem && /^#|\./.test(elem)) {
+            var id = elem.substr(1);
+            var edit = tinymce.editors[id];
+            return edit
+        } else {
+            return false;
+        }
+    }
+
+    //重载
+    t.reload = function (elem, option, callback) {
+           
+        var options = {}
+
+        if(typeof elem == 'string'){
+            option.elem = elem
+            options = $.extend({}, option)
+        } else if (typeof elem == 'object' && typeof elem.elem == 'string'){
+            options = $.extend({}, elem)
+            callback = option
+        } 
+
+        var optionCache = layui.sessionData('layui-tinymce')[options.elem]
+
+        delete optionCache.init_instance_callback
+
+        $.extend(optionCache,options)
+
+        return t.render(optionCache,callback)
+    }
+
+    function initOptions(option,callback) {
+        
+        var admin = layui.admin || {}
+
+        var form = option.form || {}
+
+        var file_field = form.name || 'edit' //文件字段名
+
+        var form_data = form.data || {} //其他表单数据 {key:value, ...}
+
+        option.suffix= isset(option.suffix) ? option.suffix : (plugin_filename.indexOf('.min')>-1 ? '.min' : '')
+
+        option.base_url = isset(option.base_url) ? option.base_url : settings.base_url
+
+        option.language = isset(option.language) ? option.language : settings.language
+
+        option.selector = isset(option.selector) ? option.selector : option.elem
+
+        option.quickbars_selection_toolbar = isset(option.quickbars_selection_toolbar) ? option.quickbars_selection_toolbar : 'cut copy | bold italic underline strikethrough '
+
+        option.plugins = isset(option.plugins) ? option.plugins : 'code kityformula-editor quickbars print preview searchreplace autolink fullscreen image link media codesample table charmap hr advlist lists wordcount imagetools indent2em';
+
+        option.toolbar = isset(option.toolbar) ? option.toolbar : 'code undo redo | kityformula-editor forecolor backcolor bold italic underline strikethrough | indent2em alignleft aligncenter alignright alignjustify outdent indent | link bullist numlist image table codesample | formatselect fontselect fontsizeselect';
+
+        option.resize = isset(option.resize) ? option.resize : false;
+
+        option.elementpath = isset(option.elementpath) ? option.elementpath : false;
+
+        option.branding = isset(option.branding) ? option.branding : false;
+
+        option.contextmenu_never_use_native = isset(option.contextmenu_never_use_native) ? option.contextmenu_never_use_native : true;
+
+        option.menubar = isset(option.menubar) ? option.menubar : 'file edit insert format table';
+
+        option.menu = isset(option.menu) ? option.menu : {
+            file: {title: '文件', items: 'newdocument | print preview fullscreen | wordcount'},
+            edit: {title: '编辑', items: 'undo redo | cut copy paste pastetext selectall | searchreplace'},
+            format: {
+                title: '格式',
+                items: 'bold italic underline strikethrough superscript subscript | formats | forecolor backcolor | removeformat'
+            },
+            table: {title: '表格', items: 'inserttable tableprops deletetable | cell row column'},
+        };
+
+        option.init_instance_callback =isset(option.init_instance_callback) ? option.init_instance_callback : function(inst) {
+            if(typeof callback == 'function') callback(option,inst)
+        };
+
+        option.images_upload_url = isset(option.images_upload_url) ? option.images_upload_url : settings.images_upload_url;
+
+        option.images_upload_handler = isset(option.images_upload_handler) ? option.images_upload_handler : function(blobInfo, succFun, failFun) {
+            if(isEmpty(option.images_upload_url)){
+                failFun("上传接口未配置");
+                return console.error('images_upload_url未配置');
+            }
+            var formData = new FormData();
+            formData.append(file_field, blobInfo.blob());
+            if(typeof form_data == 'object'){
+                for(var key in form_data){
+                    formData.append(key, form_data[key]);
+                }
+            }
+            var ajaxOpt = {
+                url: option.images_upload_url,
+                dataType: 'json',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    settings.success(res, succFun, failFun)
+                },
+                error: function (res) {
+                    failFun("网络错误：" + res.status);
+                }
+            };
+            if (typeof admin.req == 'function') {
+                admin.req(ajaxOpt);
+            } else {
+                $.ajax(ajaxOpt);
+            }
+        }
+
+        layui.sessionData('layui-tinymce',{
+            key:option.selector,
+            value:option
+        })
+        return option
+    }
+
+    function initTinymce() {
+        if (typeof tinymce == 'undefined') {
+            $.ajax({//获取插件
+                url: settings.base_url + '/' + plugin_filename,
+                dataType: 'script',
+                cache: true,
+                async: false,
+            });
+        }
+    }
+
+    function isset(value) {
+        return typeof value !== 'undefined' && value !== null
+    }
+
+    function isEmpty(value) {
+        if(typeof value === 'undefined' || value === null|| value === ''){
+            return true
+        } else if (value instanceof Array && value.length === 0){
+            return true
+        } else if (typeof value === 'object' && Object.keys(value).length === 0){
+            return true
+        }
+        return false
+    }
+
+    exports('tinymce', t);
+
+});
