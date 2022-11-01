@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request, redirect
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -31,6 +31,9 @@ def register_extensions(app: Flask) -> None:
 
     @jwt.expired_token_loader
     def my_expired_token_callback(jwt_header, jwt_payload):
+        if request.method == "GET":
+            return redirect("/login")
+
         return (
             jsonify(
                 meta={

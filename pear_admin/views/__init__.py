@@ -7,19 +7,33 @@ from random import choices
 from typing import List
 
 from captcha.image import ImageCaptcha
-from flask import Blueprint, abort, make_response, redirect, render_template, request
+from flask import (
+    Blueprint,
+    Flask,
+    abort,
+    make_response,
+    redirect,
+    render_template,
+    request,
+)
+from flask_jwt_extended import get_current_user, jwt_required
 from PIL import Image
 
 from pear_admin.extensions import redis_client
-from pear_admin.models import DepartmentORM, PermissionORM, RoleORM, UserORM
+from pear_admin.orms import DepartmentORM, PermissionORM, RoleORM, UserORM
 
 view_bp = Blueprint("views", __name__)
 
 
+def register_blueprint(app: Flask):
+    app.register_blueprint(view_bp)
+
+
 @view_bp.get("/")
+@jwt_required(optional=True)
 def index():
-    is_login = request.cookies.get("is_login")
-    if is_login != "true":
+    user = get_current_user()
+    if not user:
         return redirect("/login")
     return render_template("index.html")
 

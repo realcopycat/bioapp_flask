@@ -1,33 +1,16 @@
 # -*- coding: utf-8 -*-
-import typing as t
-from typing import List
 
 from flask import request
 from flask.views import MethodView
 from flask_jwt_extended import jwt_required
 from flask_pydantic import validate
 from flask_sqlalchemy import Pagination
-from pydantic import BaseModel, Field
 
-from pear_admin.models import DepartmentORM, RoleORM, UserORM
+from pear_admin.models import PaginationModel, UserModel, DepartmentModel
+from pear_admin.orms import DepartmentORM, RoleORM, UserORM
 
 
 class UserApi(MethodView):
-    class PaginationModel(BaseModel):
-        query: str = Field(default="")
-        page: int = Field(default=1)
-        pre_page: int = Field(default=10)
-
-    class UserModel(BaseModel):
-        username: str = Field(default="")
-        nickname: str = Field(default="")
-        password: str = Field(default="")
-        mobile: str = Field(default="")
-        email: str = Field(default="")
-        gender: str = Field(default="")
-        education: str = Field(default="")
-        state: bool = Field(default=False)
-
     @validate()
     def get(self, uid, query: PaginationModel):
 
@@ -38,7 +21,7 @@ class UserApi(MethodView):
         paginate: Pagination = UserORM.query.filter(*filters).paginate(
             page=query.page, per_page=query.pre_page
         )
-        items: List[UserORM] = paginate.items
+        items: list[UserORM] = paginate.items
         return {
             "result": {
                 "total": paginate.total,
@@ -125,28 +108,13 @@ class UserApi(MethodView):
 
 
 class DepartmentApi(MethodView):
-    class PaginationModel(BaseModel):
-        query: str = Field(default="")
-        page: int = Field(default=1)
-        pre_page: int = Field(default=10)
-
-    class DepartmentModel(BaseModel):
-        address: t.Optional[str]
-        name: t.Optional[str]
-        email: t.Optional[str]
-        leader: t.Optional[str]
-        pid: t.Optional[int]
-        phone: t.Optional[str]
-        sort: t.Optional[int]
-        enable: t.Optional[bool]
-
     @validate()
     def get(self, did, query: PaginationModel):
         if did:
             dept: DepartmentORM = DepartmentORM.find_by_id(did)
             return dict(success=True, message="ok", dept=dept.json())
         else:
-            department_list: List[DepartmentORM] = DepartmentORM.query.all()
+            department_list: list[DepartmentORM] = DepartmentORM.query.all()
 
             action = request.args.get("action")
             if action == "tree":
@@ -228,7 +196,7 @@ class DepartmentApi(MethodView):
 
 
 def user_role(uid):
-    roles: List[RoleORM] = RoleORM.query.all()
+    roles: list[RoleORM] = RoleORM.query.all()
     if request.method == "GET":
         user: UserORM = UserORM.find_by_id(uid)
         rets = []

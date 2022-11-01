@@ -1,31 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from typing import List
-
 from flask import request
 from flask.views import MethodView
 from flask_jwt_extended import jwt_required
 from flask_pydantic import validate
 from flask_sqlalchemy import Pagination
-from pydantic import BaseModel, Field
 
-from pear_admin.extensions import db
-from pear_admin.models import PermissionORM, RoleORM
+from pear_admin.models import PaginationModel, RoleModel, PermissionModel
+from pear_admin.orms import PermissionORM, RoleORM
+from pear_admin.utils.response_code import RetCode
 
 
 class RoleApi(MethodView):
-    class PaginationModel(BaseModel):
-        query: str = Field(default="")
-        page: int = Field(default=1)
-        pre_page: int = Field(default=10)
-
-    class RoleModel(BaseModel):
-        name: str = Field(default="")
-        desc: str = Field(default="")
-
     @validate()
     def get(self, rid, query: PaginationModel):
-
         filters = []
         if query.query:
             filters.append(RoleORM.username.like("%" + query.query + "%"))
@@ -33,7 +21,7 @@ class RoleApi(MethodView):
         paginate: Pagination = RoleORM.query.filter(*filters).paginate(
             page=query.page, per_page=query.pre_page
         )
-        items: List[RoleORM] = paginate.items
+        items: list[RoleORM] = paginate.items
         return {
             "result": {
                 "total": paginate.total,
@@ -42,11 +30,13 @@ class RoleApi(MethodView):
                 "roles": [item.json() for item in items],
             },
             "meta": {
+                "code": RetCode.OK.value,
                 "message": "查询数据成功",
                 "status": "success",
             },
         }
 
+    @jwt_required()
     @validate()
     def post(self, body: RoleModel):
         role = RoleORM()
@@ -55,11 +45,13 @@ class RoleApi(MethodView):
         role.save_to_db()
         return {
             "meta": {
+                "code": RetCode.OK.value,
                 "message": "添加数据成功",
                 "status": "success",
             },
         }
 
+    @jwt_required()
     @validate()
     def put(self, rid, body: RoleModel):
         role = RoleORM.query.get(rid)
@@ -68,17 +60,21 @@ class RoleApi(MethodView):
         role.save_to_db()
         return {
             "meta": {
+                "code": RetCode.OK.value,
                 "message": "编辑角色数据成功",
                 "status": "success",
             },
         }
 
+    @jwt_required()
     @validate()
     def delete(self, rid):
+        # 用户项目演示
         if rid in [1, 2, 3]:
             return {
                 "meta": {
-                    "message": "测试数据禁止删除",
+                    "code": RetCode.DELETE_ERR.value,
+                    "message": RetCode.DELETE_ERR.errmsg,
                     "status": "fail",
                 },
             }
@@ -86,6 +82,7 @@ class RoleApi(MethodView):
         role.delete_from_db()
         return {
             "meta": {
+                "code": 0,
                 "message": "删除角色数据成功",
                 "status": "success",
             },
@@ -93,16 +90,6 @@ class RoleApi(MethodView):
 
 
 class PermissionApi(MethodView):
-    class PermissionModel(BaseModel):
-        pid: int
-        name: str
-        code: str
-        level: str
-        path: str
-        open_type: str
-        icon: str
-        sort: int
-
     def get(self, pid):
         if pid:
             permission: PermissionORM = PermissionORM.query.get(pid)
@@ -129,7 +116,7 @@ class PermissionApi(MethodView):
                 },
             }
         else:
-            permission_list: List[PermissionORM] = PermissionORM.query.all()
+            permission_list: list[PermissionORM] = PermissionORM.query.all()
             _type = request.args.get("type")
             if _type == "dtree":
                 rets = [permission.json() for permission in permission_list]
@@ -150,6 +137,7 @@ class PermissionApi(MethodView):
                 },
             }
 
+    @jwt_required()
     @validate()
     def post(self, body: PermissionModel):
         permission = PermissionORM()
@@ -169,6 +157,7 @@ class PermissionApi(MethodView):
             },
         }
 
+    @jwt_required()
     @validate()
     def put(self, pid, body: PermissionModel):
         if pid <= 11:
@@ -195,6 +184,7 @@ class PermissionApi(MethodView):
             },
         }
 
+    @jwt_required()
     @validate()
     def delete(self, pid):
         if pid <= 11:

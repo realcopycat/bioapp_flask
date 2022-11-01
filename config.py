@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+from datetime import timedelta
 
 # 默认日志等级
 LOG_LEVEL = logging.WARN
@@ -20,5 +21,7 @@ REDIS_HOST = "127.0.0.1"
 REDIS_PORT = 6379
 
 JWT_SECRET_KEY = "pear_admin_flask_jwt_token"
-JWT_TOKEN_LOCATION = ["headers"]
+JWT_TOKEN_LOCATION = ["headers", "cookies"]
 JWT_ACCESS_COOKIE_NAME = "jwt"
+JWT_COOKIE_CSRF_PROTECT = False
+JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)

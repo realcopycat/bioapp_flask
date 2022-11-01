@@ -4,8 +4,8 @@ from flask import Flask
 import config
 from pear_admin.api import register_api
 from pear_admin.extensions import db, register_extensions
-from pear_admin.models import DepartmentORM, PermissionORM, RoleORM, UserORM
-from pear_admin.views import view_bp
+from pear_admin.orms import DepartmentORM, PermissionORM, RoleORM, UserORM
+from pear_admin.views import register_blueprint
 
 
 def create_app() -> Flask:
@@ -13,16 +13,24 @@ def create_app() -> Flask:
     app.config.from_object(config)
     register_extensions(app)
     register_api(app)
-    app.register_blueprint(view_bp)
-
-    @app.cli.command()
-    def create():
-        init_databases()
+    register_blueprint(app)
+    register_commands(app)
 
     return app
 
 
+def register_commands(app: Flask) -> None:
+    @app.cli.command()
+    def create():
+        init_databases()
+
+
 def init_databases():
+    # 新建数据库
+    db.session.execute("drop database if exists pear_admin_flask;")
+    db.session.execute("create database pear_admin_flask character set `utf8mb4`;")
+    db.session.execute("use pear_admin_flask;")
+
     db.drop_all()
     db.create_all()
 
