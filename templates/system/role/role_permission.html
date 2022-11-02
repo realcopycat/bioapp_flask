@@ -25,6 +25,7 @@
 </form>
 <script src="/static/component/layui/layui.js"></script>
 <script src="/static/component/pear/pear.js"></script>
+<script src="/static/js/pear_admin_flask.js"></script>
 <script>
   function isArray(obj) {
     return obj && typeof (obj) === 'object' && obj.constructor === Array;
@@ -62,29 +63,23 @@
       var checkData = tree.getChecked('demoId1');
       let ids = get_ids(checkData);
 
-      $.ajax({
-        url: `/api/private/v1/role/permission/{{ role.id }}`,
-        data: JSON.stringify({'ids': ids.join(',')}),
-        dataType: 'json',
-        contentType: 'application/json',
-        type: 'put',
-        success: function(result) {
-          if (result.meta.status === 'success') {
-            layer.msg(result.meta.message, {
-              icon: 1,
-              time: 1000,
-            }, function() {
-              parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-              parent.layui.table.reload('role-table');
-            });
-          } else {
-            layer.msg(result.meta.message, {
-              icon: 2,
-              time: 1000,
-            });
-          }
-        },
+      put_api(`/api/private/v1/role/permission/{{ role.id }}`, {'ids': ids.join(',')}).then(function(ret) {
+        if (ret.meta.status === 'success') {
+          layer.msg(ret.meta.message, {
+            icon: 1,
+            time: 1000,
+          }, function() {
+            parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+            parent.layui.table.reload('role-table');
+          });
+        } else {
+          layer.msg(ret.meta.message, {
+            icon: 2,
+            time: 1000,
+          });
+        }
       });
+
       return false;
     });
   });

@@ -86,7 +86,7 @@
 </script>
 
 <script type="text/html" id="power-enable">
-    {{ '<input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable"  {{ d.enable== true ? "checked" : "" }} />' | safe }}
+    {{ '<input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="permission-enable"  {{ d.enable== true ? "checked" : "" }} />' | safe }}
 </script>
 
 
@@ -94,8 +94,9 @@
     {{ '<i class="layui-icon {{d.icon}}"></i>' | safe }}
 </script>
 
-<script src=/static/component/layui/layui.js></script>
-<script src=/static/component/pear/pear.js></script>
+<script src="/static/component/layui/layui.js"></script>
+<script src="/static/component/pear/pear.js"></script>
+<script src="/static/js/pear_admin_flask.js"></script>
 <script>
   layui.use(['table', 'form', 'jquery', 'treetable'], function() {
     let table = layui.table;
@@ -162,7 +163,6 @@
     });
 
     form.on('switch(permission-enable)', function(obj) {
-      console.log(obj);
       let operate;
       if (obj.elem.checked) {
         operate = true;  /*启用*/
@@ -170,20 +170,14 @@
         operate = false;  /*禁用*/
       }
       let loading = layer.load();
-      $.ajax({
-        url: `/api/private/v1/permission/${this.value}/enable`,
-        data: JSON.stringify({enable: operate}),
-        dataType: 'json',
-        contentType: 'application/json',
-        type: 'put',
-        success: function(result) {
-          layer.close(loading);
-          if (result.meta.status === 'success') {
-            layer.msg(result.meta.message, {icon: 1, time: 1000});
-          } else {
-            layer.msg(result.meta.message, {icon: 2, time: 1000});
-          }
-        },
+
+      enable_permission(this.value, {enable: operate}).then(function(ret) {
+        layer.close(loading);
+        if (ret.meta.status === 'success') {
+          layer.msg(ret.meta.message, {icon: 1, time: 1000});
+        } else {
+          layer.msg(ret.meta.message, {icon: 2, time: 1000});
+        }
       });
     });
 
@@ -211,21 +205,16 @@
       layer.confirm('确定要删除该权限', {icon: 3, title: '提示'}, function(index) {
         layer.close(index);
         let loading = layer.load();
-        console.log(obj);
-        $.ajax({
-          url: `/api/private/v1/permission/${obj.data['id']}`,
-          dataType: 'json',
-          type: 'delete',
-          success: function(result) {
-            layer.close(loading);
-            if (result.meta.status === 'success') {
-              layer.msg(result.meta.message, {icon: 1, time: 1000}, function() {
-                obj.del();
-              });
-            } else {
-              layer.msg(result.meta.message, {icon: 2, time: 1000});
-            }
-          },
+
+        remove_permission(obj.data.id).then(function(ret) {
+          layer.close(loading);
+          if (ret.meta.status === 'success') {
+            layer.msg(ret.meta.message, {icon: 1, time: 1000}, function() {
+              obj.del();
+            });
+          } else {
+            layer.msg(ret.meta.message, {icon: 2, time: 1000});
+          }
         });
       });
     };

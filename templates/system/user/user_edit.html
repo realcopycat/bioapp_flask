@@ -128,7 +128,7 @@
 
       send_data.state = send_data.state === 'on';
 
-      let response = edit_user(data.field.uid, send_data);
+      let response = update_user(data.field.uid, send_data);
       response.then(function(result) {
         if (result.meta.status === 'success') {
           layer.msg(result.meta.message, {

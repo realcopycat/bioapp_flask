@@ -5,7 +5,8 @@ from pear_admin.utils.functools import register_rest_api_func
 
 from .auth_api import LoginApi, LogoutApi
 from .role_api import PermissionApi, RoleApi, permission_enable, role_permission
-from .users_api import DepartmentApi, UserApi, user_role
+from .users_api import UserApi, user_role
+from .department_api import DepartmentApi, batch_remove_api
 
 
 def register_api(app: Flask):
@@ -35,5 +36,8 @@ def register_api(app: Flask):
 
     register_rest_api_func(
         api, DepartmentApi, "department_api", "/department/", pk="did"
+    )
+    api.add_url_rule(
+        "/department/batch_remove", view_func=batch_remove_api, methods=["DELETE"]
     )
     app.register_blueprint(api)

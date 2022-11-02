@@ -103,7 +103,7 @@
       role_ids = role_ids.substr(0, role_ids.length - 1);
       data.field.role_ids = role_ids;
 
-      let response = add_user(data.field);
+      let response = create_user(data.field);
       response.then(function(result) {
         if (result.meta.status === 'success') {
           layer.msg(result.meta.message, {

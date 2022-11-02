@@ -13,14 +13,14 @@
                 <label class="layui-form-label">角色名</label>
                 <div class="layui-input-block">
                     <input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入标题" required
-                           class="layui-input" value="{{ role.name }}">
+                            class="layui-input" value="{{ role.name }}">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">描述</label>
                 <div class="layui-input-block">
                     <input type="text" name="desc" lay-verify="required" autocomplete="off" placeholder="请输入标题" required
-                           class="layui-input" value="{{ role.desc }}">
+                            class="layui-input" value="{{ role.desc }}">
                 </div>
             </div>
         </div>
@@ -38,34 +38,29 @@
 </form>
 <script src="/static/component/layui/layui.js"></script>
 <script src="/static/component/pear/pear.js"></script>
+<script src="/static/js/pear_admin_flask.js"></script>
 <script>
   layui.use(['form', 'jquery'], function() {
     let form = layui.form;
     let $ = layui.jquery;
 
     form.on('submit(role-save)', function(data) {
-      $.ajax({
-        url: '/api/private/v1/role/{{ role.id }}',
-        data: JSON.stringify(data.field),
-        dataType: 'json',
-        contentType: 'application/json',
-        type: 'put',
-        success: function(result) {
-          if (result.meta.status === 'success') {
-            layer.msg(result.meta.message, {
-              icon: 1,
-              time: 1000,
-            }, function() {
-              parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-              parent.layui.table.reload('role-table');
-            });
-          } else {
-            layer.msg(result.meta.message, {
-              icon: 2,
-              time: 1000,
-            });
-          }
-        },
+
+      update_role({{ role.id }}, data.field).then(function(ret) {
+        if (ret.meta.status === 'success') {
+          layer.msg(ret.meta.message, {
+            icon: 1,
+            time: 1000,
+          }, function() {
+            parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+            parent.layui.table.reload('role-table');
+          });
+        } else {
+          layer.msg(ret.meta.message, {
+            icon: 2,
+            time: 1000,
+          });
+        }
       });
       return false;
     });

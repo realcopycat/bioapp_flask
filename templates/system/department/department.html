@@ -48,6 +48,7 @@
         <table id="tables" lay-filter="tables"></table>
     </div>
 </div>
+
 <script type="text/html" id="toolbar">
     <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
         <i class="layui-icon layui-icon-add-1"></i> 新增
@@ -62,6 +63,7 @@
         <i class="layui-icon layui-icon-shrink-right"></i> 折叠
     </button>
 </script>
+
 <script type="text/html" id="tools">
     <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="tool_edit">
         <i class="layui-icon layui-icon-edit"></i>
@@ -71,8 +73,13 @@
     </button>
 </script>
 
+<script type="text/html" id="enable">
+    {{ '<input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="tools-enable" {{d.enable == true ? "checked" : ""}} />' | safe }}
+</script>
+
 <script src="/static/component/layui/layui.js"></script>
 <script src="/static/component/pear/pear.js"></script>
+<script src="/static/js/pear_admin_flask.js"></script>
 <script>
   layui.use(['table', 'form', 'jquery', 'treetable'], function() {
     let table = layui.table;
@@ -90,7 +97,6 @@
         treeDefaultClose: false,
         toolbar: '#toolbar',
         elem: '#tables',
-        {#url: '/static/admin/data/power.json',#}
         url: '/api/private/v1/department/',
         page: false,
         cols: [
@@ -100,24 +106,12 @@
             {field: 'leader', title: '负责人'},
             {field: 'phone', title: '联系方式'},
             {field: 'email', title: '邮箱'},
-            {
-              field: 'enable', title: '状态', templet: (d) => `
-                <input type="checkbox" name="enable" value="${d.id}"
-                lay-skin="switch" lay-text="启用|禁用" lay-filter="tools-enable"
-                ${d.enable == true ? 'checked' : ''} />`,
-            },
+            {field: 'enable', title: '状态', templet: '#enable'},
             {field: 'address', title: '详细地址', hide: true},
             {field: 'sort', title: '排序', width: 100, hide: true},
             {title: '操作', templet: '#tools', width: 120, align: 'center'}],
         ],
-        parseData: function(res) { // res 即为原始返回的数据
-          return {
-            'code': res.meta.status === 'success' ? 0 : 1, //解析接口状态
-            'msg': res.meta.message, //解析提示文本
-            {#'count': res.result.total, //解析数据长度#}
-            'data': res.result.department_list, //解析数据列表
-          };
-        },
+        parseData: parseData,
       });
     };
 
@@ -161,36 +155,33 @@
         ids += data[i].id + ',';
       }
       ids = ids.substr(0, ids.length - 1);
+
       layer.confirm('确定要删除这些权限', {
         icon: 3,
         title: '提示',
       }, function(index) {
         layer.close(index);
-        layer.msg('暂不支持批量删除');
-        /*
+
+        layer.msg('演示模式下不支持批量删除');
+        return;
+
         let loading = layer.load();
-        $.ajax({
-          url: MODULE_PATH + 'batchRemove/' + ids,
-          dataType: 'json',
-          type: 'delete',
-          success: function(result) {
-            layer.close(loading);
-            if (result.success) {
-              layer.msg(result.msg, {
-                icon: 1,
-                time: 1000,
-              }, function() {
-                table.reload('user-table');
-              });
-            } else {
-              layer.msg(result.msg, {
-                icon: 2,
-                time: 1000,
-              });
-            }
-          },
+        batch_remove_department({'ids': ids}).then(function(ret) {
+          layer.close(loading);
+          if (ret.meta.status === 'success') {
+            layer.msg(ret.meta.message, {
+              icon: 1,
+              time: 1000,
+            }, function() {
+              table.reload('tables');
+            });
+          } else {
+            layer.msg(ret.meta.message, {
+              icon: 2,
+              time: 1000,
+            });
+          }
         });
-        */
       });
     };
 
@@ -211,7 +202,7 @@
         title: '修改',
         shade: 0.1,
         area: ['450px', '500px'],
-        content: '/department/edit?did=' + obj.data['id'],  /*编辑修改窗口从那里来*/
+        content: `/department/edit?did=` + obj.data.id,  /*编辑修改窗口从那里来*/
       });
     };
 
@@ -219,20 +210,16 @@
       layer.confirm('确定要删除该部门', {icon: 3, title: '提示'}, function(index) {
         layer.close(index);
         let loading = layer.load();
-        $.ajax({
-          url: '/api/private/v1/department/' + obj.data['id'],
-          dataType: 'json',
-          type: 'delete',
-          success: function(result) {
-            layer.close(loading);
-            if (result.meta.status === 'success') {
-              layer.msg(result.meta.message, {icon: 1, time: 1000}, function() {
-                obj.del();
-              });
-            } else {
-              layer.msg(result.meta.message, {icon: 2, time: 1000});
-            }
-          },
+
+        remove_department(obj.data.id).then(function(ret) {
+          layer.close(loading);
+          if (ret.meta.status === 'success') {
+            layer.msg(ret.meta.message, {icon: 1, time: 1000}, function() {
+              obj.del();
+            });
+          } else {
+            layer.msg(ret.meta.message, {icon: 2, time: 1000});
+          }
         });
       });
     };

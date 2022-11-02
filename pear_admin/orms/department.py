@@ -42,3 +42,7 @@ class DepartmentORM(db.Model):
     def delete_from_db(self):
         db.session.delete(self)
         db.session.commit()
+
+    @classmethod
+    def delete_by_id(cls, did):
+        cls.find_by_id(did).delete_from_db()

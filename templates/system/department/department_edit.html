@@ -12,7 +12,7 @@
                 <label class="layui-form-label">ID</label>
                 <div class="layui-input-block">
                     <input type="text" value="{{ department.id }}" name="id" lay-verify="required|number"
-                           autocomplete="off" placeholder="请输入部门编号" class="layui-input">
+                            autocomplete="off" placeholder="请输入部门编号" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -25,29 +25,29 @@
                 <label class="layui-form-label">名称</label>
                 <div class="layui-input-block">
                     <input type="text" name="name" lay-verify="title" autocomplete="off" placeholder="请输入部门名称"
-                           class="layui-input" value="{{ department.name }}" >
+                            class="layui-input" value="{{ department.name }}">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">负责人</label>
                 <div class="layui-input-block">
                     <input type="text" name="leader" lay-verify="title" autocomplete="off" placeholder="请输入负责人名字"
-                           class="layui-input" value="{{ department.leader }}">
+                            class="layui-input" value="{{ department.leader }}">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">邮箱</label>
                 <div class="layui-input-block">
                     <input type="text" name="email" lay-verify="title" autocomplete="off" placeholder="请输入邮箱地址"
-                           class="layui-input" value="{{ department.email }}">
+                            class="layui-input" value="{{ department.email }}">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">联系方式</label>
                 <div class="layui-input-block">
                     <input type="text" name="phone" lay-verify="title" autocomplete="off"
-                           placeholder="请输入联系方式（电话号码）"
-                           class="layui-input" value="{{ department.phone }}">
+                            placeholder="请输入联系方式（电话号码）"
+                            class="layui-input" value="{{ department.phone }}">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -61,7 +61,7 @@
                 <label class="layui-form-label">排序</label>
                 <div class="layui-input-block">
                     <input type="text" name="sort" lay-verify="title" autocomplete="off" placeholder="请输入排序序号（数字）"
-                           class="layui-input" value="{{ department.sort }}">
+                            class="layui-input" value="{{ department.sort }}">
                 </div>
             </div>
             <div class="layui-form-item layui-form-text">
@@ -87,8 +87,10 @@
     </div>
 </form>
 
-<script src=/static/component/layui/layui.js></script>
-<script src=/static/component/pear/pear.js></script>
+<script src="/static/component/layui/layui.js"></script>
+<script src="/static/component/pear/pear.js"></script>
+<script src="/static/js/pear_admin_flask.js"></script>
+
 <script>
   layui.use(['form', 'jquery', 'dtree'], function() {
     let form = layui.form;
@@ -109,22 +111,15 @@
 
     /*添加数据 表单组件，提交按钮之后触发的事件*/
     form.on('submit(save)', function(data) {
-      $.ajax({
-        url: `/api/private/v1/department/${data.field.id}`,
-        data: JSON.stringify(data.field),
-        dataType: 'json',
-        contentType: 'application/json',
-        type: 'put',
-        success: function(result) {
-          if (result.meta.status === 'success') {
-            layer.msg(result.meta.message, {icon: 1, time: 1000}, function() {
-              parent.layer.close(parent.layer.getFrameIndex(window.name));
-              parent.render();
-            });
-          } else {
-            layer.msg(result.meta.message, {icon: 2, time: 1000});
-          }
-        },
+      update_department(data.field.id, data.field).then(function(ret) {
+        if (ret.meta.status === 'success') {
+          layer.msg(ret.meta.message, {icon: 1, time: 1000}, function() {
+            parent.layer.close(parent.layer.getFrameIndex(window.name));
+            parent.render();
+          });
+        } else {
+          layer.msg(ret.meta.message, {icon: 2, time: 1000});
+        }
       });
       return false;
     });

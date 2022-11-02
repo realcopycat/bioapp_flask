@@ -28,63 +28,104 @@ function formatDate(value) {//调用时间戳为日期显示
   //let ls = date.getMilliseconds()            //毫秒
 }
 
-async function logout() {
+function parseData(res) { // res 即为原始返回的数据
+  return {
+    'code': res.meta.status === 'success' ? 0 : 1, //解析接口状态
+    'msg': res.meta.message, //解析提示文本
+    'data': res.result.department_list, //解析数据列表
+  };
+}
+
+/**封装请求接口**/
+async function request(method, url, data = {}) {
   const options = {
-    method: 'POST',
+    method: method,
     headers: {
       'Content-Type': 'application/json',
       // 'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
     },
-    body: JSON.stringify({}),
+    body: JSON.stringify(data),
   };
-  const response = await fetch('/api/private/v1/logout', options);
+  const response = await fetch(url, options);
   return await response.json();
+}
+
+async function get_api(url, data) {
+  return request('GET', url, data);
+}
+
+async function post_api(url, data) {
+  return request('POST', url, data);
+}
+
+async function put_api(url, data) {
+  return request('PUT', url, data);
+}
+
+async function delete_api(url, data) {
+  return request('DELETE', url, data);
+}
+
+async function logout() {
+  return await post_api('/api/private/v1/logout');
 }
 
 async function login(data) {
-  const response = await fetch('/api/private/v1/login', {
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  });
-  return await response.json();
+  return await post_api('/api/private/v1/login', data);
+}
+
+async function create_user(data) {
+  return post_api(`/api/private/v1/user/`, data);
 }
 
 async function remove_user(uid) {
-  const options = {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
-  const response = await fetch(`/api/private/v1/user/${uid}`, options);
-  return await response.json();
+  return await delete_api(`/api/private/v1/user/${uid}`);
 }
 
-async function add_user(data) {
-  const options = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-    },
-    body: JSON.stringify(data),
-  };
-  const response = await fetch(`/api/private/v1/user/`, options);
-  return await response.json();
+async function update_user(uid, data) {
+  return await put_api(`/api/private/v1/user/${uid}`, data);
 }
 
-async function edit_user(uid, data) {
-  const options = {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-    },
-    body: JSON.stringify(data),
-  };
-  const response = await fetch(`/api/private/v1/user/${uid}`, options);
-  return await response.json();
+async function batch_remove_department(data) {
+  return await delete_api(`/api/private/v1/department/batch_remove`, data);
+}
+
+async function create_department(data) {
+  return await post_api(`/api/private/v1/department/`, data);
+}
+
+async function remove_department(did) {
+  return await delete_api(`/api/private/v1/department/${did}`);
+}
+
+async function update_department(did, data) {
+  return put_api(`/api/private/v1/department/${did}`, data);
+}
+
+async function create_permission(data) {
+  return await post_api(`/api/private/v1/permission/`, data);
+}
+
+async function remove_permission(pid) {
+  return await delete_api(`/api/private/v1/permission/${pid}`);
+}
+
+async function update_permission(pid, data) {
+  return await put_api(`/api/private/v1/permission/${pid}`, data);
+}
+
+async function enable_permission(pid, data) {
+  return await put_api(`/api/private/v1/permission/${pid}/enable`, data);
+}
+
+async function create_role(data) {
+  return await post_api(`/api/private/v1/role/`, data);
+}
+
+async function remove_role(rid) {
+  return await delete_api(`/api/private/v1/role/${rid}`);
+}
+
+async function update_role(rid, data) {
+  return await put_api(`/api/private/v1/role/${rid}`, data);
 }

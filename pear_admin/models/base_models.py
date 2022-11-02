@@ -26,7 +26,7 @@ class DepartmentModel(BaseModel):
     pid: str = Field(default="")
     phone: str = Field(default="")
     sort: str = Field(default="")
-    enable: str = Field(default="")
+    enable: bool = Field(default="")
 
 
 class RoleModel(BaseModel):
