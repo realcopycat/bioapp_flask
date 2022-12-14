@@ -61,6 +61,7 @@ body::-webkit-scrollbar-corner {
 
 .mainBox {
 	width: 100%;
+	/*height: 500;*/
 	position: absolute;
 	top: 0px;
 	left: 0px;

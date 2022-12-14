@@ -1,15 +1,13 @@
 import datetime
 
-task_list = ['task2', 'task3', 'task4']
+task_list = ['景区评论标题', '线路评论标题', '景区攻略']
+
+def 景区评论标题(id, name):
+    print(id, name)
 
 
-def task2(a, b):
-    print(f'定时任务_1_{a},{b},{datetime.datetime.now()}')
+def 线路评论标题(id, name):
+    print(id, name)
 
-
-def task3(a, b):
-    print(f'定时任务_2_{a}{b}{datetime.datetime.now()}')
-
-
-def task4(a, b):
-    print(f'定时任务_4_{a}{b}{datetime.datetime.now()}')
+def 景区攻略(id, name):
+    print(id, name)
