@@ -8,16 +8,21 @@ from applications.common.tasks.景区评论标题.tongcheng_scenic_comment_title
 from applications.common.tasks.景区评论标题.xiecheng_scenic_comment_title import Xiecheng_Scenic
 import asyncio
 import time
+from scrapy.crawler import CrawlerProcess
+from scrapy.utils.project import get_project_settings
 
+settings = get_project_settings()
+crawler = CrawlerProcess(settings)
 mafengwo = Mafengwo_Scenic()
 qunaer = Qunaer_Scenic()
 tongcheng = Tongcheng_Scenic()
 xiecheng = Xiecheng_Scenic()
 
+
 class Scenic:
     def run(self):
         print("开始爬取各个网站的评论标题!")
-        time_start=time.time()
+        time_start = time.time()
 
         asyncio.run(xiecheng.getScenic())
         print("携程爬取结束")
@@ -28,11 +33,9 @@ class Scenic:
         asyncio.run(mafengwo.getScenic())
         print("马蜂窝爬取结束")
 
-        time_end=time.time()
-        print(' time cost ',time_end-time_start,'s')
+        crawler.crawl('tuniu_scenic')
+        crawler.start()
+        print("途牛景区爬取结束")
 
-
-
-
-
-
+        time_end = time.time()
+        print(' time cost ', time_end - time_start, 's')
