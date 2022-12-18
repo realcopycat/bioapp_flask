@@ -1,0 +1,89 @@
+[
+  {
+    "id": 1,
+    "name": "工作空间",
+    "level": 0,
+    "icon": "layui-icon layui-icon-console",
+    "path": "",
+    "pid": 0
+  },
+  {
+    "id": 2,
+    "name": "控制后台",
+    "level": 1,
+    "icon": "layui-icon layui-icon-console",
+    "path": "/dashboard",
+    "pid": 1,
+    "open_type": "_iframe"
+  },
+  {
+    "id": 3,
+    "name": "系统管理",
+    "level": 0,
+    "icon": "layui-icon layui-icon-set-fill",
+    "path": "",
+    "pid": 0
+  },
+  {
+    "id": 4,
+    "name": "用户管理",
+    "level": 1,
+    "icon": "layui-icon layui-icon-face-smile",
+    "path": "/user",
+    "pid": 3,
+    "open_type": "_iframe"
+  },
+  {
+    "id": 5,
+    "name": "角色管理",
+    "level": 1,
+    "icon": "layui-icon layui-icon-face-cry",
+    "path": "/role",
+    "pid": 3,
+    "open_type": "_iframe"
+  },
+  {
+    "id": 6,
+    "name": "权限管理",
+    "level": 1,
+    "icon": "layui-icon layui-icon-face-cry",
+    "path": "/permission",
+    "pid": 3,
+    "open_type": "_iframe"
+  },
+  {
+    "id": 7,
+    "name": "部门管理",
+    "level": 1,
+    "icon": "layui-icon layui-icon-face-cry",
+    "path": "/department",
+    "pid": 3,
+    "open_type": "_iframe"
+  },
+  {
+    "id": 8,
+    "name": "数据图表",
+    "level": 0,
+    "icon": "layui-icon layui-icon-chart",
+    "path": "",
+    "pid": 0
+  },
+  {
+    "id": 9,
+    "name": "折线图",
+    "level": 1,
+    "icon": "layui-icon layui-icon-face-cry",
+    "path": "/echarts/line",
+    "pid": 9,
+    "open_type": "_iframe"
+  },
+  {
+    "id": 10,
+    "name": "柱状图",
+    "level": 1,
+    "icon": "layui-icon layui-icon-face-smile",
+    "path": "/echarts/column",
+    "pid": 9,
+    "open_type": "_iframe"
+  }
+]

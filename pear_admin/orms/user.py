@@ -21,20 +21,14 @@ class UserORM(db.Model):
         default="女",
         comment="性别",
     )
-    education = db.Column(
-        db.Enum("博士", "硕士", "本科", "专科", "高中", "初中", "小学"),
-        nullable=False,
-        default="专科",
-        comment="学历",
-    )
     state = db.Column(db.Boolean, default=False, comment="用户状态 False 停止使用，True 正常使用")
     introduce = db.Column(db.Text, comment="简介")
     avatar = db.Column(db.Text, comment="头像地址")
     create_at = db.Column(
-        db.Integer,
+        db.DateTime,
         nullable=False,
         comment="创建时间",
-        default=datetime.now().timestamp,
+        default=datetime.now,
     )
 
     role = db.relationship(

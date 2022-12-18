@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "username": "admin",
+    "nickname": "超级管理员",
+    "password": "123456",
+    "email": "8540854@qq.com",
+    "avatar": "",
+    "mobile": "15543526531",
+    "gender": "男",
+    "state": true
+  },
+  {
+    "id": 2,
+    "username": "就眠仪式",
+    "nickname": "就眠仪式",
+    "password": "123456",
+    "email": "8540854@qq.com",
+    "avatar": "",
+    "mobile": "155324324234",
+    "gender": "男",
+    "state": true
+  },
+  {
+    "id": 3,
+    "username": "zhengxinonly",
+    "nickname": "正心全栈编程",
+    "password": "123456",
+    "email": "pyxxponly@gmail.com",
+    "avatar": "",
+    "mobile": "18675867241",
+    "gender": "男",
+    "state": true
+  }
+]

@@ -4,9 +4,9 @@ from flask import Blueprint, Flask
 from pear_admin.utils.functools import register_rest_api_func
 
 from .auth_api import LoginApi, LogoutApi
+from .department_api import DepartmentApi, batch_remove_api
 from .role_api import PermissionApi, RoleApi, permission_enable, role_permission
 from .users_api import UserApi, user_role
-from .department_api import DepartmentApi, batch_remove_api
 
 
 def register_api(app: Flask):

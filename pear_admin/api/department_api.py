@@ -3,8 +3,8 @@ from flask import request
 from flask.views import MethodView
 from flask_pydantic import validate
 
+from pear_admin.models import DepartmentModel, PaginationModel
 from pear_admin.orms import DepartmentORM
-from pear_admin.models import PaginationModel, DepartmentModel
 
 
 class DepartmentApi(MethodView):
@@ -37,16 +37,15 @@ class DepartmentApi(MethodView):
 
     @validate()
     def post(self, body: DepartmentModel):
-        department = DepartmentORM(
-            pid=body.pid,
-            name=body.name,
-            sort=body.sort,
-            leader=body.leader,
-            phone=body.phone,
-            email=body.email,
-            enable=body.enable,
-            address=body.address,
-        )
+        department = DepartmentORM()
+        department.pid = (body.pid,)
+        department.name = (body.name,)
+        department.sort = (body.sort,)
+        department.leader = (body.leader,)
+        department.phone = (body.phone,)
+        department.email = (body.email,)
+        department.enable = (body.enable,)
+        department.address = (body.address,)
         department.save_to_db()
 
         return {
@@ -94,8 +93,8 @@ class DepartmentApi(MethodView):
 
 
 def batch_remove_api():
-    ids = request.json.get('ids')
-    id_list = ids.split(',')
+    ids = request.json.get("ids")
+    id_list = ids.split(",")
     for did in id_list:
         DepartmentORM.delete_by_id(did)
     return {

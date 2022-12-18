@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required
 from flask_pydantic import validate
 from flask_sqlalchemy import Pagination
 
-from pear_admin.models import PaginationModel, UserModel, DepartmentModel
+from pear_admin.models import DepartmentModel, PaginationModel, UserModel
 from pear_admin.orms import DepartmentORM, RoleORM, UserORM
 
 

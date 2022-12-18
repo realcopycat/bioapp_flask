@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+import os
 from datetime import timedelta
 
 # 默认日志等级
@@ -25,3 +26,6 @@ JWT_TOKEN_LOCATION = ["headers", "cookies"]
 JWT_ACCESS_COOKIE_NAME = "jwt"
 JWT_COOKIE_CSRF_PROTECT = False
 JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
+
+# 获取项目根目录
+root_path = os.path.dirname(os.path.abspath(__file__))

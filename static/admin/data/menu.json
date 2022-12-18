@@ -24,12 +24,12 @@
     "href": "",
     "children": [
       {
-        "id": 601,
-        "title": "用户管理",
-        "icon": "layui-icon layui-icon-face-smile",
+        "id": 603,
+        "title": "权限管理",
+        "icon": "layui-icon layui-icon-face-cry",
         "type": 1,
         "openType": "_iframe",
-        "href": "/user"
+        "href": "/permission"
       },
       {
         "id": 602,
@@ -40,14 +40,6 @@
         "href": "/role"
       },
       {
-        "id": 603,
-        "title": "权限管理",
-        "icon": "layui-icon layui-icon-face-cry",
-        "type": 1,
-        "openType": "_iframe",
-        "href": "/permission"
-      },
-      {
         "id": 604,
         "title": "部门管理",
         "icon": "layui-icon layui-icon-face-cry",
@@ -56,12 +48,12 @@
         "href": "/department"
       },
       {
-        "id": 605,
-        "title": "行为日志",
-        "icon": "layui-icon layui-icon-face-cry",
+        "id": 601,
+        "title": "用户管理",
+        "icon": "layui-icon layui-icon-face-smile",
         "type": 1,
         "openType": "_iframe",
-        "href": "/sys_log"
+        "href": "/user"
       }
     ]
   },

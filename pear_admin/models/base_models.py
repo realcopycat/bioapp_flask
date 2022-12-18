@@ -43,4 +43,3 @@ class PermissionModel(BaseModel):
     open_type: str = Field(default="")
     icon: str = Field(default="")
     sort: int = Field(default="")
-

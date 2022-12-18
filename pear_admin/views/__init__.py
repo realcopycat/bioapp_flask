@@ -181,11 +181,6 @@ def department_edit_view():
     )
 
 
-@view_bp.get("/sys_log")
-def sys_log_view():
-    return render_template("system/sys_log.html")
-
-
 @view_bp.get("/echarts/line")
 def echarts_line_view():
     return render_template("echarts/line.html")
