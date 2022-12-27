@@ -5,6 +5,7 @@ from applications.common.tasks import tasks
 from applications.common.tasks.tasks import task_list
 from applications.common.utils.http import table_api, fail_api, success_api
 from applications.extensions.init_apscheduler import scheduler
+import time as t
 
 admin_task = Blueprint('adminTask', __name__, url_prefix='/admin/task')
 
@@ -44,6 +45,10 @@ def save():
     functions = request.json.get("functions")
     datetime = request.json.get("datetime")
     time = request.json.get("time")
+    list = str(time).split(':')
+    hour = int(list[0])
+    min = int(list[1])
+    sec = int(list[2])
     if not hasattr(tasks, functions):
         return fail_api()
     if type == 'date':
@@ -62,6 +67,9 @@ def save():
             name=name,
             args=(1, 1),
             trigger=type,
+            hours=hour,
+            minutes=min,
+            seconds=sec,
             replace_existing=True)
     elif type == 'cron':
         scheduler.add_job(

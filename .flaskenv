@@ -9,7 +9,7 @@ FLASK_RUN_PORT = 5000
 SYSTEM_NAME = Pear Admin
 
 # MySql配置信息
-MYSQL_HOST=127.0.0.1
+MYSQL_HOST=202.193.53.151
 # MYSQL_HOST=dbserver
 MYSQL_PORT=3306
 MYSQL_DATABASE=PearAdminFlask
@@ -25,5 +25,5 @@ SECRET_KEY='pear-admin-flask'
 
 # 邮箱配置
 MAIL_SERVER='smtp.qq.com'
-MAIL_USERNAME='123@qq.com'
-MAIL_PASSWORD='XXXXX' # 生成的授权码
+MAIL_USERNAME='540467981@qq.com'
+MAIL_PASSWORD='Libingcai@123' # 生成的授权码
