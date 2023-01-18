@@ -5,9 +5,20 @@ from urllib.parse import quote_plus as urlquote
 from apscheduler.executors.pool import ThreadPoolExecutor
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 
+# 读入 flaskenv 中的环境变量
+with open(".flaskenv", "r", encoding='utf-8') as f:
+    for line in f.read().split("\n"):
+        pos = line.find("#")
+        if pos != -1:
+            line = line[:pos]
+        line = line.strip()
+        if line == "":
+            continue
+        _ = line.split("=")
+        key, value = _[0], '='.join(_[1:])
+        os.environ[key.strip()] = value.strip()
 
 class BaseConfig:
-
     SYSTEM_NAME = os.getenv('SYSTEM_NAME', 'Pear Admin')
     # 主题面板的链接列表配置
     SYSTEM_PANEL_LINKS = [
@@ -62,10 +73,11 @@ class BaseConfig:
     # 默认发件人的邮箱,这里填写和MAIL_USERNAME一致即可
     MAIL_DEFAULT_SENDER = ('pear admin', os.getenv('MAIL_USERNAME') or '123@qq.com')
 
-    # 設置 APSCHEDULER 參數
+    # 設置 APSCHEDULER 參數 @CHunYenc
     SCHEDULER_API_ENABLED = os.getenv('SCHEDULER_API_ENABLED') or False
     SCHEDULER_JOBSTORES: dict = {
-        'default': SQLAlchemyJobStore(url=f'mysql+pymysql://{MYSQL_USERNAME}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}')
+        'default': SQLAlchemyJobStore(
+            url=f'mysql+pymysql://{MYSQL_USERNAME}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}')
     }
     SCHEDULER_EXECUTORS: dict = {
         'default': ThreadPoolExecutor(20)
@@ -74,6 +86,9 @@ class BaseConfig:
         'coalesce': False,
         'max_instances': 3
     }
+
+    # 插件配置
+    PLUGIN_ENABLE_FOLDERS = os.getenv('PLUGIN_ENABLE_FOLDERS')
 
 
 class TestingConfig(BaseConfig):

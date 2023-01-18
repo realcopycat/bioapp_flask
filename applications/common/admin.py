@@ -112,7 +112,7 @@ def get_render_config():
     },
         {
             "id": "2",
-            "color": "#5FB878"
+            "color": "#2d8cf0"
         },
         {
             "id": "3",

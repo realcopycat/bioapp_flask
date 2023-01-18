@@ -85,10 +85,9 @@
 </form>
 {% include 'admin/common/footer.html' %}
 <script>
-    layui.use(['form', 'jquery', 'icon', 'dtree'], function () {
+    layui.use(['form', 'jquery', 'dtree'], function () {
         let form = layui.form
         let $ = layui.jquery
-        let icon = layui.icon
         let dtree = layui.dtree
 
         dtree.renderSelect({
@@ -145,17 +144,7 @@
             return false
         })
 
-        icon.render({
-            elem: '#icon',
-            style: 'color: #5FB878;',
-            placeholder: '',
-            isSplit: true,
-            page: false,
-            search: false,
-            click: function (data) {
-                console.log(data)
-            }
-        })
+
     })
 </script>
 <script>
