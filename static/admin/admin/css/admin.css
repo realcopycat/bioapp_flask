@@ -108,7 +108,7 @@ body,
 .pear-admin .layui-logo .title {
 	font-size: 21px;
 	font-weight: 550;
-	color: #5FB878;
+	color: #2D8CF0;
 	position: relative;
 	top: 5px;
 	margin-left: 5px;
@@ -217,7 +217,7 @@ body,
 .pear-admin .layui-header .layui-nav .layui-nav-bar {
 	top: 0px !important;
 	height: 2px !important;
-	background-color: #5FB878;
+	background-color: #2D8CF0;
 }
 
 .pear-admin .layui-header .layui-nav .layui-this:after {
@@ -235,7 +235,7 @@ body,
 	z-index: 400000;
 	bottom: 30px;
 	right: 30px;
-	background-color: #5FB878 !important;
+	background-color: #2D8CF0 !important;
 	height: 50px;
 	line-height: 50px;
 	text-align: center;
@@ -447,7 +447,7 @@ body,
 	padding: 4px;
 	top: -5px;
 	left: -5px;
-	border: #5FB878 2px solid;
+	border: #2D8CF0 2px solid;
 	opacity: 1;
 	border-radius: 4px;
 }
@@ -545,12 +545,12 @@ body,
 }
 
 .menu-search-list li:hover {
-	background-color: #5FB878;
+	background-color: #2D8CF0;
 	color: white;
 }
 
 .menu-search-list li.this {
-	background-color: #5FB878;
+	background-color: #2D8CF0;
 	color: white;
 }
 

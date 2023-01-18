@@ -70,8 +70,8 @@ def main():
                            boot_time=boot_time,
                            up_time_format=up_time_format,
                            disk_partitions_list=disk_partitions_list,
-                           time_now=time_now
-
+                           time_now=time_now,
+                           pearppid=os.environ.get('pearppid')
                            )
 
 

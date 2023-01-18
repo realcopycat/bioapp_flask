@@ -29,12 +29,12 @@
     height: 3px;
 	margin-top: 4px;
     vertical-align: top;
-    background: #5FB878;
+    background: #2D8CF0;
     position: relative;
 }
 
 .step-item-tail .step-item-tail-done {
-    background:  #5FB878;
+    background:  #2D8CF0;
 	height: 3px;
 	margin-top: 4px;
 }
@@ -46,14 +46,14 @@
     width: 35px;
     text-align: center;
     vertical-align: top;
-    color: #5FB878;
-    border: 3px solid #5FB878;
+    color: #2D8CF0;
+    border: 3px solid #2D8CF0;
     border-radius: 50%;
     background: #ffffff;
 }
 
 .step-item-head.step-item-head-active {
-    background: #5FB878;
+    background: #2D8CF0;
     color: #ffffff;
 }
 

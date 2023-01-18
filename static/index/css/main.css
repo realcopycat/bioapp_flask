@@ -45,7 +45,7 @@ body {
 	box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.06);
 	border-radius: 0;
 	color: #666;
-	border-color: #3EC483;
+	border-color: #2d8cf0;
 }
 
 /** //blockquote */
@@ -57,7 +57,7 @@ body {
 
 .layui-text a:not(.layui-btn),
 .layui-text a:not(.layui-btn):hover {
-	color: #3EC483;
+	color: #2d8cf0;
 	text-decoration: none;
 }
 
@@ -70,7 +70,7 @@ body {
 }
 
 .layui-btn {
-	background-color: #3EC483;
+	background-color: #2d8cf0;
 	box-sizing: border-box;
 }
 
@@ -145,12 +145,12 @@ body {
 }
 
 .text-primary {
-	color: #3EC483 !important;
+	color: #2d8cf0 !important;
 	;
 }
 
 .text-success {
-	color: #5FB878 !important;
+	color: #2D8CF0 !important;
 	;
 }
 
@@ -271,7 +271,7 @@ input.layui-disabled:hover {
 }
 
 .ball-loader>span {
-	background-color: #3EC483;
+	background-color: #2d8cf0;
 	display: inline-block;
 }
 
@@ -486,8 +486,8 @@ input.layui-disabled:hover {
 }
 
 .layui-layer.layui-layer-admin .layui-layer-btn .layui-layer-btn0 {
-	border-color: #3EC483;
-	background-color: #3EC483;
+	border-color: #2d8cf0;
+	background-color: #2d8cf0;
 	color: #fff;
 }
 
@@ -696,7 +696,7 @@ body .layui-util-face .layui-layer-content {
 
 .ew-header .layui-nav>.layui-nav-item>a:hover,
 .ew-header .layui-nav>.layui-nav-item.layui-this>a {
-	color: #3EC483;
+	color: #2d8cf0;
 }
 
 .ew-header .layui-nav .layui-nav-more {
@@ -709,12 +709,12 @@ body .layui-util-face .layui-layer-content {
 
 .ew-header .layui-nav>.layui-nav-item>a:hover>.layui-nav-more,
 .ew-header .layui-nav>.layui-nav-item.layui-this>a>.layui-nav-more {
-	border-color: #3EC483 transparent transparent;
+	border-color: #2d8cf0 transparent transparent;
 }
 
 .ew-header .layui-nav>.layui-nav-item>a:hover>.layui-nav-mored,
 .ew-header .layui-nav>.layui-nav-item.layui-this>a>.layui-nav-mored {
-	border-color: transparent transparent #3EC483;
+	border-color: transparent transparent #2d8cf0;
 }
 
 .ew-header .layui-nav .layui-nav-bar,
@@ -731,7 +731,7 @@ body .layui-util-face .layui-layer-content {
 	width: 0;
 	margin: 0 auto;
 	height: 3px;
-	background-color: #3EC483;
+	background-color: #2d8cf0;
 	transition: width .2s ease-out;
 }
 
@@ -848,7 +848,7 @@ body .layui-util-face .layui-layer-content {
 
 	.ew-header .layui-nav .layui-nav-item.layui-this>a {
 		color: #fff;
-		background-color: #3EC483;
+		background-color: #2d8cf0;
 	}
 
 	.ew-header .layui-nav>.layui-nav-item.nav-btn-login {
@@ -867,7 +867,7 @@ body .layui-util-face .layui-layer-content {
 
 	.ew-header .layui-nav>.layui-nav-item.nav-btn-login>a:hover {
 		background-color: transparent;
-		color: #3EC483;
+		color: #2d8cf0;
 	}
 
 	.ew-header .layui-nav>.layui-nav-item>.layui-nav-child {
@@ -889,7 +889,7 @@ body .layui-util-face .layui-layer-content {
 
 	.ew-header .layui-nav>.layui-nav-item>.layui-nav-child a:hover {
 		background-color: transparent;
-		color: #3EC483;
+		color: #2d8cf0;
 	}
 
 	/* nav-toggle */
@@ -959,7 +959,7 @@ body .layui-util-face .layui-layer-content {
 }
 
 .ew-footer p .layui-icon {
-	color: #3EC483;
+	color: #2d8cf0;
 	font-size: 24px;
 	vertical-align: middle;
 	margin-right: 10px;
@@ -1119,7 +1119,7 @@ body .layui-util-face .layui-layer-content {
 	top: 20px;
 	left: 20px;
 	background-color: rgba(62, 196, 131, .15);
-	color: #3EC483;
+	color: #2d8cf0;
 	padding: 15px;
 	border-radius: 50%;
 	font-size: 22px;
@@ -1162,7 +1162,7 @@ body .layui-util-face .layui-layer-content {
 .pricing .price {
 	margin: 10px 0;
 	font-size: 22px;
-	color: #3EC483;
+	color: #2d8cf0;
 }
 
 .pricing .price .small {
@@ -1195,7 +1195,7 @@ body .layui-util-face .layui-layer-content {
 }
 
 .pricing .price-content>li.active {
-	color: #3EC483;
+	color: #2d8cf0;
 }
 
 .pricing .price-btn>.layui-btn {
@@ -1212,7 +1212,7 @@ body .layui-util-face .layui-layer-content {
 }
 
 .guide .layui-icon {
-	color: #3EC483;
+	color: #2d8cf0;
 	font-size: 36px;
 	line-height: 36px;
 	display: inline-block;
@@ -1240,7 +1240,7 @@ body .layui-util-face .layui-layer-content {
 
 .guide .layui-btn {
 	background-color: rgba(62, 196, 131, .08);
-	color: #3EC483;
+	color: #2d8cf0;
 	border: 1px solid rgba(62, 196, 131, .8);
 	box-sizing: content-box;
 	margin: 35px 0 5px 0;
@@ -1954,7 +1954,7 @@ body::-webkit-scrollbar-corner {
 }
 
 .login-wrapper .layui-form .layui-btn-fluid {
-	background-color: #3EC483;
+	background-color: #2d8cf0;
 	line-height: 50px;
 	height: 50px;
 }
@@ -2133,7 +2133,7 @@ body::-webkit-scrollbar-corner {
 }
 
 .layer-get-code .layui-btn-fluid {
-	background-color: #3EC483;
+	background-color: #2d8cf0;
 	line-height: 50px;
 	height: 50px;
 }
@@ -2165,11 +2165,11 @@ body::-webkit-scrollbar-corner {
 	top: unset !important;
 	height: 2px !important;
 	border: none !important;
-	background-color: #3EC483;
+	background-color: #2d8cf0;
 }
 
 .ew-tab>.layui-tab-title>li.layui-this>a {
-	color: #3EC483;
+	color: #2d8cf0;
 }
 
 .ew-tab .layui-tab-bar {
@@ -2262,7 +2262,7 @@ body::-webkit-scrollbar-corner {
 
 .ew-vip-code-group .ew-vip-scan {
 	position: relative;
-	color: #3EC483;
+	color: #2d8cf0;
 	cursor: pointer;
 }
 
@@ -2320,8 +2320,8 @@ a.icon-text>.layui-icon {
 
 .ew-tab-coupon>.layui-tab-title .layui-this {
 	color: #fff;
-	background-color: #3EC483;
-	border-color: #3EC483;
+	background-color: #2d8cf0;
+	border-color: #2d8cf0;
 }
 
 .ew-tab-coupon>.layui-tab-title .layui-this:after {
@@ -2403,19 +2403,19 @@ a.icon-text>.layui-icon {
 
 /** 分页插件 */
 .layui-laypage .layui-laypage-curr .layui-laypage-em {
-	background-color: #5FB878;
+	background-color: #2D8CF0;
 }
 
 .layui-table-page .layui-laypage input:focus {
-	border-color: #5FB878 !important;
+	border-color: #2D8CF0 !important;
 }
 
 .layui-table-view select:focus {
-	border-color: #5FB878 !important;
+	border-color: #2D8CF0 !important;
 }
 
 .layui-table-page .layui-laypage a:hover {
-	color: #5FB878;
+	color: #2D8CF0;
 }
 
 /** 固定块 */
@@ -2451,7 +2451,7 @@ a.icon-text>.layui-icon {
 
 .layui-card-body>.ew-adv-item:nth-child(2) {
 	background-color: #009688;
-	background-image: linear-gradient(to right, #009688, #5FB878);
+	background-image: linear-gradient(to right, #009688, #2D8CF0);
 }
 
 .layui-card-body>.ew-adv-item:nth-child(3) {
@@ -2490,7 +2490,7 @@ a.icon-text>.layui-icon {
 }
 
 .layui-btn-primary {
-	background-color: #00c58e !important;
+	background-color: #2D8CF0 !important;
 	color: #fff !important;
 }
 
