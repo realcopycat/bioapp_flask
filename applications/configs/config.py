@@ -62,7 +62,7 @@ class BaseConfig:
     SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{MYSQL_USERNAME}:{urlquote(MYSQL_PASSWORD)}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}?charset=utf8mb4"
 
     # 默认日志等级
-    LOG_LEVEL = logging.WARN\
+    LOG_LEVEL = logging.WARN
         
     # 邮件配置
     MAIL_SERVER = os.getenv('MAIL_SERVER') or 'smtp.qq.com'
