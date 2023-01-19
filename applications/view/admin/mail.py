@@ -57,11 +57,11 @@ def save():
     req_json = request.json
     receiver = str_escape(req_json.get("receiver"))
     subject = str_escape(req_json.get('subject'))
-    content = str_escape(req_json.get('content'))
+    content = req_json.get('content')
     user_id = current_user.id
 
     try:
-        msg = Message(subject=subject, recipients=receiver.split(";"), body=content)
+        msg = Message(subject=subject, recipients=receiver.split(";"), html=content)
         flask_mail.send(msg)
     except Exception as e:
         current_app.log_exception(e)

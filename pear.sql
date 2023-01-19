@@ -207,11 +207,13 @@ INSERT INTO `admin_power` VALUES (52, '定时任务', '0', '', '', '', '0', 'lay
 INSERT INTO `admin_power` VALUES (53, '任务管理', '1', 'admin:task:main', '/admin/task', '_iframe', '52', 'layui-icon ', 1, '2021-06-22 21:15:00', '2021-06-22 21:15:00', 1);
 INSERT INTO `admin_power` VALUES (54, '任务增加', '2', 'admin:task:add', '', '', '53', 'layui-icon ', 1, '2021-06-22 22:20:54', '2021-06-22 22:20:54', 1);
 INSERT INTO `admin_power` VALUES (55, '任务修改', '2', 'admin:task:edit', '', '', '53', 'layui-icon ', 2, '2021-06-22 22:21:34', '2021-06-22 22:21:34', 1);
-INSERT INTO `admin_power` VALUES (56, '任务删除', '2', 'admin:task:remove', '', '', '53', 'layui-icon ', 3, '2021-06-22 22:22:18', '2021-06-22 22:22:18', 1);
-INSERT INTO `admin_power` VALUES (57, '邮件管理', '1', 'admin:mail:main', '/admin/mail', '_iframe', '1', 'layui-icon layui-icon layui-icon-release', 7, '2022-10-11 11:21:05', '2022-10-11 11:21:22', 1);
-INSERT INTO `admin_power` VALUES (58, '邮件发送', '2', 'admin:mail:add', '', '', '57', 'layui-icon layui-icon-ok-circle', 1, '2022-10-11 11:22:26', '2022-10-11 11:22:26', 1);
-INSERT INTO `admin_power` VALUES (59, '邮件删除', '2', 'admin:mail:remove', '', '', '57', 'layui-icon layui-icon layui-icon-close', 2, '2022-10-11 11:23:06', '2022-10-11 11:23:18', 1);
-
+INSERT INTO `admin_power` VALUES (57, '拓展插件', '0', '', '', '', '0', 'layui-icon layui-icon layui-icon-senior', 2, '2022-12-18 12:28:19', '2022-12-18 12:30:25', 1);
+INSERT INTO `admin_power` VALUES (58, '插件管理', '1', 'admin:plugin:main', '/plugin', '_iframe', '57', 'layui-icon layui-icon layui-icon layui-icon ', 1, '2022-12-18 12:30:13', '2022-12-18 13:57:20', 1);
+INSERT INTO `admin_power` VALUES	(59, '启禁插件', '2', 'admin:plugin:enable', '', '', '58', 'layui-icon ', 1, '2022-12-18 13:25:37', '2022-12-18 13:25:37', 1);
+INSERT INTO `admin_power` VALUES	(60, '删除插件', '2', 'admin:plugin:remove', '', '', '58', 'layui-icon layui-icon ', 2, '2022-12-18 13:26:30', '2022-12-18 13:27:17', 1);
+INSERT INTO `admin_power` VALUES	(61, '邮件管理', '1', 'admin:mail:main', '/admin/mail', '_iframe', '1', 'layui-icon layui-icon layui-icon-release', 7, '2022-10-11 11:21:05', '2022-10-11 11:21:22', 1);
+INSERT INTO `admin_power` VALUES	(62, '邮件发送', '2', 'admin:mail:add', '', '', '61', 'layui-icon layui-icon layui-icon-ok-circle', 1, '2022-10-11 11:22:26', '2022-12-25 10:48:11', 1);
+INSERT INTO `admin_power` VALUES	(63, '邮件删除', '2', 'admin:mail:remove', '', '', '61', 'layui-icon layui-icon layui-icon layui-icon-close', 2, '2022-10-11 11:23:06', '2022-12-25 10:48:22', 1);
 -- ----------------------------
 -- Table structure for admin_role
 -- ----------------------------

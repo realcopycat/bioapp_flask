@@ -74,6 +74,7 @@ Pear Admin Flask
 │  ├─configs  # 配置文件
 │  │  ├─ common.py  # 普通配置
 │  │  └─ config.py  # 配置文件对象
+│  ├─ dev  # 插件开发模块
 │  ├─extensions  # 注册插件
 │  ├─models  # 数据模型
 │  ├─static  # 静态资源文件
@@ -83,6 +84,7 @@ Pear Admin Flask
 │     └─index  # 前台视图模块
 ├─docs  # 文档说明（占坑）
 ├─migrations  # 迁移文件记录
+├─plugins  # 自定义插件文件夹
 ├─requirement  # 依赖文件
 ├─test # 测试文件夹（占坑）
 └─.env # 项目的配置文件
@@ -161,3 +163,42 @@ flask new --type view --name test/a
 | ![](docs/assets/1.jpg)  | ![](docs/assets/2.jpg)  |
 | ![](docs/assets/3.jpg)|  ![](docs/assets/4.jpg)   |
 | ![](docs/assets/5.jpg) |  ![](docs/assets/6.jpg)   |
+
+
+#### 此 PR 修改内容
+
+- [*] 关闭了 Flask 原有的日志输出，并采用自定义日志输出。```(applications/\_\_init\_\_.py)```
+
+- [*] 在程序 上游(app.before_request) 修改了请求的 来源地址(request.remote_addr) 以便获取远程地址的真实IP。```(applications/\_\_init\_\_.py)```
+
+- [*] 强制性将 .flaskenv 中的内容设置为程序运行时的环境变量，解决使用 ```python app.py``` 运行程序时不能正常读取配置的问题。```(applications/configs/config.py)```
+
+- [*] 不过滤提交邮件时的内容，并更改邮件以 HTML 格式发送。```(applications/view/admin/main.py)```
+
+- [*] 修改邮件管理网页模板中的一个字符串错误。“暂无人员信息” -> “暂无邮件信息” 。```(templates/admin/mail/main.html)```
+
+- [*] 修改登录页面中为引入全局网页头文件(admin/common/header.html)中导致的问题（手机页面过小）。```(templates/admin/login.html)```
+
+- [*] 修改系统监控为全核CPU使用率。```(applications/view/admin/monitor.py)```
+
+- [*] 修正系统监控中的CPU拼写错误。“cup” -> “cpu”。```(applications/view/admin/monitor.py)``````(templates/admin/monitor.html)```
+
+- [+] 直接将 pywsgi 集成，使用 ```python app.py``` 运行程序默认使用 pywsgi 运行，调试可以采用 ```python -m flask run``` 便于部署。```(app.py)```
+
+- [+] 增加插件功能，并把部分数据库操作封装成模块，以便于插件调用。```(applications/dev)``````(applications/plugin)```
+
+- [+] 增加关闭与重启程序功能。```(applications/view/admin/monitor.py)``````(templates/admin/monitor.html)``` 注意：写了一个 start.py 实现进程守护的功能，需要使用 ```python start.py (命令行，如 -m flask run)``` 才能使用重启功能。具体看下面的解释。
+
+###### 重启程序功能的解释
+
+伪守护进程，```start.py```的作用是打开一个新的进程并等待进程运行完毕，进程运行完毕时再打开一个进程（无论子进程是否正常退出，主进程始终会在子进程退出后再创建一个子进程）。```start.py```运行时会给子进程传递一个叫```pearppid```的环境变量，子进程通过判断这个变量是否存在来知道是否属于守护进程内。
+
+结束程序时，若没有守护进程，直接退出；若有，先结束守护进程，再结束自身。
+
+###### 插件功能的使用
+
+插件功能便于开发者二次开发，且最大限度地不更改原有框架内容。
+
+插件启用与禁用：在 .flaskenv 中设置。直接配置环境变量。将插件放在根目录的```plugins```文件夹下，再配置环境变量 ```PLUGIN_ENABLE_FOLDERS``` 实现插件禁用与启用。**注意：```PLUGIN_ENABLE_FOLDERS```为 json 数据格式的列表，请在列表中填入插件的文件夹名。**（当然你也可以在后台管理页面快速启用与禁用插件。）
+
+插件的编写：我们提供了一个实例插件 Helloworld。一个符合规格插件应该至少包含实例插件中的所有内容。

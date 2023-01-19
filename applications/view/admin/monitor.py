@@ -1,4 +1,5 @@
 import os
+import sys
 import platform
 import re
 from datetime import datetime
@@ -22,8 +23,8 @@ def main():
     python_version = platform.python_version()
     # 逻辑cpu数量
     cpu_count = psutil.cpu_count()
-    # cup使用率
-    cpus_percent = psutil.cpu_percent(interval=0.1)
+    # cpu使用率
+    cpus_percent = psutil.cpu_percent(interval=0.1, percpu=False)  # percpu 获取主使用率
     # 内存
     memory_information = psutil.virtual_memory()
     # 内存使用率
@@ -70,8 +71,8 @@ def main():
                            boot_time=boot_time,
                            up_time_format=up_time_format,
                            disk_partitions_list=disk_partitions_list,
-                           time_now=time_now
-
+                           time_now=time_now,
+                           pearppid=os.environ.get('pearppid')
                            )
 
 
@@ -79,10 +80,37 @@ def main():
 @admin_monitor_bp.get('/polling')
 @authorize("admin:monitor:main")
 def ajax_polling():
-    # 获取cup使用率
-    cpus_percent = psutil.cpu_percent(interval=0.1)
+    # 获取cpu使用率
+    cpus_percent = psutil.cpu_percent(interval=0.1, percpu=False)  # percpu 获取主使用率
     # 获取内存使用率
     memory_information = psutil.virtual_memory()
     memory_usage = memory_information.percent
     time_now = time.strftime('%H:%M:%S ', time.localtime(time.time()))
-    return jsonify(cups_percent=cpus_percent, memory_used=memory_usage, time_now=time_now)
+    return jsonify(cpus_percent=cpus_percent, memory_used=memory_usage, time_now=time_now)
+
+
+# 重启程序
+@admin_monitor_bp.get('/restart')
+@authorize("admin:monitor:main")
+def restart():
+    for proc in psutil.process_iter():
+        if proc.pid == os.getpid():
+            proc.kill()
+    ppid = os.getenv('pearppid', None)
+    if not ppid:
+        sys.exit(1)
+
+# 关闭程序
+@admin_monitor_bp.get('/kill')
+@authorize("admin:monitor:main")
+def kill():
+    ppid = os.getenv('pearppid', None)
+    if ppid:
+        for proc in psutil.process_iter():
+            if proc.pid == ppid:
+                proc.kill()
+    else:
+        for proc in psutil.process_iter():
+            if proc.pid == os.getpid():
+                proc.kill()
+    sys.exit(1)

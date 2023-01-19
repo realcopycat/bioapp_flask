@@ -1,7 +1,7 @@
 # flask配置
-FLASK_APP=app.py
-FLASK_ENV=development
-FLASK_DEBUG=1
+FLASK_APP = app.py
+FLASK_ENV = development
+FLASK_DEBUG = 1
 FLASK_RUN_HOST = 127.0.0.1
 FLASK_RUN_PORT = 5000
 
@@ -27,3 +27,6 @@ SECRET_KEY='pear-admin-flask'
 MAIL_SERVER='smtp.qq.com'
 MAIL_USERNAME='123@qq.com'
 MAIL_PASSWORD='XXXXX' # 生成的授权码
+
+# 插件配置 json 格式，填入插件的文件夹名
+PLUGIN_ENABLE_FOLDERS = ["helloworld"]
