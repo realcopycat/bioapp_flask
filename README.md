@@ -183,6 +183,8 @@ flask new --type view --name test/a
 
 - [*] 修正系统监控中的CPU拼写错误。“cup” -> “cpu”。```(applications/view/admin/monitor.py)``````(templates/admin/monitor.html)```
 
+- [*] 更新后台框架与 pear admin layui 同步。
+
 - [+] 直接将 pywsgi 集成，使用 ```python app.py``` 运行程序默认使用 pywsgi 运行，调试可以采用 ```python -m flask run``` 便于部署。```(app.py)```
 
 - [+] 增加插件功能，并把部分数据库操作封装成模块，以便于插件调用。```(applications/dev)``````(applications/plugin)```
@@ -200,5 +202,7 @@ flask new --type view --name test/a
 插件功能便于开发者二次开发，且最大限度地不更改原有框架内容。
 
 插件启用与禁用：在 .flaskenv 中设置。直接配置环境变量。将插件放在根目录的```plugins```文件夹下，再配置环境变量 ```PLUGIN_ENABLE_FOLDERS``` 实现插件禁用与启用。**注意：```PLUGIN_ENABLE_FOLDERS```为 json 数据格式的列表，请在列表中填入插件的文件夹名。**（当然你也可以在后台管理页面快速启用与禁用插件。）
+
+![输入图片说明](docs/assets/image.png)
 
 插件的编写：我们提供了一个实例插件 Helloworld。一个符合规格插件应该至少包含实例插件中的所有内容。
