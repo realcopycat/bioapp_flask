@@ -75,7 +75,7 @@ def save():
 
     if bool(User.query.filter_by(username=username).count()):
         return fail_api(msg="用户已经存在")
-    user = User(username=username, realname=real_name)
+    user = User(username=username, realname=real_name, dept_id=1)
     user.set_password(password)
     db.session.add(user)
     roles = Role.query.filter(Role.id.in_(role_ids)).all()
