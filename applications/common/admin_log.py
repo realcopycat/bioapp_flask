@@ -5,16 +5,16 @@ from applications.extensions import db
 from applications.models import AdminLog
 
 
-def login_log(request, uid, is_access):
+def admin_log(request, is_access):
+    request_data = request.json if request.headers.get('Content-Type') == 'application/json' else request.values
     info = {
         'method': request.method,
         'url': request.path,
-        'ip': request.remote_addr,
-        'user_agent': str_escape(request.headers.get('User-Agent')),
-        'desc': str_escape(request.form.get('username')),
-        'uid': uid,
+        'ip': get_user_ip(request),
+        'user_agent': xss_escape(request.headers.get('User-Agent')),
+        'desc': (str(dict(request_data))),
+        'uid': current_user.id,
         'success': int(is_access)
-
     }
     log = AdminLog(
         url=info.get('url'),
@@ -26,7 +26,6 @@ def login_log(request, uid, is_access):
         success=info.get('success')
     )
     db.session.add(log)
-    db.session.flush()
     db.session.commit()
     return log.id
 
