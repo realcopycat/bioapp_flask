@@ -3,6 +3,7 @@ from flask import Blueprint, Flask
 
 from pear_admin.utils.functools import register_rest_api_func
 
+from .admin_api import menus_api
 from .auth_api import LoginApi, LogoutApi
 from .department_api import DepartmentApi, batch_remove_api
 from .role_api import PermissionApi, RoleApi, permission_enable, role_permission
@@ -40,4 +41,5 @@ def register_api(app: Flask):
     api.add_url_rule(
         "/department/batch_remove", view_func=batch_remove_api, methods=["DELETE"]
     )
+    api.add_url_rule("/menus", view_func=menus_api, methods=["GET"])
     app.register_blueprint(api)

@@ -74,7 +74,7 @@ class RoleApi(MethodView):
             return {
                 "meta": {
                     "code": RetCode.DELETE_ERR.value,
-                    "message": RetCode.DELETE_ERR.errmsg,
+                    "message": "演示数据禁止修改，请新增之后再进行删除",
                     "status": "fail",
                 },
             }

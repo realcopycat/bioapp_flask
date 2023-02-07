@@ -17,3 +17,11 @@ create database pear_admin_flask character set `utf8mb4`;
 + https://layui.gitee.io/v2/ ， layui 的官方文档，建议先把文档与示例全部刷一遍。
 + http://layui.pearadmin.com/ , pear admin layui 演示地址，虽然官方文档不是很详细，但是演示网址中的演示案例非常容易上手。
 
+
+## 使用方式
+
+```shell
+pip install poetry
+
+poetry run flask run
+```
