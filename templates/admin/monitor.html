@@ -145,6 +145,17 @@
                         <td>python版本</td>
                         <td>{{ python_version }}</td>
                     </tr>
+                    <tr>
+                        <td>程序操作</td>
+                        <td>
+                            {% if pearppid %}
+                                <a href="javascript:restart();"
+                                   class="pear-btn pear-btn-xs pear-btn-primary">重启程序</a>
+                            {% endif %}
+                            <a href="javascript:kill();"
+                               class="pear-btn pear-btn-xs pear-btn-primary">关闭程序</a>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -153,6 +164,65 @@
 </div>
 {% include 'admin/common/footer.html' %}
 <script>
+    // 重启程序
+    function restart() {
+        layui.use(['layer'], function () {
+            var $ = layui.jquery;
+            let popup = layui.popup;
+            layer.confirm('确定要重启程序吗？您可能需要一段时间等待程序重启。', {
+                icon: 3,
+                title: '提示'
+            }, function (index) {
+                layer.close(index)
+                let loading = layer.load()
+                $.ajax({
+                    url: '/admin/monitor/restart',
+                    dataType: 'json',
+                    type: 'get',
+                    error: function (result) {
+                        setInterval(function () {
+                            $.ajax({
+                                url: '/admin/monitor',
+                                type: 'get',
+                                success: function (result) {
+                                    layer.close(loading)
+                                    popup.success("重启程序成功！", function () {
+                                        window.location.reload()
+                                    })
+                                }
+                            })
+                        }, 1000);
+                    }
+                })
+            })
+        })
+    }
+
+    // 关闭程序
+    function kill() {
+        layui.use(['layer'], function () {
+            var $ = layui.jquery;
+            let popup = layui.popup;
+            layer.confirm('确定要关闭程序吗？请求执行后，需要您手动关闭网页。', {
+                icon: 3,
+                title: '提示'
+            }, function (index) {
+                layer.close(index)
+                let loading = layer.load()
+                $.ajax({
+                    url: '/admin/monitor/kill',
+                    dataType: 'json',
+                    type: 'get',
+                    error: function (result) {
+                        layer.close(loading)
+                        popup.success("关闭程序成功！请手动关闭网页！", function () {})
+
+                    }
+                })
+            })
+        })
+    }
+
     layui.use(['layer', 'echarts', 'popup'], function () {
         var $ = layui.jquery,
             echarts = layui.echarts;
@@ -368,7 +438,7 @@
             echartsRecords.resize();
         };
 
-        setInterval(ajaxPolling, 1000 * 10);
+        setInterval(ajaxPolling, 1000);
 
         function ajaxPolling() {
             $.ajax({
@@ -376,7 +446,7 @@
                 success: function (data) {
                     echartData.push({
                         name: data.time_now,
-                        cpu_percent: data.cups_percent,
+                        cpu_percent: data.cpus_percent,
                         memory_percent: data.memory_used
                     });
                     if (echartData.length > 8) {
@@ -395,7 +465,7 @@
 
                 },
                 error: function (xhr, type, errorThrown) {
-                    popup.failure("api错误");
+                    // popup.failure("api错误"); 就不要提示了吧
                 }
             })
 
