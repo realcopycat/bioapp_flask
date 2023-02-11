@@ -49,8 +49,8 @@ CREATE TABLE `ums_permission`
 );
 
 insert into ums_permission
-values (0, 100, '系统管理', 'ums:permission', 'menu', null, 1, null, 0, null, 0),
-       (0, 100001, '权限管理', 'ums:permission:list', 'path', '/permission_list', 1, null, 0, null, 100),
+values (0, 100, '系统管理', 'ums:permission', 'menu', null, 'layui-icon layui-icon-set-fill', null, 2, null, 0),
+       (0, 100001, '权限管理', 'ums:permission:list', 'path', '/permission', 1, null, 0, null, 100),
        (0, 1000011, '新增权限', 'ums:permission:create', 'auth', '', 1, null, 0, null, 100001),
        (0, 1000012, '修改权限', 'ums:permission:update', 'auth', '', 1, null, 0, null, 100001),
        (0, 1000013, '获取权限', 'ums:permission:read', 'auth', '', 1, null, 0, null, 100001),
@@ -65,11 +65,16 @@ values (0, 100, '系统管理', 'ums:permission', 'menu', null, 1, null, 0, null
        (0, 1000032, '修改部门', 'ums:department:update', 'auth', '', 1, null, 0, null, 100003),
        (0, 1000033, '删除部门', 'ums:department:delete', 'auth', '', 1, null, 0, null, 100003),
        (0, 1000034, '查询部门', 'ums:department:read', 'auth', '', 1, null, 0, null, 100003),
-       (0, 100004, '员工管理', 'ums:employee', 'path', '/employee', 1, null, 0, null, 100),
-       (0, 1000041, '新增员工', 'ums:employee:create', 'auth', '', 1, null, 0, null, 100004),
-       (0, 1000042, '修改员工', 'ums:employee:update', 'auth', '', 1, null, 0, null, 100004),
-       (0, 1000043, '查询员工', 'ums:employee:read', 'auth', '', 1, null, 0, null, 100004),
-       (0, 1000044, '查询员工', 'ums:employee:read', 'auth', '', 1, null, 0, null, 100004)
+       (0, 100004, '员工管理', 'ums:user', 'path', '/user', 1, null, 0, null, 100),
+       (0, 1000041, '新增员工', 'ums:user:create', 'auth', '', 1, null, 0, null, 100004),
+       (0, 1000042, '修改员工', 'ums:user:update', 'auth', '', 1, null, 0, null, 100004),
+       (0, 1000043, '查询员工', 'ums:user:read', 'auth', '', 1, null, 0, null, 100004),
+       (0, 1000044, '查询员工', 'ums:user:read', 'auth', '', 1, null, 0, null, 100004),
+       (0, 200, '数据图表', '', 'menu', null, 'layui-icon layui-icon-chart', null, 3, null, 0),
+       (0, 200001, '折线图', '', 'path', '/echarts/line', 'layui-icon layui-icon-face-smile', null, 0, null, 200),
+       (0, 200002, '柱状图', '', 'path', '/echarts/column', 'layui-icon layui-icon-face-smile', null, 0, null, 200),
+       (0, 300, '工作空间', '', 'menu', null, 'layui-icon layui-icon-console', null, 1, null, 0),
+       (0, 300001, '控制后台', '', 'path', '/person', 'layui-icon layui-icon-console', null, 0, null, 300)
 ;
 
 CREATE TABLE `ums_role`
