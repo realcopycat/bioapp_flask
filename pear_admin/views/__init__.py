@@ -115,7 +115,7 @@ def role_permission_view(pid):
     permission_list = [
         {
             "id": item.id,
-            "title": item.name,
+            "title": item.permission_name,
             "sort": item.sort or 0,
             "pid": item.pid,
             "spread": True,

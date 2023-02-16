@@ -20,14 +20,14 @@
                     <label class="layui-form-label">名称</label>
                     <div class="layui-input-block">
                         <input type="text" name="name" lay-verify="title" autocomplete="off" placeholder="权限名称"
-                                class="layui-input">
+                               class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item" id="powerCodeItem">
                     <label class="layui-form-label">标识</label>
                     <div class="layui-input-block">
                         <input type="text" id="powerCode" name="code" autocomplete="off" placeholder="权限标识"
-                                class="layui-input">
+                               class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -42,7 +42,7 @@
                     <label class="layui-form-label">路径</label>
                     <div class="layui-input-block">
                         <input type="text" id="powerUrl" name="path" autocomplete="off" placeholder="菜单路径"
-                                class="layui-input">
+                               class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item" id="openTypeItem">
@@ -65,7 +65,7 @@
                     <label class="layui-form-label">排序</label>
                     <div class="layui-input-block">
                         <input type="text" name="sort" lay-verify="title" autocomplete="off" placeholder="排序"
-                                class="layui-input">
+                               class="layui-input">
                     </div>
                 </div>
             </div>
@@ -89,11 +89,12 @@
 <script src="/static/component/pear/pear.js"></script>
 <script src="/static/js/pear_admin_flask.js"></script>
 <script>
-  layui.use(['form', 'jquery', 'iconPicker', 'dtree'], function() {
+  layui.use(['form', 'jquery', 'iconPicker', 'dtree', 'popup'], function() {
     let form = layui.form;
     let $ = layui.jquery;
     let iconPicker = layui.iconPicker;
     let dtree = layui.dtree;
+    let popup = layui.popup;
 
     dtree.renderSelect({
       elem: '#selectParent',
@@ -132,12 +133,12 @@
 
       create_permission(data.field).then(function(ret) {
         if (ret.meta.status === 'success') {
-          layer.msg(ret.meta.message, {icon: 1, time: 1000}, function() {
+          popup.success(ret.meta.message, function() {
             parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
             parent.render();
           });
         } else {
-          layer.msg(ret.meta.message, {icon: 2, time: 1000});
+          popup.failure(ret.meta.message);
         }
       });
       return false;

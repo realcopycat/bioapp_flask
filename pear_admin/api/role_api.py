@@ -95,20 +95,7 @@ class PermissionApi(MethodView):
             permission: PermissionORM = PermissionORM.query.get(pid)
             return {
                 "result": {
-                    "permission": [
-                        {
-                            "id": permission.id,
-                            "pid": permission.pid,
-                            "level": permission.level,
-                            "name": permission.name,
-                            "code": permission.code,
-                            "icon": permission.icon,
-                            "path": permission.path,
-                            "open_type": permission.open_type,
-                            "enable": permission.enable,
-                            "sort": permission.sort,
-                        }
-                    ],
+                    "permission": [permission.json()],
                 },
                 "meta": {
                     "message": "查询数据成功",
@@ -118,12 +105,31 @@ class PermissionApi(MethodView):
         else:
             permission_list: list[PermissionORM] = PermissionORM.query.all()
             _type = request.args.get("type")
-            if _type == "dtree":
+            if _type == "dtree":  # 树形菜单分配权限
                 rets = [permission.json() for permission in permission_list]
                 rets.append({"id": 0, "name": "顶级权限", "pid": -1})
                 return {
                     "status": {"code": 200, "message": "默认"},  # 兼容 dtree
                     "data": rets,
+                }
+            elif _type == "treetable":  # 树形菜单分配权限
+                rets = [permission.json() for permission in permission_list]
+
+                permission_id_2_id_dict = {
+                    permission.permission_id: permission.id
+                    for permission in permission_list
+                }
+
+                for item in rets:
+                    item.update({"pid": permission_id_2_id_dict.get(item["pid"], 0)})
+                return {
+                    "result": {
+                        "permission_list": rets,
+                    },
+                    "meta": {
+                        "message": "查询数据成功",
+                        "status": "success",
+                    },
                 }
             return {
                 "result": {
@@ -140,11 +146,11 @@ class PermissionApi(MethodView):
     @jwt_required()
     @validate()
     def post(self, body: PermissionModel):
-        permission = PermissionORM()
+        permission: PermissionORM = PermissionORM()
         permission.pid = body.pid
-        permission.name = body.name
-        permission.code = body.code
-        permission.level = body.level
+        permission.permission_name = body.name
+        permission.permission_code = body.code
+        permission.permission_type = body.level
         permission.path = body.path
         permission.open_type = body.open_type
         permission.icon = body.icon

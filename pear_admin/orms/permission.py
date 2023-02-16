@@ -28,8 +28,7 @@ class PermissionORM(db.Model):
     def json(self):
         return {
             "id": self.id,
-            "pid": str(self.pid),
-            "permission_id": str(self.permission_id),
+            "permission_id": self.permission_id,
             "permission_name": self.permission_name,
             "permission_code": self.permission_code,
             "permission_type": self.permission_type,
@@ -37,6 +36,8 @@ class PermissionORM(db.Model):
             "icon": self.icon,
             "status": self.status,
             "sort": self.sort,
+            "open_type": self.open_type,
+            "pid": self.pid,
         }
 
     def menu_json(self):

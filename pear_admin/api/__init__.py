@@ -19,6 +19,13 @@ def register_api(app: Flask):
         "/logout", view_func=LogoutApi.as_view("logout_api"), methods=["POST"]
     )
 
+    register_rest_api_func(
+        api, PermissionApi, "permission_api", "/permission/", pk="pid"
+    )
+    api.add_url_rule(
+        "/permission/<int:pid>/enable", view_func=permission_enable, methods=["PUT"]
+    )
+
     register_rest_api_func(api, UserApi, "user_api", "/user/", pk="uid")
     api.add_url_rule(
         "/user/role/<int:uid>", view_func=user_role, methods=["GET", "PUT"]
@@ -27,12 +34,6 @@ def register_api(app: Flask):
 
     api.add_url_rule(
         "/role/permission/<int:rid>", view_func=role_permission, methods=["PUT"]
-    )
-    register_rest_api_func(
-        api, PermissionApi, "permission_api", "/permission/", pk="pid"
-    )
-    api.add_url_rule(
-        "/permission/<int:pid>/enable", view_func=permission_enable, methods=["PUT"]
     )
 
     register_rest_api_func(

@@ -77,17 +77,17 @@
 </script>
 
 <script type="text/html" id="power-type">
-    {{ "{{#if (d.level == 'path') { }}" | safe }}
+    {{ "{{#if (d.permission_type == 'path') { }}" | safe }}
     <span>目录</span>
-    {{ "{{# }else if(d.level == 'menu'){ }}" | safe }}
+    {{ "{{# }else if(d.permission_type == 'menu'){ }}" | safe }}
     <span>菜单</span>
-    {{ "{{# }else if(d.level == 'auth'){ }}" | safe }}
+    {{ "{{# }else if(d.permission_type == 'auth'){ }}" | safe }}
     <span>权限</span>
     {{ "{{# } }}" | safe }}
 </script>
 
 <script type="text/html" id="power-enable">
-    {{ '<input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="permission-enable"  {{ d.status== true ? "checked" : "" }} />' | safe }}
+    {{ '<input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="permission-enable"  {{ d.status == true ? "checked" : "" }} />' | safe }}
 </script>
 
 
@@ -99,23 +99,24 @@
 <script src="/static/component/pear/pear.js"></script>
 <script src="/static/js/pear_admin_flask.js"></script>
 <script>
-    layui.use(['table', 'form', 'jquery', 'treetable'], function () {
+    layui.use(['table', 'form', 'jquery', 'treetable', 'popup'], function () {
         let table = layui.table;
         let form = layui.form;
         let $ = layui.jquery;
         let treetable = layui.treetable;
+        let popup = layui.popup;
 
         window.render = function () {
             treetable.render({
                 treeColIndex: 1,
                 treeSpid: 0,
-                treeIdName: 'permission_id',
+                treeIdName: 'id',
                 treePidName: 'pid',
                 skin: 'line',
                 treeDefaultClose: true,
                 toolbar: '#power-toolbar',
                 elem: '#permission-table',
-                url: '/api/private/v1/permission/',
+                url: '/api/private/v1/permission/?type=treetable',
                 page: false,
                 cols: [
                     [
@@ -134,7 +135,7 @@
                     return {
                         'code': res.meta.status === 'success' ? 0 : 1, //解析接口状态
                         'msg': res.meta.message, //解析提示文本
-                        {#'count': res.result.total, //解析数据长度#}
+                        'count': res.result.total, //解析数据长度
                         'data': data, //解析数据列表
                     };
                 },
@@ -177,9 +178,9 @@
             enable_permission(this.value, {enable: operate}).then(function (ret) {
                 layer.close(loading);
                 if (ret.meta.status === 'success') {
-                    layer.msg(ret.meta.message, {icon: 1, time: 1000});
+                    popup.success(ret.meta.message)
                 } else {
-                    layer.msg(ret.meta.message, {icon: 2, time: 1000});
+                    popup.failure(ret.meta.message)
                 }
             });
         });
@@ -212,11 +213,11 @@
                 remove_permission(obj.data.id).then(function (ret) {
                     layer.close(loading);
                     if (ret.meta.status === 'success') {
-                        layer.msg(ret.meta.message, {icon: 1, time: 1000}, function () {
+                        popup.success(ret.meta.message, function () {
                             obj.del();
-                        });
+                        })
                     } else {
-                        layer.msg(ret.meta.message, {icon: 2, time: 1000});
+                        popup.failure(ret.meta.message)
                     }
                 });
             });
@@ -225,10 +226,7 @@
         window.batchRemove = function (obj) {
             let data = table.checkStatus(obj.config.id).data;
             if (data.length === 0) {
-                layer.msg('未选中数据', {
-                    icon: 3,
-                    time: 1000,
-                });
+                popup.warning('未选中数据')
                 return false;
             }
             let ids = '';
@@ -241,29 +239,23 @@
                 title: '提示',
             }, function (index) {
                 layer.close(index);
-                layer.msg('暂不支持批量删除');
+                popup.failure('暂不支持批量删除')
                 /*
                 let loading = layer.load();
                 $.ajax({
-                  url: MODULE_PATH + 'batchRemove/' + ids,
-                  dataType: 'json',
-                  type: 'delete',
-                  success: function(result) {
-                    layer.close(loading);
-                    if (result.success) {
-                      layer.msg(result.msg, {
-                        icon: 1,
-                        time: 1000,
-                      }, function() {
-                        table.reload('user-table');
-                      });
-                    } else {
-                      layer.msg(result.msg, {
-                        icon: 2,
-                        time: 1000,
-                      });
-                    }
-                  },
+                    url: MODULE_PATH + 'batchRemove/' + ids,
+                    dataType: 'json',
+                    type: 'delete',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            popup.success(result.meta.message, function () {
+                                table.reload('user-table');
+                            })
+                        } else {
+                            popup.failure(result.meta.message)
+                        }
+                    },
                 });
                 */
             });
