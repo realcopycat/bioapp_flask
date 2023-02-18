@@ -102,35 +102,36 @@
 
 <!-- 框 架 初 始 化 -->
 <script>
-  layui.use(['admin', 'jquery', 'popup', 'drawer'], function() {
-    var $ = layui.jquery;
-    var admin = layui.admin;
-    var popup = layui.popup;
+    layui.use(['admin', 'jquery', 'popup', 'drawer'], function() {
+        var $ = layui.jquery;
+        var admin = layui.admin;
+        var popup = layui.popup;
 
-    admin.setConfigType('json');
-    admin.setConfigPath('/static/config/pear.config.json');
+        admin.setConfigType('json');
+        admin.setConfigPath('/static/config/pear.config.json');
 
-    admin.render();
+        admin.render();
 
-    // 登出逻辑
-    admin.logout(async function() {
+        // 登出逻辑
+        admin.logout(async function() {
 
-      const res_data = await logout();
-      if (res_data?.meta && res_data?.meta.status === 'success') {
-        popup.success('注销成功', function() {
-          location.href = '/login';
+            const res_data = await logout();
+            if (res_data?.meta && res_data?.meta.status === 'success') {
+                popup.success('注销成功', function() {
+                    location.href = '/login';
+                });
+            } else {
+                layer.msg(`注销失败 ${res_data.meta.message}`, {'icon': 2, time: 1000});
+
+            }
+
+            // 注销逻辑 返回 true / false
+            return true;
         });
-      } else {
-        popup.success(`注销失败 ${res_data.meta.message}`);
-      }
 
-      // 注销逻辑 返回 true / false
-      return true;
+        // 消息点击回调
+        admin.message(function(id, title, context, form) {});
     });
-
-    // 消息点击回调
-    admin.message(function(id, title, context, form) {});
-  });
 </script>
 </body>
 </html>

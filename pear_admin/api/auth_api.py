@@ -27,7 +27,7 @@ class LoginApi(MethodView):
         user: UserORM = UserORM.find_by_username(username)
 
         code = redis_client.get(f"image_code_{image_code_uuid}")
-        if code != captcha_code:
+        if str(code) != captcha_code:
             return {
                 "meta": {
                     "code": RetCode.CAPTCHA_CODE_ERR.code,

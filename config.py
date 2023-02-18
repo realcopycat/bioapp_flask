@@ -8,7 +8,7 @@ LOG_LEVEL = logging.WARN
 
 # mysql 配置
 MYSQL_USERNAME = "root"
-MYSQL_PASSWORD = "root"
+MYSQL_PASSWORD = "123456"
 
 MYSQL_HOST = "127.0.0.1"
 MYSQL_PORT = 3306

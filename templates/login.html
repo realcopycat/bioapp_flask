@@ -19,13 +19,16 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <input type="text" name="username" value="admin" placeholder="账 户 : admin " lay-verify="required" hover class="layui-input"/>
+        <input type="text" name="username" value="admin" placeholder="账 户 : admin " lay-verify="required" hover
+               class="layui-input"/>
     </div>
     <div class="layui-form-item">
-        <input type="password" name="password" value="123456" placeholder="密 码 : 123456 " lay-verify="required" hover class="layui-input"/>
+        <input type="password" name="password" value="123456" placeholder="密 码 : 123456 " lay-verify="required" hover
+               class="layui-input"/>
     </div>
     <div class="layui-form-item">
-        <input name="captcha_code" placeholder="验证码 : " hover lay-verify="required" class="code layui-input layui-input-inline" lay-verify="captcha_code"/>
+        <input name="captcha_code" placeholder="验证码 : " hover lay-verify="required"
+               class="code layui-input layui-input-inline" lay-verify="captcha_code"/>
         <img src="/static/admin/images/captcha.gif" class="codeImage"/>
     </div>
     <div class="layui-form-item">
@@ -43,82 +46,80 @@
 <script src="/static/js/pear_admin_flask.js"></script>
 
 <script>
-  layui.use(['form', 'button', 'popup'], function() {
-    var form = layui.form;
-    var button = layui.button;
-    var popup = layui.popup;
+    layui.use(['form', 'button', 'popup'], function() {
+        var form = layui.form;
+        var button = layui.button;
+        var popup = layui.popup;
 
-    var $ = layui.$;
-    let imageCodeId = '';
-    let captchaPath = '/login/captcha';
+        var $ = layui.$;
+        let imageCodeId = '';
+        let captchaPath = '/login/captcha';
 
-    /// 验证登录验证
-    form.verify({
-      username: function(value, item) { //value：表单的值、item：表单的DOM对象
-        if (!new RegExp('^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$').test(value)) {
-          return '用户名不能有特殊字符';
-        }
-        if (/(^\_)|(\__)|(\_+$)/.test(value)) {
-          return '用户名首尾不能出现下划线\'_\'';
-        }
-        if (/^\d+\d+\d$/.test(value)) {
-          return '用户名不能全为数字';
-        }
-      }
-      , password: [
-        /^[\S]{6,12}$/
-        , '密码必须6到12位，且不能出现空格',
-      ]
-      , captcha_code: [
-        /^[\S]{4}$/
-        , '验证码必须4位，且不能出现空格',
-      ],
-    });
-
-    // 登 录 提 交
-    form.on('submit(login)', async function(form) {
-
-      /// 登录 do something
-      let data = Object.assign({'image_code': imageCodeId}, form.field);
-      const res_data = await login(data);
-
-      if (res_data.meta.status === 'success') {
-        localStorage.setItem('jwt', res_data.result.access_token);
-
-        /// 动画
-        button.load({
-          elem: '.login',
-          time: 1500,
-          done: function() {
-            popup.success('登录成功', function() {
-              location.href = '/';
-            });
-          },
+        /// 验证登录验证
+        form.verify({
+            username: function(value, item) { //value：表单的值、item：表单的DOM对象
+                if (!new RegExp('^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$').test(value)) {
+                    return '用户名不能有特殊字符';
+                }
+                if (/(^\_)|(\__)|(\_+$)/.test(value)) {
+                    return '用户名首尾不能出现下划线\'_\'';
+                }
+                if (/^\d+\d+\d$/.test(value)) {
+                    return '用户名不能全为数字';
+                }
+            }
+            , password: [
+                /^[\S]{6,12}$/
+                , '密码必须6到12位，且不能出现空格',
+            ]
+            , captcha_code: [
+                /^[\S]{4}$/
+                , '验证码必须4位，且不能出现空格',
+            ],
         });
-      } else {
-        layui.layer.msg(res_data.meta.message);
-      }
-      return false;
+
+        // 登 录 提 交
+        form.on('submit(login)', async function(form) {
+
+            /// 登录 do something
+            let data = Object.assign({'image_code': imageCodeId}, form.field);
+            const res_data = await login(data);
+            if (res_data.meta.status === 'success') {
+                localStorage.setItem('jwt', res_data.result.access_token);
+                /// 动画
+                button.load({
+                    elem: '.login',
+                    time: 1500,
+                    done: function() {
+                        popup.success('登录成功', function() {
+                            location.href = '/';
+                        });
+                    },
+                });
+            } else {
+                layui.layer.msg(res_data.meta.message[1], {icon: 2, time: 1000});
+            }
+            return false;
+        });
+
+        // 点击按钮更新验证码
+        $('.codeImage').click(function() {
+            // 浏览器要发起图片验证码请求/image_code?imageCodeId=xxxxx
+            update_captcha_image();
+        });
+
+        function update_captcha_image() {
+            imageCodeId = generateUUID();
+            document.querySelector('.codeImage').src = captchaPath + '?image_code=' + imageCodeId;
+        }
+
+        update_captcha_image();
+
+        // 定时器，定时更新验证码
+        setInterval(function() {
+            document.querySelector('.codeImage').src = captchaPath + '?' + Math.random();
+        }, 60 * 1000);
     });
-
-    // 点击按钮更新验证码
-    $('.codeImage').click(function() {
-      // 浏览器要发起图片验证码请求/image_code?imageCodeId=xxxxx
-      update_captcha_image();
-    });
-
-    function update_captcha_image() {
-      imageCodeId = generateUUID();
-      document.querySelector('.codeImage').src = captchaPath + '?image_code=' + imageCodeId;
-    }
-
-    update_captcha_image();
-
-    // 定时器，定时更新验证码
-    setInterval(function() {
-      document.querySelector('.codeImage').src = captchaPath + '?' + Math.random();
-    }, 60 * 1000);
-  });
 </script>
 </body>
 </html>
