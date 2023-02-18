@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
+from flask import current_app
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from pear_admin.extensions import db
+from pear_admin.utils.response_code import RetCode
 
 
 class UserORM(db.Model):
@@ -75,8 +77,34 @@ class UserORM(db.Model):
 
     def save_to_db(self):
         db.session.add(self)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            # 添加log
+            current_app.logger.error(e)
+            # 滚回操作
+            db.session.rollback()
+            return {
+                "meta": {
+                    "code": RetCode.DB_ERR.value,
+                    "message": "添加数据成功",
+                    "status": "fail",
+                },
+            }
 
     def delete_from_db(self):
         db.session.delete(self)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            # 添加log
+            current_app.logger.error(e)
+            # 滚回操作
+            db.session.rollback()
+            return {
+                "meta": {
+                    "code": RetCode.DB_ERR.value,
+                    "message": "添加数据成功",
+                    "status": "fail",
+                },
+            }

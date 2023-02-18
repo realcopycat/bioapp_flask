@@ -14,6 +14,14 @@ from pear_admin.utils.response_code import RetCode
 class RoleApi(MethodView):
     @validate()
     def get(self, rid, query: PaginationModel):
+        if not query:
+            return {
+                "meta": {
+                    "code": RetCode.NECESSARY_PARAM_ERR.value,
+                    "message": "请求头数据缺少",
+                    "status": "fail",
+                },
+            }
         filters = []
         if query.query:
             filters.append(RoleORM.username.like("%" + query.query + "%"))
@@ -39,6 +47,14 @@ class RoleApi(MethodView):
     @jwt_required()
     @validate()
     def post(self, body: RoleModel):
+        if not body:
+            return {
+                "meta": {
+                    "code": RetCode.NECESSARY_PARAM_ERR.value,
+                    "message": "请求头数据缺少",
+                    "status": "fail",
+                },
+            }
         role = RoleORM()
         role.name = body.name
         role.desc = body.desc
@@ -54,7 +70,23 @@ class RoleApi(MethodView):
     @jwt_required()
     @validate()
     def put(self, rid, body: RoleModel):
+        if not all([rid, body]):
+            return {
+                "meta": {
+                    "code": RetCode.NECESSARY_PARAM_ERR.value,
+                    "message": "请求头数据缺少",
+                    "status": "fail",
+                },
+            }
         role = RoleORM.query.get(rid)
+        if not role:
+            return {
+                "meta": {
+                    "code": RetCode.NODATA_ERR.value,
+                    "message": "无数据",
+                    "status": "fail",
+                },
+            }
         role.name = body.name
         role.desc = body.desc
         role.save_to_db()
@@ -69,6 +101,14 @@ class RoleApi(MethodView):
     @jwt_required()
     @validate()
     def delete(self, rid):
+        if not rid:
+            return {
+                "meta": {
+                    "code": RetCode.NECESSARY_PARAM_ERR.value,
+                    "message": "请求头数据缺少",
+                    "status": "fail",
+                },
+            }
         # 用户项目演示
         if rid in [1, 2, 3]:
             return {
@@ -79,6 +119,14 @@ class RoleApi(MethodView):
                 },
             }
         role: RoleORM = RoleORM.find_by_id(rid)
+        if not role:
+            return {
+                "meta": {
+                    "code": RetCode.NODATA_ERR.value,
+                    "message": "无数据",
+                    "status": "fail",
+                },
+            }
         role.delete_from_db()
         return {
             "meta": {
@@ -93,6 +141,14 @@ class PermissionApi(MethodView):
     def get(self, pid):
         if pid:
             permission: PermissionORM = PermissionORM.query.get(pid)
+            if not permission:
+                return {
+                    "meta": {
+                        "code": RetCode.NODATA_ERR.value,
+                        "message": "无数据",
+                        "status": "fail",
+                    },
+                }
             return {
                 "result": {
                     "permission": [permission.json()],
@@ -104,6 +160,14 @@ class PermissionApi(MethodView):
             }
         else:
             permission_list: list[PermissionORM] = PermissionORM.query.all()
+            if not permission_list:
+                return {
+                    "meta": {
+                        "code": RetCode.NODATA_ERR.value,
+                        "message": "无数据",
+                        "status": "fail",
+                    },
+                }
             _type = request.args.get("type")
             if _type == "dtree":  # 树形菜单分配权限
                 rets = [permission.json() for permission in permission_list]
@@ -146,6 +210,14 @@ class PermissionApi(MethodView):
     @jwt_required()
     @validate()
     def post(self, body: PermissionModel):
+        if not body:
+            return {
+                "meta": {
+                    "code": RetCode.NECESSARY_PARAM_ERR.value,
+                    "message": "请求头数据缺少",
+                    "status": "fail",
+                },
+            }
         permission: PermissionORM = PermissionORM()
         permission.pid = body.pid
         permission.permission_name = body.name
@@ -166,6 +238,14 @@ class PermissionApi(MethodView):
     @jwt_required()
     @validate()
     def put(self, pid, body: PermissionModel):
+        if not all([pid, body]):
+            return {
+                "meta": {
+                    "code": RetCode.NECESSARY_PARAM_ERR.value,
+                    "message": "请求头数据缺少",
+                    "status": "fail",
+                },
+            }
         if pid <= 11:
             return {
                 "meta": {
@@ -174,6 +254,14 @@ class PermissionApi(MethodView):
                 },
             }
         permission = PermissionORM.query.get(pid)
+        if not permission:
+            return {
+                "meta": {
+                    "code": RetCode.NODATA_ERR.value,
+                    "message": "无数据",
+                    "status": "fail",
+                },
+            }
         permission.pid = body.pid
         permission.name = body.name
         permission.code = body.code
@@ -193,6 +281,14 @@ class PermissionApi(MethodView):
     @jwt_required()
     @validate()
     def delete(self, pid):
+        if not pid:
+            return {
+                "meta": {
+                    "code": RetCode.NECESSARY_PARAM_ERR.value,
+                    "message": "请求头数据缺少",
+                    "status": "fail",
+                },
+            }
         if pid <= 11:
             return {
                 "meta": {
@@ -201,6 +297,14 @@ class PermissionApi(MethodView):
                 },
             }
         permission: PermissionORM = PermissionORM.query.get(pid)
+        if not permission:
+            return {
+                "meta": {
+                    "code": RetCode.NODATA_ERR.value,
+                    "message": "无数据",
+                    "status": "fail",
+                },
+            }
         permission.delete_from_db()
         return {
             "meta": {
@@ -211,7 +315,23 @@ class PermissionApi(MethodView):
 
 
 def role_permission(rid):
+    if not rid:
+        return {
+            "meta": {
+                "code": RetCode.NECESSARY_PARAM_ERR.value,
+                "message": "请求头数据缺少",
+                "status": "fail",
+            },
+        }
     role: RoleORM = RoleORM.query.get(rid)
+    if not role:
+        return {
+            "meta": {
+                "code": RetCode.NODATA_ERR.value,
+                "message": "无数据",
+                "status": "fail",
+            },
+        }
     ids: str = request.json.get("ids")
     per_arr = PermissionORM.query.filter(PermissionORM.id.in_(ids.split(","))).all()
     role.permission = []
@@ -227,7 +347,23 @@ def role_permission(rid):
 
 
 def permission_enable(pid):
+    if not pid:
+        return {
+            "meta": {
+                "code": RetCode.NECESSARY_PARAM_ERR.value,
+                "message": "请求头数据缺少",
+                "status": "fail",
+            },
+        }
     permission = PermissionORM.find_by_id(pid)
+    if not permission:
+        return {
+            "meta": {
+                "code": RetCode.NODATA_ERR.value,
+                "message": "无数据",
+                "status": "fail",
+            },
+        }
     enable = request.json.get("enable")
     permission.enable = enable
     permission.save_to_db()

@@ -5,6 +5,7 @@ from flask_pydantic import validate
 
 from pear_admin.models import DepartmentModel, PaginationModel
 from pear_admin.orms import DepartmentORM
+from pear_admin.utils.response_code import RetCode
 
 
 class DepartmentApi(MethodView):
@@ -12,11 +13,34 @@ class DepartmentApi(MethodView):
     def get(self, did, query: PaginationModel):
         if did:
             dept: DepartmentORM = DepartmentORM.find_by_id(did)
+            if not dept:
+                return {
+                    "meta": {
+                        "code": RetCode.NODATA_ERR.value,
+                        "message": "无数据",
+                        "status": "fail",
+                    },
+                }
             return dict(success=True, message="ok", dept=dept.json())
         else:
             department_list: list[DepartmentORM] = DepartmentORM.query.all()
-
+            if not department_list:
+                return {
+                    "meta": {
+                        "code": RetCode.NODATA_ERR.value,
+                        "message": "无数据",
+                        "status": "fail",
+                    },
+                }
             action = request.args.get("action")
+            if not action:
+                return {
+                    "meta": {
+                        "code": RetCode.NECESSARY_PARAM_ERR.value,
+                        "message": "请求头数据缺少",
+                        "status": "fail",
+                    },
+                }
             if action == "tree":
                 return {
                     "status": {"code": 200, "message": "默认"},
@@ -37,6 +61,14 @@ class DepartmentApi(MethodView):
 
     @validate()
     def post(self, body: DepartmentModel):
+        if not body:
+            return {
+                "meta": {
+                    "code": RetCode.NECESSARY_PARAM_ERR.value,
+                    "message": "请求头数据缺少",
+                    "status": "fail",
+                },
+            }
         department = DepartmentORM()
         department.pid = (body.pid,)
         department.name = (body.name,)
@@ -57,7 +89,23 @@ class DepartmentApi(MethodView):
 
     @validate()
     def put(self, did, body: DepartmentModel):
+        if not all([did, body]):
+            return {
+                "meta": {
+                    "code": RetCode.NECESSARY_PARAM_ERR.value,
+                    "message": "请求头数据缺少",
+                    "status": "fail",
+                },
+            }
         department: DepartmentORM = DepartmentORM.find_by_id(did)
+        if not department:
+            return {
+                "meta": {
+                    "code": RetCode.NODATA_ERR.value,
+                    "message": "无数据",
+                    "status": "fail",
+                },
+            }
         department.pid = body.pid
         department.name = body.name
         department.sort = body.sort
@@ -75,7 +123,23 @@ class DepartmentApi(MethodView):
         }
 
     def delete(self, did):
+        if not did:
+            return {
+                "meta": {
+                    "code": RetCode.NECESSARY_PARAM_ERR.value,
+                    "message": "请求头数据缺少",
+                    "status": "fail",
+                },
+            }
         ret: DepartmentORM = DepartmentORM.find_by_id(did)
+        if not ret:
+            return {
+                "meta": {
+                    "code": RetCode.NODATA_ERR.value,
+                    "message": "无数据",
+                    "status": "fail",
+                },
+            }
         ret.delete_from_db()
         if ret:
             return {
@@ -94,6 +158,14 @@ class DepartmentApi(MethodView):
 
 def batch_remove_api():
     ids = request.json.get("ids")
+    if not ids:
+        return {
+            "meta": {
+                "code": RetCode.NECESSARY_PARAM_ERR.value,
+                "message": "请求头数据缺少",
+                "status": "fail",
+            },
+        }
     id_list = ids.split(",")
     for did in id_list:
         DepartmentORM.delete_by_id(did)

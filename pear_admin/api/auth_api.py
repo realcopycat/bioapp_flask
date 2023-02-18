@@ -23,34 +23,48 @@ class LoginApi(MethodView):
         password = request.json.get("password")
         captcha_code = request.json.get("captcha_code")
         image_code_uuid = request.json.get("image_code")
-
-        user: UserORM = UserORM.find_by_username(username)
-
-        code = redis_client.get(f"image_code_{image_code_uuid}")
-        if str(code) != captcha_code:
+        if not all([username, password, captcha_code, image_code_uuid]):
             return {
                 "meta": {
-                    "code": RetCode.CAPTCHA_CODE_ERR.code,
+                    "code": RetCode.NECESSARY_PARAM_ERR.value,
+                    "message": "请求头数据缺少",
                     "status": "fail",
-                    "message": RetCode.CAPTCHA_CODE_ERR.value,
-                }
-            }, 401
+                },
+            }
+        user: UserORM = UserORM.find_by_username(username)
         if not user:
             return {
                 "meta": {
-                    "code": RetCode.USER_NOTFOUND_ERR.code,
+                    "code": RetCode.NODATA_ERR.value,
+                    "message": "无数据",
                     "status": "fail",
-                    "message": RetCode.USER_NOTFOUND_ERR.errmsg,
-                }
-            }, 401
+                },
+            }
+        code = redis_client.get(f"image_code_{image_code_uuid}")
+        if str(code) != captcha_code:
+            return {
+                       "meta": {
+                           "code": RetCode.CAPTCHA_CODE_ERR.code,
+                           "status": "fail",
+                           "message": RetCode.CAPTCHA_CODE_ERR.value,
+                       }
+                   }, 401
+        if not user:
+            return {
+                       "meta": {
+                           "code": RetCode.USER_NOTFOUND_ERR.code,
+                           "status": "fail",
+                           "message": RetCode.USER_NOTFOUND_ERR.errmsg,
+                       }
+                   }, 401
         if not user.check_password(password):
             return {
-                "meta": {
-                    "code": RetCode.PWD_ERR.code,
-                    "status": "fail",
-                    "message": RetCode.PWD_ERR.errmsg,
-                }
-            }, 401
+                       "meta": {
+                           "code": RetCode.PWD_ERR.code,
+                           "status": "fail",
+                           "message": RetCode.PWD_ERR.errmsg,
+                       }
+                   }, 401
 
         access_token = create_access_token(identity=user)
         refresh_token = create_refresh_token(identity=user)
@@ -75,6 +89,7 @@ class LoginApi(MethodView):
 class LogoutApi(MethodView):
     @jwt_required()
     def post(self):
+
         response = make_response(
             {
                 "meta": {
