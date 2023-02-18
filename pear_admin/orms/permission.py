@@ -94,4 +94,3 @@ class PermissionORM(db.Model):
                     "status": "fail",
                 },
             }
-

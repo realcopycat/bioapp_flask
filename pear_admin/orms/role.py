@@ -68,4 +68,3 @@ class RoleORM(db.Model):
                     "status": "fail",
                 },
             }
-

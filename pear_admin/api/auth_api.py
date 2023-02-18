@@ -43,28 +43,28 @@ class LoginApi(MethodView):
         code = redis_client.get(f"image_code_{image_code_uuid}")
         if str(code) != captcha_code:
             return {
-                       "meta": {
-                           "code": RetCode.CAPTCHA_CODE_ERR.code,
-                           "status": "fail",
-                           "message": RetCode.CAPTCHA_CODE_ERR.value,
-                       }
-                   }, 401
+                "meta": {
+                    "code": RetCode.CAPTCHA_CODE_ERR.code,
+                    "status": "fail",
+                    "message": RetCode.CAPTCHA_CODE_ERR.value,
+                }
+            }, 401
         if not user:
             return {
-                       "meta": {
-                           "code": RetCode.USER_NOTFOUND_ERR.code,
-                           "status": "fail",
-                           "message": RetCode.USER_NOTFOUND_ERR.errmsg,
-                       }
-                   }, 401
+                "meta": {
+                    "code": RetCode.USER_NOTFOUND_ERR.code,
+                    "status": "fail",
+                    "message": RetCode.USER_NOTFOUND_ERR.errmsg,
+                }
+            }, 401
         if not user.check_password(password):
             return {
-                       "meta": {
-                           "code": RetCode.PWD_ERR.code,
-                           "status": "fail",
-                           "message": RetCode.PWD_ERR.errmsg,
-                       }
-                   }, 401
+                "meta": {
+                    "code": RetCode.PWD_ERR.code,
+                    "status": "fail",
+                    "message": RetCode.PWD_ERR.errmsg,
+                }
+            }, 401
 
         access_token = create_access_token(identity=user)
         refresh_token = create_refresh_token(identity=user)
