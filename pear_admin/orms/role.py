@@ -47,7 +47,7 @@ class RoleORM(db.Model):
             return {
                 "meta": {
                     "code": RetCode.DB_ERR.value,
-                    "message": "添加数据成功",
+                    "message": "提交失败",
                     "status": "fail",
                 },
             }
@@ -64,7 +64,7 @@ class RoleORM(db.Model):
             return {
                 "meta": {
                     "code": RetCode.DB_ERR.value,
-                    "message": "添加数据成功",
+                    "message": "提交失败",
                     "status": "fail",
                 },
             }

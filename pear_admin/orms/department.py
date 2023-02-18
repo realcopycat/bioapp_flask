@@ -50,7 +50,7 @@ class DepartmentORM(db.Model):
             return {
                 "meta": {
                     "code": RetCode.DB_ERR.value,
-                    "message": "添加数据成功",
+                    "message": "提交失败",
                     "status": "fail",
                 },
             }
@@ -67,11 +67,20 @@ class DepartmentORM(db.Model):
             return {
                 "meta": {
                     "code": RetCode.DB_ERR.value,
-                    "message": "添加数据成功",
+                    "message": "提交失败",
                     "status": "fail",
                 },
             }
 
     @classmethod
     def delete_by_id(cls, did):
-        cls.find_by_id(did).delete_from_db()
+        dpm = cls.find_by_id(did)
+        if not dpm:
+            return {
+                "meta": {
+                    "code": RetCode.NODATA_ERR.value,
+                    "message": "无数据",
+                    "status": "fail",
+                },
+            }
+        dpm.delete_from_db()
