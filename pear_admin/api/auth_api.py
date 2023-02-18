@@ -23,11 +23,25 @@ class LoginApi(MethodView):
         password = request.json.get("password")
         captcha_code = request.json.get("captcha_code")
         image_code_uuid = request.json.get("image_code")
-
+        if not all([username, password, captcha_code, image_code_uuid]):
+            return {
+                "meta": {
+                    "code": RetCode.NECESSARY_PARAM_ERR.value,
+                    "message": "请求头数据缺少",
+                    "status": "fail",
+                },
+            }
         user: UserORM = UserORM.find_by_username(username)
-
+        if not user:
+            return {
+                "meta": {
+                    "code": RetCode.NODATA_ERR.value,
+                    "message": "无数据",
+                    "status": "fail",
+                },
+            }
         code = redis_client.get(f"image_code_{image_code_uuid}")
-        if code != captcha_code:
+        if str(code) != captcha_code:
             return {
                 "meta": {
                     "code": RetCode.CAPTCHA_CODE_ERR.code,
@@ -75,6 +89,7 @@ class LoginApi(MethodView):
 class LogoutApi(MethodView):
     @jwt_required()
     def post(self):
+
         response = make_response(
             {
                 "meta": {

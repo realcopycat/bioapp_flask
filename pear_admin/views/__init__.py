@@ -11,6 +11,7 @@ from flask import (
     Blueprint,
     Flask,
     abort,
+    current_app,
     make_response,
     redirect,
     render_template,
@@ -27,6 +28,11 @@ view_bp = Blueprint("views", __name__)
 
 def register_blueprint(app: Flask):
     app.register_blueprint(view_bp)
+
+
+@view_bp.get("/favicon.ico")
+def favicon():
+    return current_app.send_static_file("favicon.ico")
 
 
 @view_bp.get("/")
