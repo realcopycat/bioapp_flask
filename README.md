@@ -80,6 +80,9 @@ Pear Admin Flask 有以下几个版本：
 ```bash
 git clone https://gitee.com/pear-admin/pear-admin-flask
 
+# 进入 pear-admin-flask 代码根目录
+cd pear-admin-flask
+
 # 切换分支
 git checkout mini
 ```
