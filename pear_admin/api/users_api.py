@@ -8,12 +8,20 @@ from flask_sqlalchemy import Pagination
 
 from pear_admin.models import DepartmentModel, PaginationModel, UserModel
 from pear_admin.orms import DepartmentORM, RoleORM, UserORM
+from pear_admin.utils.response_code import RetCode
 
 
 class UserApi(MethodView):
     @validate()
     def get(self, uid, query: PaginationModel):
-
+        if not query:
+            return {
+                "meta": {
+                    "code": RetCode.NECESSARY_PARAM_ERR.value,
+                    "message": "请求头缺少",
+                    "status": "fail",
+                },
+            }
         filters = []
         if query.query:
             filters.append(UserORM.username.like("%" + query.query + "%"))
@@ -38,6 +46,14 @@ class UserApi(MethodView):
     @jwt_required()
     @validate()
     def post(self, body: UserModel):
+        if not body:
+            return {
+                "meta": {
+                    "code": RetCode.NECESSARY_PARAM_ERR.value,
+                    "message": "请求头缺少",
+                    "status": "fail",
+                },
+            }
         user = UserORM()
         user.username = body.username
         user.nickname = body.nickname
@@ -63,7 +79,23 @@ class UserApi(MethodView):
     @jwt_required()
     @validate()
     def put(self, uid, body: UserModel):
+        if not all([uid, body]):
+            return {
+                "meta": {
+                    "code": RetCode.NECESSARY_PARAM_ERR.value,
+                    "message": "请求头缺少",
+                    "status": "fail",
+                },
+            }
         user = UserORM.find_by_id(uid)
+        if not user:
+            return {
+                "meta": {
+                    "code": RetCode.NODATA_ERR.value,
+                    "message": "无数据",
+                    "status": "fail",
+                },
+            }
         user.username = body.username
         user.nickname = body.nickname
         if body.password:
@@ -90,6 +122,14 @@ class UserApi(MethodView):
 
     @jwt_required()
     def delete(self, uid):
+        if not uid:
+            return {
+                "meta": {
+                    "code": RetCode.NECESSARY_PARAM_ERR.value,
+                    "message": "请求头缺少",
+                    "status": "fail",
+                },
+            }
         if uid in [1, 2, 3]:
             return {
                 "meta": {
@@ -98,6 +138,14 @@ class UserApi(MethodView):
                 },
             }
         user: UserORM = UserORM.find_by_id(uid)
+        if not user:
+            return {
+                "meta": {
+                    "code": RetCode.NODATA_ERR.value,
+                    "message": "无数据",
+                    "status": "fail",
+                },
+            }
         user.delete_from_db()
         return {
             "meta": {
@@ -109,8 +157,24 @@ class UserApi(MethodView):
 
 def user_role(uid):
     roles: list[RoleORM] = RoleORM.query.all()
+    if not uid:
+        return {
+            "meta": {
+                "code": RetCode.NECESSARY_PARAM_ERR.value,
+                "message": "请求头缺少",
+                "status": "fail",
+            },
+        }
     if request.method == "GET":
         user: UserORM = UserORM.find_by_id(uid)
+        if not user:
+            return {
+                "meta": {
+                    "code": RetCode.NODATA_ERR.value,
+                    "message": "无数据",
+                    "status": "fail",
+                },
+            }
         rets = []
         for role in roles:
             if role in user.role:

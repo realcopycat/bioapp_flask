@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+from flask import current_app
+
 from pear_admin.extensions import db
+from pear_admin.utils.response_code import RetCode
 
 
 class DepartmentORM(db.Model):
@@ -37,12 +40,47 @@ class DepartmentORM(db.Model):
 
     def save_to_db(self):
         db.session.add(self)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            # 添加log
+            current_app.logger.error(e)
+            # 滚回操作
+            db.session.rollback()
+            return {
+                "meta": {
+                    "code": RetCode.DB_ERR.value,
+                    "message": "提交失败",
+                    "status": "fail",
+                },
+            }
 
     def delete_from_db(self):
         db.session.delete(self)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            # 添加log
+            current_app.logger.error(e)
+            # 滚回操作
+            db.session.rollback()
+            return {
+                "meta": {
+                    "code": RetCode.DB_ERR.value,
+                    "message": "提交失败",
+                    "status": "fail",
+                },
+            }
 
     @classmethod
     def delete_by_id(cls, did):
-        cls.find_by_id(did).delete_from_db()
+        dpm = cls.find_by_id(did)
+        if not dpm:
+            return {
+                "meta": {
+                    "code": RetCode.NODATA_ERR.value,
+                    "message": "无数据",
+                    "status": "fail",
+                },
+            }
+        dpm.delete_from_db()

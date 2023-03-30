@@ -8,7 +8,7 @@ LOG_LEVEL = logging.WARN
 
 # mysql 配置
 MYSQL_USERNAME = "root"
-MYSQL_PASSWORD = "root"
+MYSQL_PASSWORD = "123456"
 
 MYSQL_HOST = "127.0.0.1"
 MYSQL_PORT = 3306
@@ -29,3 +29,6 @@ JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
 
 # 获取项目根目录
 root_path = os.path.dirname(os.path.abspath(__file__))
+
+# 配置jsonify返回json的编码支持中文
+JSON_AS_ASCII = False
