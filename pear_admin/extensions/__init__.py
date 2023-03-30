@@ -12,6 +12,8 @@ jwt = JWTManager()
 redis_client = FlaskRedis(decode_responses=True)
 
 
+
+
 def register_extensions(app: Flask) -> None:
     from pear_admin import UserORM
 
