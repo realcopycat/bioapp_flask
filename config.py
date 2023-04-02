@@ -28,4 +28,6 @@ JWT_COOKIE_CSRF_PROTECT = False
 JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
 
 # 获取项目根目录
-root_path = os.path.dirname(os.path.abspath(__file__))
+ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
+
+CONFIG_NAME = "dev"

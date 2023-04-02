@@ -38,14 +38,14 @@ class DepartmentApi(MethodView):
     @validate()
     def post(self, body: DepartmentModel):
         department = DepartmentORM()
-        department.pid = (body.pid,)
-        department.name = (body.name,)
-        department.sort = (body.sort,)
-        department.leader = (body.leader,)
-        department.phone = (body.phone,)
-        department.email = (body.email,)
-        department.enable = (body.enable,)
-        department.address = (body.address,)
+        department.pid = body.pid
+        department.name = body.name
+        department.sort = body.sort
+        department.leader = body.leader
+        department.phone = body.phone
+        department.email = body.email
+        department.enable = body.enable
+        department.address = body.address
         department.save_to_db()
 
         return {
@@ -75,6 +75,13 @@ class DepartmentApi(MethodView):
         }
 
     def delete(self, did):
+        if did <= 8:
+            return {
+                "meta": {
+                    "message": "测试数据禁止删除",
+                    "status": "fail",
+                },
+            }
         ret: DepartmentORM = DepartmentORM.find_by_id(did)
         ret.delete_from_db()
         if ret:

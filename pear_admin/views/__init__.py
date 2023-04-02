@@ -20,7 +20,7 @@ from flask_jwt_extended import get_current_user, jwt_required
 from PIL import Image
 
 from pear_admin.extensions import redis_client
-from pear_admin.orms import DepartmentORM, PermissionORM, RoleORM, UserORM
+from pear_admin.orms import DepartmentORM, RightsORM, RoleORM, UserORM
 
 view_bp = Blueprint("views", __name__)
 
@@ -111,7 +111,7 @@ def role_permission_view(pid):
     # 获取权限列表的 id
     check_powers_list = [rp.id for rp in role.permission]
 
-    permission: List[PermissionORM] = PermissionORM.query.all()
+    permission: List[RightsORM] = RightsORM.query.all()
     permission_list = [
         {
             "id": item.id,
@@ -151,7 +151,7 @@ def permission_add_view():
 
 @view_bp.get("/permission/edit/<int:pid>")
 def permission_edit_view(pid):
-    permission = PermissionORM.query.filter_by(id=pid).first()
+    permission = RightsORM.query.filter_by(id=pid).first()
     icon = str(permission.icon).split()
     if len(icon) == 2:
         icon = icon[1]

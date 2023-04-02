@@ -4,15 +4,15 @@ from copy import deepcopy
 from flask import make_response, request
 from flask_jwt_extended import jwt_required
 
-from pear_admin.orms import PermissionORM
+from pear_admin.orms import RightsORM
 
 # 生成菜单树
 
 
 @jwt_required()
 def menus_api():
-    permission_orm_list = PermissionORM.query.filter(
-        PermissionORM.permission_type != "auth"
+    permission_orm_list = RightsORM.query.filter(
+        RightsORM.type != "auth"
     ).all()
     permission_list = [
         permission_orm.menu_json() for permission_orm in permission_orm_list

@@ -9,6 +9,7 @@ class RoleORM(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), nullable=False, comment="角色名称")
+    code = db.Column(db.String(20), nullable=False, comment="角色标识符")
     desc = db.Column(db.Text)
 
     permission_ids = db.Column(
@@ -16,8 +17,8 @@ class RoleORM(db.Model):
         comment="权限ids,1,2,5。冗余字段，用户缓存用户权限",
     )
 
-    permission = db.relationship(
-        "PermissionORM", secondary="ums_role_permission", backref=db.backref("role")
+    permission_list = db.relationship(
+        "RightsORM", secondary="ums_role_permission", backref=db.backref("role")
     )
 
     def json(self):

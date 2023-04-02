@@ -7,7 +7,7 @@ from flask_pydantic import validate
 from flask_sqlalchemy import Pagination
 
 from pear_admin.models import PaginationModel, PermissionModel, RoleModel
-from pear_admin.orms import PermissionORM, RoleORM
+from pear_admin.orms import RightsORM, RoleORM
 from pear_admin.utils.response_code import RetCode
 
 
@@ -92,7 +92,7 @@ class RoleApi(MethodView):
 class PermissionApi(MethodView):
     def get(self, pid):
         if pid:
-            permission: PermissionORM = PermissionORM.query.get(pid)
+            permission: RightsORM = RightsORM.query.get(pid)
             return {
                 "result": {
                     "permission": [permission.json()],
@@ -103,7 +103,7 @@ class PermissionApi(MethodView):
                 },
             }
         else:
-            permission_list: list[PermissionORM] = PermissionORM.query.all()
+            permission_list: list[RightsORM] = RightsORM.query.all()
             _type = request.args.get("type")
             if _type == "dtree":  # 树形菜单分配权限
                 rets = [permission.json() for permission in permission_list]
@@ -115,13 +115,10 @@ class PermissionApi(MethodView):
             elif _type == "treetable":  # 树形菜单分配权限
                 rets = [permission.json() for permission in permission_list]
 
-                permission_id_2_id_dict = {
-                    permission.permission_id: permission.id
-                    for permission in permission_list
-                }
+
 
                 for item in rets:
-                    item.update({"pid": permission_id_2_id_dict.get(item["pid"], 0)})
+                    item.update({"pid": item["pid"]})
                 return {
                     "result": {
                         "permission_list": rets,
@@ -146,7 +143,7 @@ class PermissionApi(MethodView):
     @jwt_required()
     @validate()
     def post(self, body: PermissionModel):
-        permission: PermissionORM = PermissionORM()
+        permission: RightsORM = RightsORM()
         permission.pid = body.pid
         permission.permission_name = body.name
         permission.permission_code = body.code
@@ -173,7 +170,7 @@ class PermissionApi(MethodView):
                     "status": "fail",
                 },
             }
-        permission = PermissionORM.query.get(pid)
+        permission = RightsORM.query.get(pid)
         permission.pid = body.pid
         permission.name = body.name
         permission.code = body.code
@@ -193,14 +190,15 @@ class PermissionApi(MethodView):
     @jwt_required()
     @validate()
     def delete(self, pid):
-        if pid <= 11:
+        # 演示数据禁止删除
+        if pid <= 125:
             return {
                 "meta": {
                     "message": "测试数据禁止删除",
                     "status": "fail",
                 },
             }
-        permission: PermissionORM = PermissionORM.query.get(pid)
+        permission: RightsORM = RightsORM.query.get(pid)
         permission.delete_from_db()
         return {
             "meta": {
@@ -213,7 +211,7 @@ class PermissionApi(MethodView):
 def role_permission(rid):
     role: RoleORM = RoleORM.query.get(rid)
     ids: str = request.json.get("ids")
-    per_arr = PermissionORM.query.filter(PermissionORM.id.in_(ids.split(","))).all()
+    per_arr = RightsORM.query.filter(RightsORM.id.in_(ids.split(","))).all()
     role.permission = []
     role.permission = per_arr
     role.permission_ids = ids
@@ -227,7 +225,7 @@ def role_permission(rid):
 
 
 def permission_enable(pid):
-    permission = PermissionORM.find_by_id(pid)
+    permission = RightsORM.find_by_id(pid)
     enable = request.json.get("enable")
     permission.enable = enable
     permission.save_to_db()
