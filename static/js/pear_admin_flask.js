@@ -12,6 +12,23 @@ function generateUUID() {
   return uuid;
 }
 
+//layui弹出框适应
+var size=9;
+function screen() {
+  //获取当前窗口的宽度
+  var width = window.innerWidth;
+    if (width > 1200) {
+        return size=3;   //大屏幕
+    } else if (width > 992) {
+        return size=2;   //中屏幕
+    } else if (width > 768) {
+        return size=1;   //小屏幕
+    } else {
+        return size=0;   //超小屏幕
+    }
+}
+screen();
+
 function formatDate(value) {//调用时间戳为日期显示
   let date = new Date(value);
   let y = date.getFullYear();  //获取年份

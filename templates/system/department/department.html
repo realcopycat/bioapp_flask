@@ -136,7 +136,8 @@
         type: 2,
         title: '新增',
         shade: 0.1,
-        area: ['50%', '80%'],
+        area: size < 2 ? ['90%', '55%'] : ['70%', '80%'],
+        offset: 'auto',
         content: '/department/add',
       });
     };
@@ -201,7 +202,8 @@
         type: 2,
         title: '修改',
         shade: 0.1,
-        area: ['450px', '500px'],
+        area: size < 2 ? ['90%', '55%'] : ['70%', '80%'],
+        offset: 'auto',
         content: `/department/edit?did=` + obj.data.id,  /*编辑修改窗口从那里来*/
       });
     };

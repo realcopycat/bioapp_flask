@@ -154,7 +154,8 @@
         type: 2,
         title: '新增',
         shade: 0.1,
-        area: ['60%', '80%'],
+        area: size < 2 ? ['90%', '55%'] : ['70%', '80%'],
+        offset: 'auto',
         content: MODULE_PATH + 'add',
       });
     };
@@ -164,7 +165,8 @@
         type: 2,
         title: '修改',
         shade: 0.1,
-        area: ['60%', '80%'],
+        area: size < 2 ? ['90%', '55%'] : ['70%', '80%'],
+        offset: 'auto',
         content: MODULE_PATH + 'edit' + `?uid=${obj.data.id}`,
       });
     };
