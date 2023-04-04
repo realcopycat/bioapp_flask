@@ -130,7 +130,8 @@
         type: 2,
         title: '新增',
         shade: 0.1,
-        area: ['500px', '400px'],
+        area: size < 2 ? ['90%', '55%'] : ['70%', '80%'],
+        offset: 'auto',
         content: MODULE_PATH + 'add',
       });
     };
@@ -140,7 +141,8 @@
         type: 2,
         title: '授权',
         shade: 0.1,
-        area: ['800px', '500px'],
+        area: size < 2 ? ['90%', '55%'] : ['70%', '80%'],
+        offset: 'auto',
         content: MODULE_PATH + `permission/${obj.data['id']}`,
       });
     };
@@ -150,7 +152,8 @@
         type: 2,
         title: '修改',
         shade: 0.1,
-        area: ['500px', '400px'],
+        area: size < 2 ? ['90%', '55%'] : ['70%', '80%'],
+        offset: 'auto',
         content: MODULE_PATH + `edit/${obj.data.id}`,
       });
     };
