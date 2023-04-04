@@ -190,7 +190,8 @@
                 type: 2,
                 title: '新增',
                 shade: 0.1,
-                area: ['50%', '80%'],
+                area: size < 2 ? ['90%', '60%'] : ['70%', '80%'],
+                offset: 'auto',
                 content: '/permission/add',
             });
         };
@@ -200,7 +201,8 @@
                 type: 2,
                 title: '修改',
                 shade: 0.1,
-                area: ['50%', '80%'],
+                area: size < 2 ? ['90%', '60%'] : ['70%', '80%'],
+                offset: 'auto',
                 content: `/permission/edit/${obj.data.id}`,
             });
         };
