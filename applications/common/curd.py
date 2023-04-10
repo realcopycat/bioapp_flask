@@ -5,6 +5,7 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 from applications.extensions import db, ma
 
+from applications.models import Dept
 
 class LogicalDeleteMixin(object):
     """
@@ -16,7 +17,8 @@ class LogicalDeleteMixin(object):
     Test.query.logic_all()
     """
     create_at = db.Column(db.DateTime, default=datetime.datetime.now, comment='创建时间')
-    update_at = db.Column(db.DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now, comment='创建时间')
+    update_at = db.Column(db.DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now,
+                          comment='创建时间')
     delete_at = db.Column(db.DateTime, comment='删除时间')
 
 
@@ -27,6 +29,7 @@ def auto_model_jsonify(data, model: db.Model):
     示例
     power_data = curd.auto_model_jsonify(model=Dept, data=dept)
     """
+
     def get_model():
         return model
 
@@ -92,3 +95,22 @@ def disable_status(model: db.Model, id):
         db.session.commit()
         return True
     return False
+
+
+def get_dept(dept_id: int, dept_all_list=None, dept_list=None):
+    """
+    递归获取部门的所有下级部门
+    :param dept_id: 需要获取的部门id
+    :param dept_all_list: 所有部门列表
+    :param dept_list: 递归部门list
+    :return:
+    """
+    if not dept_all_list:
+        dept_all_list = db.session.query(Dept.id,Dept.parent_id).all()
+    if dept_list is None:
+        dept_list = [dept_id]
+    for ele in dept_all_list:
+        if ele[1] == dept_id:
+            dept_list.append(ele[0])
+            get_dept(ele[0], dept_all_list, dept_list)
+    return list(set(dept_list))
