@@ -13,12 +13,13 @@ from applications.common.utils.rights import authorize
 plugin_bp = Blueprint('plugin', __name__, url_prefix='/plugin')
 PLUGIN_ENABLE_FOLDERS = []
 
+
 def register_plugin_views(app: Flask):
     global PLUGIN_ENABLE_FOLDERS
     app.register_blueprint(plugin_bp)
     # 载入插件过程
     # plugin_folder 配置的是插件的文件夹名
-    PLUGIN_ENABLE_FOLDERS = json.loads(app.config['PLUGIN_ENABLE_FOLDERS'])
+    PLUGIN_ENABLE_FOLDERS = app.config['PLUGIN_ENABLE_FOLDERS']
     for plugin_folder in PLUGIN_ENABLE_FOLDERS:
         plugin_info = {}
         try:
@@ -63,7 +64,7 @@ def data():
                 if plugin_name is None:
                     if info['plugin_name'].find(plugin_name) == -1:
                         continue
-          
+
                 all_plugins.append(
                     {
                         "plugin_name": info["plugin_name"],
