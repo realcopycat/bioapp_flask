@@ -1,5 +1,19 @@
 [
   {
+    "id": 0,
+    "name": "顶层目录",
+    "type": "0",
+    "code": "",
+    "url": null,
+    "open_type": null,
+    "parent_id": null,
+    "icon": "",
+    "sort": 1,
+    "create_time": null,
+    "update_time": null,
+    "enable": 0
+  },
+  {
     "id": 1,
     "name": "系统管理",
     "type": "0",
