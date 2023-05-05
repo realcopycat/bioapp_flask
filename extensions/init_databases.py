@@ -44,15 +44,15 @@ def register_script(app: Flask):
 
         # 图片数据
         from models import PhotoModel
-
         add_data(file_photo_data_list, PhotoModel)
 
         # 初始化权限表数据
         from models import RightModel
-
         add_data(rt_power_data_list, RightModel)
+
         # 初始化角色表
         from models import RoleModel
+        add_data(rt_role_data_list, RoleModel)
 
         # 角色权限关系表
         from extensions import db
@@ -60,11 +60,11 @@ def register_script(app: Flask):
             db.session.execute('insert into rt_role_power VALUES (%s, %s, %s);' % tuple(data))
         db.session.commit()
 
-        add_data(rt_role_data_list, RoleModel)
+
+        
 
         # 管理员用户
         from models import UserModel
-
         add_data(cp_user_data_list, UserModel)
 
         # 用户角色表
