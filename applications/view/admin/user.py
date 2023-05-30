@@ -37,7 +37,7 @@ def data():
     if username:
         filters.append(User.realname.contains(username))
     if dept_id:
-        filters.append(User.realname == dept_id)
+        filters.append(User.dept_id == dept_id)
 
     # print(*filters)
     query = db.session.query(
