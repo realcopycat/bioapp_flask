@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from sqlalchemy import desc
 
 from applications.common import curd
-from applications.common.curd import enable_status, disable_status
+from applications.common.curd import enable_status, disable_status, get_dept
 from applications.common.utils.http import table_api, fail_api, success_api
 from applications.common.utils.rights import authorize
 from applications.common.utils.validate import str_escape
@@ -37,7 +37,8 @@ def data():
     if username:
         filters.append(User.realname.contains(username))
     if dept_id:
-        filters.append(User.realname == dept_id)
+        dept_id_list = get_dept(dept_id)
+        filters.append(User.dept_id.in_(dept_id_list))
 
     # print(*filters)
     query = db.session.query(
