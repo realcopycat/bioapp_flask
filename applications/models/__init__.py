@@ -1,4 +1,4 @@
-from .admin_dept import Dept
+# from .admin_dept import Dept
 from .admin_dict import DictType, DictData
 from .admin_log import AdminLog
 from .admin_photo import Photo

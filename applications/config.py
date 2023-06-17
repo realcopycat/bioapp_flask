@@ -5,23 +5,23 @@ from urllib.parse import quote_plus as urlquote
 class BaseConfig:
     SUPERADMIN = 'admin'
 
-    SYSTEM_NAME = 'Pear Admin'
+    SYSTEM_NAME = 'hml admin'
     # 主题面板的链接列表配置
     SYSTEM_PANEL_LINKS = [
         {
             "icon": "layui-icon layui-icon-auz",
             "title": "官方网站",
-            "href": "http://www.pearadmin.com"
+            "href": "/"
         },
         {
             "icon": "layui-icon layui-icon-auz",
             "title": "开发文档",
-            "href": "http://www.pearadmin.com"
+            "href": "/"
         },
         {
             "icon": "layui-icon layui-icon-auz",
             "title": "开源地址",
-            "href": "https://gitee.com/Jmysy/Pear-Admin-Layui"
+            "href": "/"
         }
     ]
 
@@ -32,12 +32,12 @@ class BaseConfig:
     # JSON配置
     JSON_AS_ASCII = False
 
-    SECRET_KEY = "pear-admin-flask"
+    SECRET_KEY = "hml-session-sec-key"
 
     # mysql 配置
     MYSQL_USERNAME = "root"
-    MYSQL_PASSWORD = "123456"
-    MYSQL_HOST = "127.0.0.1"
+    MYSQL_PASSWORD = "Brr0qZo6uo#6"
+    MYSQL_HOST = "121.5.62.78"
     MYSQL_PORT = 3306
     MYSQL_DATABASE = "PearAdminFlask"
 

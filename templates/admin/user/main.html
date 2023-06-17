@@ -36,9 +36,9 @@
         <div class="layui-card-body">
             <div class="button button-primary user-group" user-group=""> 全 部 用 户</div>
             <div class="button button-default user-group" user-group="-1"> 默 认 分 组</div>
-            <div style="overflow: auto">
+            <!-- <div style="overflow: auto">
                 <ul id="dept-tree" class="dept-tree" data-id="0"></ul>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
@@ -104,11 +104,11 @@
 {% include 'admin/common/footer.html' %}
 
 <script>
-  layui.use(['table', 'dtree', 'form', 'jquery', 'popup', 'common'], function () {
+  layui.use(['table', 'form', 'jquery', 'popup', 'common'], function () {
     let table = layui.table
     let form = layui.form
     let $ = layui.jquery
-    let dtree = layui.dtree
+    // let dtree = layui.dtree
     let popup = layui.popup
     let common = layui.common
     let MODULE_PATH = '/admin/user/'
@@ -143,23 +143,23 @@
     })
 
     // 公司部门树状图菜单
-    dtree.render({
-      elem: '#dept-tree',
-      method: 'get',
-      url: '/dept/tree',
-      dataFormat: 'list',
-      line: true,
-      skin: 'laySimple',
-      icon: '-1',
-      response: { treeId: 'deptId', parentId: 'parentId', title: 'deptName' },
-    })
+    // dtree.render({
+    //   elem: '#dept-tree',
+    //   method: 'get',
+    //   url: '/dept/tree',
+    //   dataFormat: 'list',
+    //   line: true,
+    //   skin: 'laySimple',
+    //   icon: '-1',
+    //   response: { treeId: 'deptId', parentId: 'parentId', title: 'deptName' },
+    // })
 
     // 菜单栏渲染
-    dtree.on('node(\'dept-tree\')', function (obj) {
-      let field = form.val('user-query-form') /*用户账号查询*/
-      field.deptId = obj.param.nodeId
-      window.refresh(field)
-    })
+    // dtree.on('node(\'dept-tree\')', function (obj) {
+    //   let field = form.val('user-query-form') /*用户账号查询*/
+    //   field.deptId = obj.param.nodeId
+    //   window.refresh(field)
+    // })
 
     //
     $('.user-group').click(function () {
