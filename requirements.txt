@@ -1,7 +1,11 @@
 Flask
 Flask-APScheduler
 Flask-Migrate
-Flask-Login
+# Flask-Login
+# itsdangerous #弃用
+flask-jwt-extended
+# flask-httpauth
+flask_caching
 Flask_Reuploaded
 Flask-SQLAlchemy
 flask-marshmallow

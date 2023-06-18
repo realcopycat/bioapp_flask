@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request, session
-from flask_login import login_required, current_user
+from flask import Blueprint, render_template, request
+from flask_login import login_required
 from sqlalchemy import desc
 
 from applications.common import curd
@@ -11,6 +11,8 @@ from applications.extensions import db
 from applications.models import Role
 from applications.models import User, AdminLog
 
+from flask_jwt_extended import current_user
+
 admin_user = Blueprint('adminUser', __name__, url_prefix='/admin/user')
 
 
@@ -18,6 +20,8 @@ admin_user = Blueprint('adminUser', __name__, url_prefix='/admin/user')
 @admin_user.get('/')
 @authorize("admin:user:main")
 def main():
+    # current_user2 = get_jwt_identity()
+    # c3= current_user
     return render_template('admin/user/main.html')
 
 
@@ -247,8 +251,8 @@ def batch_remove():
     return success_api(msg="批量删除成功")
 
 
-@admin_user.get("test")
-def test():
-    print(session)
-    print(session.get('role')[0])
-    return '6'
+# @admin_user.get("test")
+# def test():
+#     print(session)
+#     print(session.get('role')[0])
+#     return '6'
