@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request, session
-from flask_login import login_required, current_user
+from flask import Blueprint, render_template, request
+from flask_login import login_required
 from sqlalchemy import desc
 
 from applications.common import curd
@@ -8,8 +8,10 @@ from applications.common.utils.http import table_api, fail_api, success_api
 from applications.common.utils.rights import authorize
 from applications.common.utils.validate import str_escape
 from applications.extensions import db
-from applications.models import Role, Dept
+from applications.models import Role
 from applications.models import User, AdminLog
+
+from flask_jwt_extended import current_user
 
 admin_user = Blueprint('adminUser', __name__, url_prefix='/admin/user')
 
@@ -18,6 +20,8 @@ admin_user = Blueprint('adminUser', __name__, url_prefix='/admin/user')
 @admin_user.get('/')
 @authorize("admin:user:main")
 def main():
+    # current_user2 = get_jwt_identity()
+    # c3= current_user
     return render_template('admin/user/main.html')
 
 
@@ -29,21 +33,24 @@ def data():
     real_name = str_escape(request.args.get('realName', type=str))
 
     username = str_escape(request.args.get('username', type=str))
-    dept_id = request.args.get('deptId', type=int)
+    # dept_id = request.args.get('deptId', type=int)
 
     filters = []
     if real_name:
         filters.append(User.realname.contains(real_name))
     if username:
         filters.append(User.realname.contains(username))
-    if dept_id:
-        filters.append(User.realname == dept_id)
+    # if dept_id:
+    #     filters.append(User.realname == dept_id)
 
     # print(*filters)
+    # query = db.session.query(
+    #     User,
+    #     Dept
+    # ).filter(*filters).outerjoin(Dept, User.dept_id == Dept.id).layui_paginate()
     query = db.session.query(
-        User,
-        Dept
-    ).filter(*filters).outerjoin(Dept, User.dept_id == Dept.id).layui_paginate()
+        User
+    ).filter(*filters).layui_paginate()
 
     return table_api(
         data=[{
@@ -52,14 +59,11 @@ def data():
             'realname': user.realname,
             'enable': user.enable,
             'create_at': user.create_at,
-            'update_at': user.update_at,
-            'dept_name': dept.dept_name if dept else None
-        } for user, dept in query.items],
+            'update_at': user.update_at
+        } for user in query.items],
         count=query.total)
 
-    # 用户增加
-
-
+# 用户增加
 @admin_user.get('/add')
 @authorize("admin:user:add", log=True)
 def add():
@@ -127,9 +131,9 @@ def update():
     id = str_escape(req_json.get("userId"))
     username = str_escape(req_json.get('username'))
     real_name = str_escape(req_json.get('realName'))
-    dept_id = str_escape(req_json.get('deptId'))
+    # dept_id = str_escape(req_json.get('deptId'))
     role_ids = a.split(',')
-    User.query.filter_by(id=id).update({'username': username, 'realname': real_name, 'dept_id': dept_id})
+    User.query.filter_by(id=id).update({'username': username, 'realname': real_name})
     u = User.query.filter_by(id=id).first()
 
     roles = Role.query.filter(Role.id.in_(role_ids)).all()
@@ -247,8 +251,8 @@ def batch_remove():
     return success_api(msg="批量删除成功")
 
 
-@admin_user.get("test")
-def test():
-    print(session)
-    print(session.get('role')[0])
-    return '6'
+# @admin_user.get("test")
+# def test():
+#     print(session)
+#     print(session.get('role')[0])
+#     return '6'

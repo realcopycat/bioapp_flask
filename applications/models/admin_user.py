@@ -1,10 +1,10 @@
 import datetime
-from flask_login import UserMixin
+# from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from applications.extensions import db
 
 
-class User(db.Model, UserMixin):
+class User(db.Model):
     __tablename__ = 'admin_user'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, comment='用户ID')
     username = db.Column(db.String(20), comment='用户名')
@@ -23,3 +23,16 @@ class User(db.Model, UserMixin):
 
     def validate_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+# 用户简单存储的临时数据格式
+class UserCacheInfo:
+
+    username:str
+    id:int
+
+    def __init__(self,id,username) -> None:
+        self.id=id
+        self.username=username
+
+    
