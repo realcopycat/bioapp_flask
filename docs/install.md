@@ -77,10 +77,10 @@ flask admin init
 
 ```shell
 # linux
-run.bat
+./run.sh
 
 # windows
-./run.sh
+run.bat
 ```
 
 #### 使用docker-compose运行项目
