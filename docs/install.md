@@ -76,10 +76,10 @@ flask admin init
 #### 运行项目
 
 ```shell
-# linux
+# windows
 run.bat
 
-# windows
+# linux
 ./run.sh
 ```
 
