@@ -51,7 +51,7 @@ class ModelFilter:
 
     def less(self, field_name, value):
         """
-        大于查询字段
+        小于查询字段
         :param field_name: 模型字段名称
         :param value: 值
         """
