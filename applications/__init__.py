@@ -2,7 +2,7 @@ import os
 from flask import Flask
 from applications.common.script import init_script
 from applications.config import BaseConfig
-from applications.extensions import init_plugs,init_template_func
+from applications.extensions import init_plugs
 from applications.view import init_bps
 
 
@@ -20,7 +20,6 @@ def create_app():
     # 注册命令
     init_script(app)
 
-    # 注册全局模板函数
-    init_template_func(app)
+
 
     return app

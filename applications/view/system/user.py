@@ -39,7 +39,7 @@ def data():
     if dept_id:
         filters.append(User.dept_id == dept_id)
 
-    # print(*filters)
+
     query = db.session.query(
         User,
         Dept

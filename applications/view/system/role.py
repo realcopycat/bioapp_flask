@@ -193,7 +193,6 @@ def remove(id):
 def group():
     obj=RoleGroup.query.with_entities(func.max(RoleGroup.sort)).first()
     if obj:
-        print(obj)
         maxSort=obj[0]+1
     else:
         maxSort=1
@@ -203,7 +202,8 @@ def group():
 @bp.get('/group/data')
 @authorize("system:role:add", log=True)
 def groupData():
-    roleGroups = RoleGroup.query.filter().layui_paginate()
+    print("jaja")
+    roleGroups = RoleGroup.query.order_by(RoleGroup.sort.asc()).layui_paginate()
     return table_api(data=RoleGroupSchema(many=True).dump(roleGroups), count=roleGroups.total)
 
 # 角色分组编辑
@@ -222,7 +222,7 @@ def groupUpdate():
         "sort": str_escape(req_json.get("sort")),
         "remark": str_escape(req_json.get("remark"))
     }
-    print(req_json)
+
     role = RoleGroup.query.filter_by(id=id).update(data)
     db.session.commit()
     if not role:
