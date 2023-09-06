@@ -20,4 +20,7 @@ def create_app():
     # 注册命令
     init_script(app)
 
+    # 注册全局模板函数
+    init_template_func(app)
+
     return app

@@ -8,7 +8,7 @@ from applications.common.utils.http import table_api, fail_api, success_api
 from applications.common.utils.rights import authorize
 from applications.common.utils.validate import str_escape
 from applications.extensions import db
-from applications.models import Role, Dept
+from applications.models import Role,RoleGroup,Dept
 from applications.models import User, AdminLog
 
 bp = Blueprint('user', __name__, url_prefix='/user')
@@ -111,11 +111,13 @@ def delete(id):
 @authorize("system:user:edit", log=True)
 def edit(id):
     user = curd.get_one_by_id(User, id)
-    roles = Role.query.all()
+
+    roles = Role.query.order_by(Role.group_id.asc()).all()
     checked_roles = []
     for r in user.role:
         checked_roles.append(r.id)
     return render_template('system/user/edit.html', user=user, roles=roles, checked_roles=checked_roles)
+
 
 
 #  编辑用户

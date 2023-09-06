@@ -41,6 +41,11 @@
             <i class="layui-icon layui-icon-add-1"></i>
             新增
         </button>
+        <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="group">
+            <i class="layui-icon layui-icon-group"></i>
+            角色分组
+        </button>
+
     {% endif %}
 </script>
 
@@ -66,6 +71,10 @@
     <input type="checkbox" name="enable" value="{{ "{{d.id}}" }}" lay-skin="switch" lay-text="启用|禁用"
            lay-filter="role-enable" {{ "{{# if(d.enable==1){ }} checked {{# } }}" }}>
 </script>
+<script type="text/html" id="role-group">
+    {{ " {{ d.group.name }}" }}
+</script>
+
 {% include 'system/common/footer.html' %}
 <script>
     layui.use(['table', 'form', 'jquery', 'popup', 'common'], function () {
@@ -83,6 +92,7 @@
                 {title: 'Key值', field: 'code', align: 'center'},
                 {title: '描述', field: 'details', align: 'center'},
                 {title: '是否可用', field: 'enable', align: 'center', templet: '#role-enable'},
+                {title: '角色组', field: 'enable', align: 'center', templet: '#role-group'},
                 {title: '排序', field: 'sort', align: 'center'},
                 {title: '操作', toolbar: '#role-bar', align: 'center', width: 240}
             ]
@@ -114,9 +124,11 @@
         table.on('toolbar(role-table)', function (obj) {
             if (obj.event === 'add') {
                 window.add()
-            } else if (obj.event === 'refresh') {
+            }else if(obj.event==="group"){
+                window.group()
+            }else if (obj.event === 'refresh') {
                 window.refresh()
-            } else if (obj.event === 'batchRemove') {
+            }else if (obj.event === 'batchRemove') {
                 window.batchRemove(obj)
             }
         })
@@ -160,7 +172,15 @@
                 content: MODULE_PATH + 'add'
             })
         }
-
+        window.group = function () {
+            layer.open({
+                type: 2,
+                title: '角色分组管理',
+                shade: 0.1,
+                area: ['700px', '500px'],
+                content: MODULE_PATH + 'group'
+            })
+        }
         window.power = function (obj) {
             layer.open({
                 type: 2,
@@ -220,7 +240,7 @@
                     ids.push(element.id)
                 })
             }
-            console.log(ids)
+
             layer.confirm('确定要删除选中角色', {
                 icon: 3,
                 title: '提示'
