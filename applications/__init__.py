@@ -2,7 +2,7 @@ import os
 from flask import Flask
 from applications.common.script import init_script
 from applications.config import BaseConfig
-from applications.extensions import init_plugs,init_template_func
+from applications.extensions import init_plugs
 from applications.view import init_bps
 
 
