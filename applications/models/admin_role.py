@@ -14,3 +14,15 @@ class Role(db.Model):
     create_time = db.Column(db.DateTime, default=datetime.datetime.now, comment='创建时间')
     update_time = db.Column(db.DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now, comment='更新时间')
     power = db.relationship('Power', secondary="admin_role_power", backref=db.backref('role'))
+    group_id = db.Column(db.Integer, db.ForeignKey('admin_role_group.id'))
+    group=db.relationship("RoleGroup", back_populates="roles")
+
+class RoleGroup(db.Model):
+    __tablename__ = 'admin_role_group'
+    id = db.Column(db.Integer, primary_key=True, comment='角色分组ID')
+    name = db.Column(db.String(255), comment='角色分组名称')
+    remark = db.Column(db.String(255), comment='备注')
+    sort = db.Column(db.Integer, comment='排序')
+    create_time = db.Column(db.DateTime, default=datetime.datetime.now, comment='创建时间')
+    update_time = db.Column(db.DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now, comment='更新时间')
+    roles = db.relationship('Role', back_populates="group")

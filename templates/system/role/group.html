@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>角色分组管理</title>
+    {% include 'system/common/header.html' %}
+    <style>
+        .layui-table-tool{
+            display: none!important;
+        }
+        .mainBox{
+            overflow-y: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mainBox">
+        <div class="main-container">
+            <form class="layui-form" action="">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">分组名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" lay-verify="required" placeholder="" class="layui-input">
+                    </div>
+                    <label class="layui-form-label">排序</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="sort" name="sort" value="{{ sort }}" lay-verify="required"  placeholder="" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">描述</label>
+                    <div class="layui-input-inline" style="width: 360px;">
+                        <input type="text" name="remark" placeholder="" class="layui-input">
+                    </div>
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit="" lay-filter="role-group-save">
+                        <i class="layui-icon layui-icon-add-1"></i>
+                        新增
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                </div>
+            </form>
+            <table id="role-group-table" lay-filter="role-group-table"></table>
+        </div>
+    </div>
+
+
+
+<script type="text/html" id="role-group-bar">
+
+    {% if authorize("system:role:remove") %}
+        <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i
+                class="layui-icon layui-icon-delete"> 删除</i>
+        </button>
+    {% endif %}
+</script>
+
+{% include 'system/common/footer.html' %}
+<script>
+    layui.use(['table', 'form', 'jquery'], function () {
+        let table = layui.table
+        let form = layui.form
+        let $ = layui.jquery
+        let MODULE_PATH = '/system/role/group/'
+
+        let cols = [
+            [
+                { type: "numbers", width: 90, title: 'id', sort: true },
+                {title: '名称', field: 'name', align: 'center', width: 150,edit: 'text'},
+                {title: '描述', field: 'details', align: 'center',width: 140,edit: 'text'},
+                {title: '排序', field: 'sort', align: 'center',width: 90,edit: 'number'},
+                {title: '操作', toolbar: '#role-group-bar', align: 'center'}
+            ]
+        ]
+
+        table.render({
+            elem: '#role-group-table',
+            url: MODULE_PATH + 'data',
+            page: true,
+            cols: cols,
+            skin: 'line',
+            limit:4,
+            limits:[4,12,24,48],
+            height: 'full-120',
+            toolbar: '#role-toolbar',
+            defaultToolbar:null
+        })
+
+        table.on('tool(role-group-table)', function (obj) {
+            if (obj.event === 'remove') {
+                window.remove(obj)
+            }
+        })
+        table.on('edit(role-group-table)', function(obj){
+            let loading = layer.load()
+            $.ajax({
+                url: MODULE_PATH+"update",
+                data: JSON.stringify(obj.data),
+                dataType: 'json',
+                type: 'put',
+                success: function (result) {
+                    layer.close(loading)
+                    if (result.success) {
+                        layer.msg(result.msg, {icon: 1, time: 1000},function (){
+                            table.reload('role-group-table')
+                        })
+                    } else {
+                        layer.msg(result.msg, {icon: 2, time: 1000},function (){
+                             table.reload('role-group-table')
+                        })
+                    }
+                }
+            })
+        });
+        form.on('submit(role-group-save)', function (data) {
+            $.ajax({
+                url: MODULE_PATH+'save',
+                data: JSON.stringify(data.field),
+                dataType: 'json',
+                contentType: 'application/json',
+                type: 'post',
+                success: function (result) {
+                    if (result.success) {
+                        layer.msg(result.msg, { icon: 1, time: 1000 }, function () {
+                            table.reload('role-group-table')
+                        })
+                    } else {
+                        layer.msg(result.msg, { icon: 2, time: 1000 })
+                    }
+                }
+            })
+            return false
+        })
+        window.remove = function (obj) {
+            layer.confirm('确定要删除该角色分组吗(删除后原分组下角色将自动归类到默认分组)', {icon: 3, title: '提示'}, function (index) {
+                {#layer.close(index)#}
+                let loading = layer.load()
+                $.ajax({
+                    url: MODULE_PATH + 'remove/' + obj.data['id'],
+                    dataType: 'json',
+                    type: 'delete',
+                    success: function (result) {
+                        layer.close(loading)
+                        if (result.success) {
+                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                obj.del()
+                            })
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000})
+                        }
+                    }
+                })
+            })
+        }
+    })
+</script>
+</body>
+</html>

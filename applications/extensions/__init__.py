@@ -7,7 +7,7 @@ from .init_error_views import init_error_views
 from .init_mail import init_mail, mail as flask_mail
 from .init_upload import init_upload
 from .init_migrate import init_migrate
-
+from .init_template_func import init_template_func
 
 def init_plugs(app: Flask) -> None:
     init_login_manager(app)
@@ -17,3 +17,4 @@ def init_plugs(app: Flask) -> None:
     init_mail(app)
     init_upload(app)
     init_migrate(app)
+    init_template_func(app)

@@ -1,9 +1,10 @@
-import datetime
+import datetime,click
 
 from flask.cli import AppGroup
 
 from applications.extensions import db
-from applications.models import User, Role, Dept, Power
+from applications.models import User, Role, RoleGroup, Dept, Power
+
 
 admin_cli = AppGroup("admin")
 
@@ -51,6 +52,7 @@ roledata = [
         enable=1,
         details='管理员',
         sort=1,
+        group_id="1",
         create_time=now_time,
     ),
     Role(
@@ -60,8 +62,16 @@ roledata = [
         enable=1,
         details='只有查看，没有增删改权限',
         sort=2,
+        group_id="1",
         create_time=now_time,
+    ),
+    RoleGroup(
+        id=1,
+        name="默认分组",
+        sort=1,
+        create_time =now_time,
     )
+
 ]
 deptdata = [
     Dept(
@@ -554,6 +564,14 @@ def add_role_power():
     for i in admin_powers:
         admin_user.power.append(i)
     db.session.commit()
+
+
+
+@admin_cli.command("drop")
+def init_db():
+    click.confirm('此操作或删除所有数据表，确认继续?', abort=True)
+    db.drop_all()
+    click.echo('数据表删除完毕')
 
 
 @admin_cli.command("init")

@@ -5,9 +5,10 @@ from applications.common.curd import model_to_dicts, enable_status, disable_stat
 from applications.common.utils.http import table_api, success_api, fail_api
 from applications.common.utils.rights import authorize
 from applications.common.utils.validate import str_escape
+from sqlalchemy import func
 from applications.extensions import db
-from applications.models import Role, Power, User
-from applications.schemas import RoleOutSchema, PowerOutSchema2
+from applications.models import Role, RoleGroup, Power, User
+from applications.schemas import RoleOutSchema, PowerOutSchema2,RoleGroupSchema
 
 bp = Blueprint('role', __name__, url_prefix='/role')
 
@@ -37,7 +38,9 @@ def table():
 @bp.get('/add')
 @authorize("system:role:add", log=True)
 def add():
-    return render_template('system/role/add.html')
+    roleGroups=RoleGroup.query.order_by(RoleGroup.id.asc()).all()
+    selectDic=[{"name":roleGroup.name,"value":roleGroup.id} for roleGroup in roleGroups]
+    return render_template('system/role/add.html',selectDic=selectDic)
 
 
 # 角色增加
@@ -49,13 +52,15 @@ def save():
     enable = str_escape(req.get("enable"))
     roleCode = str_escape(req.get("roleCode"))
     roleName = str_escape(req.get("roleName"))
+    groupId = str_escape(req.get("groupId"))
     sort = str_escape(req.get("sort"))
     role = Role(
         details=details,
         enable=enable,
         code=roleCode,
         name=roleName,
-        sort=sort
+        sort=sort,
+        group_id=groupId
     )
     db.session.add(role)
     db.session.commit()
@@ -114,8 +119,10 @@ def save_role_power():
 @bp.get('/edit/<int:id>')
 @authorize("system:role:edit", log=True)
 def edit(id):
-    r = get_one_by_id(model=Role, id=id)
-    return render_template('system/role/edit.html', role=r)
+    role = get_one_by_id(model=Role, id=id)
+    roleGroups=RoleGroup.query.order_by(RoleGroup.id.asc()).all()
+    selectDic=[{"name":roleGroup.name,"value":roleGroup.id} for roleGroup in roleGroups]
+    return render_template('system/role/edit.html', role=role,selectDic=selectDic)
 
 
 # 更新角色
@@ -178,3 +185,89 @@ def remove(id):
     if not r:
         return fail_api(msg="角色删除失败")
     return success_api(msg="角色删除成功")
+
+
+# 角色分组管理
+@bp.get('/group')
+@authorize("system:role:add", log=True)
+def group():
+    obj=RoleGroup.query.with_entities(func.max(RoleGroup.sort)).first()
+    if obj:
+        print(obj)
+        maxSort=obj[0]+1
+    else:
+        maxSort=1
+    return render_template('system/role/group.html',sort=maxSort)
+
+# 角色分组管理
+@bp.get('/group/data')
+@authorize("system:role:add", log=True)
+def groupData():
+    roleGroups = RoleGroup.query.filter().layui_paginate()
+    return table_api(data=RoleGroupSchema(many=True).dump(roleGroups), count=roleGroups.total)
+
+# 角色分组编辑
+@bp.put('/group/update')
+@authorize("system:role:edit", log=True)
+def groupUpdate():
+    req_json = request.get_json(force=True)
+    id = req_json.get("id")
+
+    roleGroup=get_one_by_id(RoleGroup,id)
+
+    if roleGroup.name=="默认分组":
+        return fail_api(msg="默认分组不允许修改")
+    data = {
+        "name": str_escape(req_json.get("name")),
+        "sort": str_escape(req_json.get("sort")),
+        "remark": str_escape(req_json.get("remark"))
+    }
+    print(req_json)
+    role = RoleGroup.query.filter_by(id=id).update(data)
+    db.session.commit()
+    if not role:
+        return fail_api(msg="更新角色分组失败")
+    return success_api(msg="更新角色分组成功")
+
+
+# 角色分组增加
+@bp.post('/group/save')
+@authorize("system:role:add", log=True)
+def groupSave():
+    req = request.get_json(force=True)
+    name = str_escape(req.get("name"))
+    sort = str_escape(req.get("sort"))
+    remark = str_escape(req.get("remark"))
+
+    roleGroup = RoleGroup.query.filter_by(name="name").first()
+    if roleGroup:
+        return fail_api(msg="改分组名称已存在！")
+
+    roleGroup = RoleGroup(
+        name=name,
+        sort=sort,
+        remark=remark,
+    )
+    db.session.add(roleGroup)
+    db.session.commit()
+    return success_api(msg="成功")
+
+# 角色分组删除
+@bp.delete('/group/remove/<int:id>')
+@authorize("system:role:remove", log=True)
+def groupRemove(id):
+
+    roleGroup = RoleGroup.query.filter_by(id=id).first()
+    if roleGroup.name=="默认分组":
+        return fail_api(msg="默认分组不能删除!")
+
+    roleGroupDefault = RoleGroup.query.filter_by(name="默认分组").first()
+    if len(roleGroup.roles)>0:
+        roleGroupDefault.roles=roleGroupDefault.roles+roleGroup.roles
+    r=RoleGroup.query.filter_by(id=id).delete()
+    db.session.commit()
+    if not r:
+        return fail_api(msg="角色分组删除失败")
+    return success_api(msg="角色分组删除成功")
+
+
