@@ -1,3 +1,4 @@
+{%from "macros/input.html" import selectField%}
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,6 +28,12 @@
                     <div class="layui-input-block">
                         <input type="text" value="{{ role.code }}" readonly name="roleCode" lay-verify="title"
                                autocomplete="off" placeholder="请输入标题" class="layui-input">
+                    </div>
+                </div>
+               <div class="layui-form-item">
+                    <label class="layui-form-label">角色组</label>
+                    <div class="layui-input-block">
+                        {{selectField("groupId",selectDic,role.group.name,True)}}
                     </div>
                 </div>
                 <div class="layui-form-item">
