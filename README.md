@@ -99,6 +99,12 @@ Pear Admin Flask
 git clone https://gitee.com/pear-admin/pear-admin-flask
 
 # 安 装
+# 配置虚拟环境
+python -m venv venv
+# 激活虚拟环境
+venv\Scripts\activate
+# PyCharm 打开Setting，选中 Python Interpreter，Add，选择Existing environment Apply
+# 安装库
 pip install -r requirements.txt
 ```
 
