@@ -50,7 +50,7 @@ def tree():
 @bp.post('/save')
 @authorize("system:dept:add", log=True)
 def save():
-    req_json = request.get_json(force=True)
+    req_json = request.json
     dept = Dept(
         parent_id=req_json.get('parentId'),
         dept_name=str_escape(req_json.get('deptName')),
@@ -78,7 +78,7 @@ def edit():
 @bp.put('/enable')
 @authorize("system:dept:edit", log=True)
 def enable():
-    id = request.get_json(force=True).get('deptId')
+    id = request.json.get('deptId')
     if id:
         enable = 1
         d = Dept.query.filter_by(id=id).update({"status": enable})
@@ -93,7 +93,7 @@ def enable():
 @bp.put('/disable')
 @authorize("system:dept:edit", log=True)
 def dis_enable():
-    id = request.get_json(force=True).get('deptId')
+    id = request.json.get('deptId')
     if id:
         enable = 0
         d = Dept.query.filter_by(id=id).update({"status": enable})
@@ -107,7 +107,7 @@ def dis_enable():
 @bp.put('/update')
 @authorize("system:dept:edit", log=True)
 def update():
-    json = request.get_json(force=True)
+    json = request.json
     id = json.get("deptId"),
     data = {
         "dept_name": validate.str_escape(json.get("deptName")),
