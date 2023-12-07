@@ -1,0 +1,15 @@
+
+{#下拉列表 模板#}
+{% macro selectField(name,selectDic,defaultKey,isRequire=False) %}
+<select name="{{name}}" lay-filter="select_{{name}}" {{'lay-verify="required"'|safe if isRequire else ''}} >
+    <option value="">请选择</option>
+    {% for item in selectDic %}
+        {% if item.name==defaultKey %}
+            <option selected value="{{item['value']}}" >{{item['name']}}</option>
+        {% else%}
+            <option value="{{item['value']}}" >{{item['name']}}</option>
+        {%endif%}
+    {% endfor %}
+</select>
+{% endmacro %}
+

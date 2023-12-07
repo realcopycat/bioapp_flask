@@ -22,3 +22,12 @@ def table_api(msg: str = "", count=0, data=None, limit=10):
 
     }
     return jsonify(res)
+
+def data_api(msg: str = "成功", data=None, success=True ):
+    """ 动态数据渲染响应 """
+    res = {
+        'msg': msg,
+        'data': data,
+        "success": success
+    }
+    return jsonify(res)

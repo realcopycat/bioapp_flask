@@ -1,9 +1,16 @@
-<!DOCTYPE html>
+{%from "macros/input.html" import selectField%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>用户编辑</title>
     {% include 'system/common/header.html' %}
+    <style>
+        .groupTitle{
+            margin-top:10px;
+            font-size: 10px;
+            font-weight: bolder;
+        }
+    </style>
 </head>
 <body>
 <form class="layui-form" action="">
@@ -42,8 +49,18 @@
 
                 <div class="layui-form-item">
                     <label class="layui-form-label">角色</label>
-                    <div class="layui-input-block">
-                        {% for role in roles %}
+
+                    <div class="layui-input-block" style="height:180px;overflow:hidden;">
+                        {% for index, role in _enumerate(roles) %}
+                            {% if _len(roles)==1%}
+                                <p class="groupTitle">[{{role.group.name}}]</p>
+                            {% elif _len(roles)>=2 %}
+                                {% if index==0%}
+                                    <p class="groupTitle">[{{role.group.name}}]</p>
+                                {% elif roles[index].group.name!=roles[index-1].group.name %}
+                                    <p class="groupTitle">[{{role.group.name}}]</p>
+                                {% endif %}
+                            {% endif %}
                             <input{% if role.id in checked_roles %}
                                 checked
                             {% endif %}
