@@ -55,7 +55,6 @@ const toLocalTime = function (date) {
 	const now = new Date(date)
 	// 获取浏览器的时区偏移量（以分钟为单位）
 	const timezoneOffset = now.getTimezoneOffset();
-	console.log(timezoneOffset)
 	// 根据时区偏移量调整时间
 	return now.setMinutes(now.getMinutes() + timezoneOffset);
 }
