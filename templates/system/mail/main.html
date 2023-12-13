@@ -78,7 +78,7 @@
 
 {# 用户注册时间 #}
 <script type="text/html" id="mail-createTime">
-    {{ '  {{layui.util.toDateString(d.create_at,  "yyyy-MM-dd HH:mm:ss")}' |safe }}}
+    {{ '  {{layui.util.toDateString(toLocalTime(d.create_at),  "yyyy-MM-dd HH:mm:ss")}' |safe }}}
 </script>
 
 {% include 'system/common/footer.html' %}
