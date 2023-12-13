@@ -49,3 +49,12 @@ layui.config({
 }).use(['layer', 'theme'], function () {
 	layui.theme.changeTheme(window, false);
 });
+
+// 调整时间偏移量
+const toLocalTime = function (date) {
+	const now = new Date(date)
+	// 获取浏览器的时区偏移量（以分钟为单位）
+	const timezoneOffset = now.getTimezoneOffset();
+	// 根据时区偏移量调整时间
+	return now.setMinutes(now.getMinutes() + timezoneOffset);
+}
