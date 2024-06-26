@@ -125,3 +125,6 @@ migrations/
 
 # 文件上传
 static/upload/
+
+# flask session
+flask_session/
